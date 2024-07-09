@@ -2,7 +2,7 @@
   <div class="p-2">
     <el-row :gutter="20">
       <!-- 部门树 -->
-      <el-col :lg="4" :xs="24" style="">
+      <!-- <el-col :lg="4" :xs="24" style="">
         <el-card shadow="hover">
           <el-input v-model="deptName" placeholder="请输入部门名称" prefix-icon="Search" clearable />
           <el-tree
@@ -18,8 +18,8 @@
             @node-click="handleNodeClick"
           />
         </el-card>
-      </el-col>
-      <el-col :lg="20" :xs="24">
+      </el-col> -->
+      <el-col :lg="24" :xs="24">
         <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
           <div v-show="showSearch" class="mb-[10px]">
             <el-card shadow="hover">
@@ -27,7 +27,7 @@
                 <el-form-item label="岗位编码" prop="postCode">
                   <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable @keyup.enter="handleQuery" />
                 </el-form-item>
-                <el-form-item label="类别编码" prop="postCategory">
+                <!-- <el-form-item label="类别编码" prop="postCategory">
                   <el-input
                     v-model="queryParams.postCategory"
                     placeholder="请输入类别编码"
@@ -35,11 +35,11 @@
                     style="width: 200px"
                     @keyup.enter="handleQuery"
                   />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="岗位名称" prop="postName">
                   <el-input v-model="queryParams.postName" placeholder="请输入岗位名称" clearable @keyup.enter="handleQuery" />
                 </el-form-item>
-                <el-form-item label="部门" prop="deptId">
+                <!-- <el-form-item label="部门" prop="deptId">
                   <el-tree-select
                     v-model="queryParams.deptId"
                     :data="deptOptions"
@@ -48,12 +48,12 @@
                     placeholder="请选择部门"
                     check-strictly
                   />
-                </el-form-item>
-                <el-form-item label="状态" prop="status">
+                </el-form-item> -->
+                <!-- <el-form-item label="状态" prop="status">
                   <el-select v-model="queryParams.status" placeholder="岗位状态" clearable>
                     <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
                   </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                   <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
                   <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -68,19 +68,19 @@
               <el-col :span="1.5">
                 <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
               </el-col>
-              <el-col :span="1.5">
+              <!-- <el-col :span="1.5">
                 <el-button v-hasPermi="['system:post:edit']" type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
                   >修改</el-button
                 >
-              </el-col>
+              </el-col> -->
               <el-col :span="1.5">
                 <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()">
                   删除
                 </el-button>
               </el-col>
-              <el-col :span="1.5">
+              <!-- <el-col :span="1.5">
                 <el-button v-hasPermi="['system:post:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
-              </el-col>
+              </el-col> -->
               <right-toolbar v-model:showSearch="showSearch" @query-table="getList"></right-toolbar>
             </el-row>
           </template>

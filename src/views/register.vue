@@ -1,7 +1,7 @@
 <template>
   <div class="register">
     <el-form ref="registerRef" :model="registerForm" :rules="registerRules" class="register-form">
-      <h3 class="title">RuoYi-Vue-Plus多租户管理系统</h3>
+      <h3 class="title">{{ title }}</h3>
       <el-form-item v-if="tenantEnabled" prop="tenantId">
         <el-select v-model="registerForm.tenantId" filterable placeholder="请选择/输入公司名称" style="width: 100%">
           <el-option v-for="item in tenantList" :key="item.tenantId" :label="item.companyName" :value="item.tenantId"> </el-option>
@@ -60,6 +60,7 @@ import { getCodeImg, register, getTenantList } from '@/api/login';
 import { RegisterForm, TenantVO } from '@/api/types';
 import { to } from 'await-to-js';
 
+const title = import.meta.env.VITE_APP_TITLE;
 const router = useRouter();
 
 const registerForm = ref<RegisterForm>({

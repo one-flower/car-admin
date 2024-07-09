@@ -8,6 +8,7 @@ export const hasPermi: Directive = {
     const { permissions } = useUserStore();
     // 「其他角色」按钮权限校验
     const { value } = binding;
+
     if (value && value instanceof Array && value.length > 0) {
       const hasPermission = permissions.some((permi: string) => {
         return permi === '*:*:*' || value.includes(permi);

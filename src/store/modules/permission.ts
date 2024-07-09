@@ -21,13 +21,13 @@ export const usePermissionStore = defineStore('permission', () => {
   const sidebarRouters = ref<RouteRecordRaw[]>([]);
 
   const getRoutes = (): RouteRecordRaw[] => {
-    return routes.value;
+    return routes.value as RouteRecordRaw[];
   };
   const getSidebarRoutes = (): RouteRecordRaw[] => {
-    return sidebarRouters.value;
+    return sidebarRouters.value as RouteRecordRaw[];
   };
   const getTopbarRoutes = (): RouteRecordRaw[] => {
-    return topbarRouters.value;
+    return topbarRouters.value as RouteRecordRaw[];
   };
 
   const setRoutes = (newRoutes: RouteRecordRaw[]): void => {
@@ -46,6 +46,7 @@ export const usePermissionStore = defineStore('permission', () => {
   const generateRoutes = async (): Promise<RouteRecordRaw[]> => {
     const res = await getRouters();
     const { data } = res;
+    console.log(res, 'ssssssssssssss');
     const sdata = JSON.parse(JSON.stringify(data));
     const rdata = JSON.parse(JSON.stringify(data));
     const defaultData = JSON.parse(JSON.stringify(data));

@@ -7,6 +7,7 @@ import createSvgIconsPlugin from './svg-icon';
 import createCompression from './compression';
 import createSetupExtend from './setup-extend';
 import createI18n from './i18n';
+import createHtml from './create-html';
 import path from 'path';
 
 export default (viteEnv: any, isBuild = false): [] => {
@@ -20,5 +21,7 @@ export default (viteEnv: any, isBuild = false): [] => {
   vitePlugins.push(createSvgIconsPlugin(path, isBuild));
   vitePlugins.push(createSetupExtend());
   vitePlugins.push(createI18n(path));
+  vitePlugins.push(createHtml(viteEnv));
+
   return vitePlugins;
 };
