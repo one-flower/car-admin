@@ -177,6 +177,57 @@ export const dynamicRoutes: RouteRecordRaw[] = [
   //     }
   //   ]
   // }
+  {
+    path: '/sys',
+    name: '新系统设置',
+    component: Layout,
+    hidden: false,
+    permissions: ['superadmin'],
+    meta: {
+      'title': '系统管理',
+      'icon': 'system',
+      'noCache': false,
+      'link': null
+    },
+    children: [
+      {
+        path: 'post',
+        component: () => import('@/views/sys/post/index.vue'),
+        name: 'post',
+        meta: { title: '岗位设置', activeMenu: '/sys/post', icon: '' }
+      },
+      {
+        path: 'brand',
+        component: () => import('@/views/sys/brand/index.vue'),
+        name: 'brand',
+        meta: { title: '产品品牌', activeMenu: '/sys/brand', icon: '' }
+      },
+      {
+        path: 'mechanism',
+        component: () => import('@/views/sys/mechanism/index.vue'),
+        name: 'mechanism',
+        meta: { title: '上游机构', activeMenu: '/sys/mechanism', icon: '' }
+      },
+      {
+        path: 'customTag',
+        component: () => import('@/views/sys/custom-tag/index.vue'),
+        name: 'customTag',
+        meta: { title: '客户标签', activeMenu: '/sys/customTag', icon: '' }
+      },
+      {
+        path: 'channelSource',
+        component: () => import('@/views/sys/channel-source/index.vue'),
+        name: 'channelSource',
+        meta: { title: '渠道来源', activeMenu: '/sys/channelSource', icon: '' }
+      },
+      {
+        path: 'management',
+        component: () => import('@/views/sys/management/index.vue'),
+        name: 'management',
+        meta: { title: '项目管理', activeMenu: '/sys/management', icon: '' }
+      }
+    ]
+  }
 ];
 
 /**

@@ -6,7 +6,7 @@
           <div v-show="showSearch" class="mb-[10px]">
             <el-card shadow="hover">
               <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-                <el-form-item label="岗位编码" prop="postCode">
+                <el-form-item label="上游机构" prop="postCode">
                   <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable @keyup.enter="handleQuery" />
                 </el-form-item>
                 <el-form-item label="岗位名称" prop="name">
@@ -86,8 +86,8 @@
 </template>
 
 <script setup name="Post" lang="ts">
-import { listPost, addPost, delPost, getPost, updatePost } from '@/api/system/post';
-import { PostForm, PostQuery, PostVO } from '@/api/system/post/types';
+import { listPost, addPost, delPost, getPost, updatePost } from '@/api/sys/post';
+import { PostForm, PostQuery, PostVO } from '@/api/sys/post/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
