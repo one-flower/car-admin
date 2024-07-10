@@ -142,10 +142,14 @@
 }
 /* 设置 el-select 的宽度默认为 240px */
 .el-form--inline .el-select {
-  width: 240px;
+  width: 240px !important;
 }
 
 /* 设置 el-input 的宽度默认为 240px */
 .el-form--inline .el-input {
-  width: 240px;
+  width: 240px !important;
+}
+// 日期选择器 丁宽
+.el-range-editor.el-input__wrapper {
+  width: 240px !important;
 }

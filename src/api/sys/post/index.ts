@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import { FormData, TableQuery, TableVO } from './types';
 import { AxiosPromise } from 'axios';
 
-// 查询岗位列表
+// 查询列表
 export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
   return request({
     url: '/clyh/configPost/list',
@@ -11,7 +11,7 @@ export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
   });
 }
 
-// 查询岗位详细
+// 查询详细
 export function getInfo(postId: string | number): AxiosPromise<TableVO> {
   return request({
     url: '/clyh/configPost/' + postId,
@@ -19,7 +19,7 @@ export function getInfo(postId: string | number): AxiosPromise<TableVO> {
   });
 }
 
-// 新增岗位
+// 新增
 export function addInfo(data: FormData) {
   return request({
     url: '/clyh/configPost',
@@ -28,7 +28,7 @@ export function addInfo(data: FormData) {
   });
 }
 
-// 修改岗位
+// 修改
 export function updateInfo(data: FormData) {
   return request({
     url: '/clyh/configPost',
@@ -37,7 +37,7 @@ export function updateInfo(data: FormData) {
   });
 }
 
-// 删除岗位
+// 删除
 export function delInfo(postId: string | number | (string | number)[]) {
   return request({
     url: '/clyh/configPost/' + postId,

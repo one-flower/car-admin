@@ -1,58 +1,46 @@
 import request from '@/utils/request';
-import { PostForm, PostQuery, PostVO } from './types';
+import { FormData, TableQuery, TableVO } from './types';
 import { AxiosPromise } from 'axios';
 
-// 查询岗位列表
-export function listPost(query: PostQuery): AxiosPromise<PostVO[]> {
+// 查询列表
+export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
   return request({
-    url: '/clyh/configPost/list',
+    url: '/clyh/configProject/list',
     method: 'get',
     params: query
   });
 }
 
-// 查询岗位详细
-export function getPost(postId: string | number): AxiosPromise<PostVO> {
+// 查询详细
+export function getInfo(postId: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/configPost/' + postId,
+    url: '/clyh/configProject/' + postId,
     method: 'get'
   });
 }
 
-// 获取岗位选择框列表
-export function optionselect(deptId?: number | string, postIds?: (number | string)[]): AxiosPromise<PostVO[]> {
+// 新增
+export function addInfo(data: FormData) {
   return request({
-    url: '/system/post/optionselect',
-    method: 'get',
-    params: {
-      postIds: postIds,
-      deptId: deptId
-    }
-  });
-}
-
-// 新增岗位
-export function addPost(data: PostForm) {
-  return request({
-    url: '/clyh/configPost',
+    url: '/clyh/configProject',
     method: 'post',
     data: data
   });
 }
 
-// 修改岗位
-export function updatePost(data: PostForm) {
+// 修改
+export function updateInfo(data: FormData) {
   return request({
-    url: '/clyh/configPost',
+    url: '/clyh/configProject',
     method: 'put',
     data: data
   });
 }
 
-// 删除岗位
-export function delPost(postId: string | number | (string | number)[]) {
+// 删除
+export function delInfo(postId: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/configPost/' + postId,
+    url: '/clyh/configProject/' + postId,
     method: 'delete'
   });
 }

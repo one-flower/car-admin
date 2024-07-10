@@ -3,7 +3,7 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.native.prevent>
             <el-form-item label="岗位编码" prop="postCode">
               <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -25,11 +25,11 @@
             <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()">
+            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableAttr.multiple" @click="handleDelete()">
               删除
             </el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @query-table="getList"></right-toolbar>
+          <right-toolbar v-model:showSearch="showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
@@ -49,12 +49,18 @@
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
+      <pagination
+        v-show="tableAttr.total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="tableAttr.total"
+        @pagination="getTableData"
+      />
     </el-card>
 
     <!-- 添加或修改岗位对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.native.prevent>
         <el-form-item label="岗位名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入岗位名称" />
         </el-form-item>
@@ -84,10 +90,11 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const tableData = ref<TableVO[]>([]);
 const loading = ref(true);
 const showSearch = ref(true);
-const ids = ref<Array<number | string>>([]);
-const single = ref(true);
-const multiple = ref(true);
-const total = ref(0);
+const tableAttr = reactive<TableAttr>({
+  ids: [],
+  multiple: true,
+  total: 0
+});
 
 const FormDataRef = ref<ElFormInstance>();
 const queryFormRef = ref<ElFormInstance>();
@@ -120,11 +127,11 @@ const data = reactive<PageData<FormData, TableQuery>>({
 const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data);
 
 /** 查询岗位列表 */
-const getList = async () => {
+const getTableData = async () => {
   loading.value = true;
   const res = await tableList(queryParams.value);
   tableData.value = res.rows;
-  total.value = res.total;
+  tableAttr.total = res.total;
   loading.value = false;
 };
 
@@ -144,7 +151,7 @@ const reset = () => {
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
 
-  getList();
+  getTableData();
 };
 
 /** 重置按钮操作 */
@@ -157,9 +164,8 @@ const resetQuery = () => {
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: TableVO[]) => {
-  ids.value = selection.map((item) => item.id);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
+  tableAttr.ids = selection.map((item) => item.id);
+  tableAttr.multiple = !selection.length;
 };
 
 /** 新增按钮操作 */
@@ -172,7 +178,7 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = async (row?: TableVO) => {
   reset();
-  const postId = row?.id || ids.value[0];
+  const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
   Object.assign(form.value, res.data);
   dialog.visible = true;
@@ -186,32 +192,19 @@ const submitForm = () => {
       form.value.id ? await updateInfo(form.value) : await addInfo(form.value);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
-      await getList();
+      await getTableData();
     }
   });
 };
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: TableVO) => {
-  const postIds = row?.id || ids.value;
+  const ids = row?.id || tableAttr.ids;
   await proxy?.$modal.confirm('是否删除选中项？');
-  await delInfo(postIds);
-  await getList();
+  await delInfo(ids);
+  await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
 
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download(
-    'system/post/export',
-    {
-      ...queryParams.value
-    },
-    `post_${new Date().getTime()}.xlsx`
-  );
-};
-
-onMounted(() => {
-  getList();
-});
+getTableData();
 </script>

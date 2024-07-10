@@ -46,6 +46,8 @@ import { OssVO } from '@/api/system/oss/types';
 import { propTypes } from '@/utils/propTypes';
 import { globalHeaders } from '@/utils/request';
 import { compressAccurately } from 'image-conversion';
+import { useFormItem } from 'element-plus';
+const { formItem } = useFormItem();
 
 const props = defineProps({
   modelValue: {
@@ -94,6 +96,7 @@ const imageUploadRef = ref<ElUploadInstance>();
 watch(
   () => props.modelValue,
   async (val: string) => {
+    formItem?.validate('change');
     if (val) {
       // 首先将值转为数组
       let list: OssVO[] = [];

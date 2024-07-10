@@ -3,7 +3,7 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.native.prevent>
             <el-form-item label="上游机构" prop="upOrg">
               <el-select v-model="queryParams.upOrg" value-key="" placeholder="请选择上游机构" clearable filterable>
                 <el-option v-for="item in mechanismList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -27,11 +27,11 @@
             <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()">
+            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableAttr.multiple" @click="handleDelete()">
               删除
             </el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @query-table="getList"></right-toolbar>
+          <right-toolbar v-model:showSearch="showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
@@ -53,18 +53,24 @@
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
             <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:details']" link type="info" icon="InfoFilled" @click="handleDetails(row)"></el-button>
+              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
+      <pagination
+        v-show="tableAttr.total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="tableAttr.total"
+        @pagination="getTableData"
+      />
     </el-card>
 
     <!-- 添加或修改品牌对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="700px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" :disabled="formDetails">
+      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" :disabled="formDetails" @submit.native.prevent>
         <el-form-item label="品牌名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入品牌名称" />
         </el-form-item>
@@ -108,11 +114,13 @@ import ImagePreview from '@/components/ImagePreview/index.vue';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const tableData = ref<TableVO[]>([]);
+const tableAttr = reactive<TableAttr>({
+  ids: [],
+  multiple: true,
+  total: 0
+});
 const loading = ref(true);
 const showSearch = ref(true);
-const ids = ref<Array<number | string>>([]);
-const multiple = ref(true);
-const total = ref(0);
 
 const formDetails = ref(false);
 const FormDataRef = ref<ElFormInstance>();
@@ -152,11 +160,11 @@ const data = reactive<PageData<FormData, TableQuery>>({
 const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data);
 
 /** 查询品牌列表 */
-const getList = async () => {
+const getTableData = async () => {
   loading.value = true;
   const res = await tableList(queryParams.value);
   tableData.value = res.rows;
-  total.value = res.total;
+  tableAttr.total = res.total;
   loading.value = false;
 };
 
@@ -175,8 +183,7 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
-
-  getList();
+  getTableData();
 };
 
 /** 重置按钮操作 */
@@ -189,8 +196,8 @@ const resetQuery = () => {
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: TableVO[]) => {
-  ids.value = selection.map((item) => item.id);
-  multiple.value = !selection.length;
+  tableAttr.ids = selection.map((item) => item.id);
+  tableAttr.multiple = !selection.length;
 };
 
 /** 新增按钮操作 */
@@ -204,7 +211,7 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = async (row?: TableVO) => {
   reset();
-  const postId = row?.id || ids.value[0];
+  const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
   Object.assign(form.value, res.data);
   formDetails.value = false;
@@ -219,22 +226,22 @@ const submitForm = () => {
       form.value.id ? await updateInfo(form.value) : await addInfo(form.value);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
-      await getList();
+      await getTableData();
     }
   });
 };
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: TableVO) => {
-  const postIds = row?.id || ids.value;
+  const ids = row?.id || tableAttr.ids;
   await proxy?.$modal.confirm('是否删除选中项？');
-  await delInfo(postIds);
-  await getList();
+  await delInfo(ids);
+  await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
 
-const handleDetails = async (row?: TableVO) => {
-  const postId = row?.id || ids.value[0];
+const handleDetail = async (row?: TableVO) => {
+  const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
   Object.assign(form.value, res.data);
   formDetails.value = true;
@@ -253,14 +260,14 @@ const handleExport = () => {
   );
 };
 
-const getDict = async () => {
+const init = async () => {
   const res = await getMechanismList();
   mechanismList.value = res.rows.map((item) => {
     return { label: item.name, value: item.id };
   });
+
+  getTableData();
 };
-onMounted(() => {
-  getDict();
-  getList();
-});
+
+init();
 </script>

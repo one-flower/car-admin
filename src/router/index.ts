@@ -179,7 +179,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
   // }
   {
     path: '/sys',
-    name: '新系统设置',
+    name: 'sys',
     component: Layout,
     hidden: false,
     permissions: ['superadmin'],
@@ -225,6 +225,33 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/sys/management/index.vue'),
         name: 'management',
         meta: { title: '项目管理', activeMenu: '/sys/management', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/storeManagement',
+    name: 'storeManagement',
+    component: Layout,
+    hidden: false,
+    permissions: ['superadmin'],
+    meta: {
+      'title': '店铺管理',
+      'icon': 'store',
+      'noCache': false,
+      'link': null
+    },
+    children: [
+      {
+        path: 'staff',
+        component: () => import('@/views/store-management/staff/index.vue'),
+        name: 'staff',
+        meta: { title: '员工管理', activeMenu: '/storeManagement/staff', icon: '' }
+      },
+      {
+        path: 'recharge',
+        component: () => import('@/views/store-management/recharge/index.vue'),
+        name: 'recharge',
+        meta: { title: '充值管理', activeMenu: '/storeManagement/recharge', icon: '' }
       }
     ]
   }

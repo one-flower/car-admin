@@ -1,18 +1,15 @@
-export interface PostVO extends BaseEntity {
-  id: number | string;
-  postCode: string;
-  name: string;
+export interface TableVO extends BaseEntity {
+  id: string;
+  label: string;
   remarks: string;
 }
 
-export interface PostForm {
-  id: number | string | undefined;
-  postCode: string;
-  name: string;
+export interface FormData {
+  id: string | undefined;
+  label: string;
   remarks: string;
 }
 
-export interface PostQuery extends PageQuery {
-  postCode: string;
-  name: string;
+export interface TableQuery extends PageQuery {
+  label: string;
 }

@@ -88,6 +88,15 @@ declare global {
     pageNum: number;
     pageSize: number;
   }
+  /**
+   *
+   */
+  declare interface TableAttr {
+    total: number;
+    ids: number[] | string[];
+    multiple: boolean;
+  }
+
   declare interface LayoutSetting {
     /**
      * 是否显示顶部导航

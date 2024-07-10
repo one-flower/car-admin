@@ -5,7 +5,7 @@ import { AxiosPromise } from 'axios';
 // 查询列表
 export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
   return request({
-    url: '/clyh/configTag/list',
+    url: '/clyh/recharge/list',
     method: 'get',
     params: query
   });
@@ -14,7 +14,7 @@ export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
 // 查询详细
 export function getInfo(postId: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/configTag/' + postId,
+    url: '/clyh/recharge/' + postId,
     method: 'get'
   });
 }
@@ -22,7 +22,7 @@ export function getInfo(postId: string | number): AxiosPromise<TableVO> {
 // 新增
 export function addInfo(data: FormData) {
   return request({
-    url: '/clyh/configTag',
+    url: '/clyh/recharge',
     method: 'post',
     data: data
   });
@@ -31,7 +31,7 @@ export function addInfo(data: FormData) {
 // 修改
 export function updateInfo(data: FormData) {
   return request({
-    url: '/clyh/configTag',
+    url: '/clyh/recharge',
     method: 'put',
     data: data
   });
@@ -40,7 +40,7 @@ export function updateInfo(data: FormData) {
 // 删除
 export function delInfo(postId: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/configTag/' + postId,
+    url: '/clyh/recharge/' + postId,
     method: 'delete'
   });
 }
