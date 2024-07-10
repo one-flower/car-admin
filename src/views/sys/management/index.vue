@@ -3,7 +3,7 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.native.prevent>
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="项目类型" prop="name">
               <el-input v-model="queryParams.name" placeholder="请输入项目类型" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -57,7 +57,7 @@
 
     <!-- 添加或修改对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.native.prevent>
+      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="项目类型" prop="name">
           <el-input v-model="form.name" placeholder="请输入项目类型" />
         </el-form-item>

@@ -3,16 +3,15 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.native.prevent>
-            <el-form-item label="套餐名称" prop="configPostId">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
+            <el-form-item label="套餐名称" prop="name">
               <el-input v-model="queryParams.name" placeholder="请输入套餐名称" clearable></el-input>
             </el-form-item>
             <el-form-item label="状态" prop="state">
-              <el-select v-model="queryParams.name" value-key="post" placeholder="请选择状态" clearable filterable>
+              <el-select v-model="queryParams.state" value-key="post" placeholder="请选择状态" clearable filterable>
                 <el-option v-for="item in dictObj.state" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -37,36 +36,28 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="员工名片" align="center" prop="staffCardUrl" width="150px">
-          <template #default="{ row }">
-            <ImagePreview :width="100" :height="100" :src="row.staffCardUrl" />
-          </template>
-        </el-table-column>
-        <el-table-column label="员工编号" align="center" prop="staffCode" show-overflow-tooltip />
-        <el-table-column label="员工姓名" align="center" prop="name" />
-        <el-table-column label="员工岗位" align="center" prop="configPostId" />
-        <el-table-column label="员工性别" align="center" prop="gender" />
-        <el-table-column label="身份证号" align="center" prop="cardNum" show-overflow-tooltip />
-        <el-table-column label="联系电话" align="center" prop="telephone" show-overflow-tooltip />
-        <el-table-column label="入职日期" align="center" prop="entryTime" show-overflow-tooltip />
-        <el-table-column label="在职状态" align="center" prop="state">
+        <el-table-column label="套餐名称" align="center" prop="name" />
+        <el-table-column label="充值金额" align="center" prop="realityMoney" />
+        <el-table-column label="赠送金额" align="center" prop="giveMoney" />
+        <el-table-column label="状态" align="center" prop="state">
           <template #default="{ row }">
             <dict-tag :options="clyh_staff_entry_state" :value="row.configType" />
           </template>
         </el-table-column>
+        <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip />
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="提成明细" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="warning" icon="Document" @click="handleUpdate(row)"></el-button>
+            <el-tooltip v-if="row.state === '1'" content="充值" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="warning" icon="Document" @click="handleRecharge(row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="修改" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
+            <el-tooltip content="充值记录" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleRechargeList(row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="删除" placement="top">
+            <el-tooltip :content="row.state === '0' ? '启用' : '禁用'" placement="top">
+              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleState(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip v-if="row.state === '0'" content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
-            </el-tooltip>
-            <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -83,53 +74,46 @@
 
     <!-- 添加或修改对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.native.prevent :disabled="formDetail">
-        <el-form-item label="员工编号" prop="staffCode">
-          <el-input v-model="form.staffCode" placeholder="请输入员工编号" />
+      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
+        <el-form-item label="套餐名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入员工编号" />
         </el-form-item>
-        <el-form-item label="员工姓名" prop="name">
-          <el-input v-model="form.name" placeholder="请输入员工姓名" />
+        <el-form-item label="充值金额" prop="realityMoney">
+          <el-input-number v-model.number="form.realityMoney" :min="0" :max="99999.99" :controls="false" />
         </el-form-item>
-        <el-form-item label="员工岗位" prop="configPostId">
-          <el-select v-model="form.configPostId" value-key="post" placeholder="请选择员工岗位" clearable filterable>
-            <el-option v-for="item in dictObj.post" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-radio-group v-model="form.gender" :disabled="form.id !== undefined">
-            <el-radio-button v-for="item in sys_user_sex" :key="item.key" :label="item.label" :value="item.value"> </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="身份证号" prop="cardNum">
-          <el-input v-model="form.cardNum" placeholder="请输入渠道来源" :disabled="form.id !== undefined" />
-        </el-form-item>
-        <el-form-item label="联系电话" prop="telephone">
-          <el-input v-model="form.telephone" placeholder="请输入渠道来源" />
-        </el-form-item>
-        <el-form-item label="入职日期" prop="entryTime">
-          <el-date-picker v-model="form.entryTime" type="date" value-format="YYYY-MM-DD hh:mm:ss" placeholder="选择日期时间"> </el-date-picker>
-        </el-form-item>
-        <el-form-item label="在职状态" prop="state">
-          <el-radio-group v-model="form.state">
-            <el-radio-button v-for="item in clyh_staff_entry_state" :key="item.key" :label="item.label" :value="item.value"> </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="员工简介" prop="snapshot">
-          <el-input v-model="form.snapshot" type="textarea" row="auto" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="员工名片" prop="staffCardUrl">
-          <imageUpload v-model="form.staffCardUrl" :file-size="50" :limit="1" />
+        <el-form-item label="赠送金额" prop="giveMoney">
+          <el-input-number v-model.number="form.giveMoney" :min="0" :max="99999.99" :controls="false" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
-      <template #footer v-if="!formDetail">
+      <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
+    </el-dialog>
+
+    <!-- 充值 -->
+    <el-dialog v-model="rechargeDiolag.visible" :title="rechargeDiolag.title" width="500px" append-to-body>
+      <el-steps style="max-width: 600px" :space="200" :active="1" finish-status="success">
+        <el-step title="充值套餐" />
+        <el-step title="选择客户" />
+        <el-step title="充值核对" />
+        <el-step title="完成" />
+      </el-steps>
+    </el-dialog>
+
+    <!-- 充值记录 -->
+    <el-dialog v-model="rechargeDiolag.visible" :title="rechargeDiolag.title" width="500px" append-to-body>
+      <el-steps style="max-width: 600px" :space="200" :active="1" finish-status="success">
+        <el-step title="充值套餐" />
+        <el-step title="选择客户" />
+        <el-step title="充值核对" />
+        <el-step title="完成" />
+      </el-steps>
     </el-dialog>
   </div>
 </template>
@@ -160,7 +144,6 @@ const { sys_user_sex, clyh_staff_entry_state } = toRefs<any>(proxy?.useDict('sys
 
 const queryFormRef = ref<ElFormInstance>();
 
-const formDetail = ref(false);
 const pageTitle = '渠道来源';
 const FormDataRef = ref<ElFormInstance>();
 
@@ -174,6 +157,7 @@ const initFormData: FormData = {
   name: '',
   realityMoney: '',
   giveMoney: '',
+  state: '1',
   remarks: ''
 };
 
@@ -186,14 +170,9 @@ const data = reactive<PageData<FormData, TableQuery>>({
     state: undefined
   },
   rules: {
-    name: [{ required: true, message: '员工姓名不能为空', trigger: 'blur' }],
-    configPostId: [{ required: true, message: '员工岗位不能为空', trigger: 'blur' }],
-    gender: [{ required: true, message: '性别不能为空', trigger: 'change' }],
-    cardNum: [{ required: true, message: '身份证号不能为空', trigger: 'blur' }],
-    entryTime: [{ required: true, message: '入职日期不能为空', trigger: 'change' }],
-    state: [{ required: true, message: '在职状态不能为空', trigger: 'change' }],
-    snapshot: [{ required: true, message: '员工简介不能为空', trigger: 'blur' }],
-    staffCardUrl: [{ required: true, message: '员工名片不能为空', trigger: 'change' }]
+    name: [{ required: true, message: '套餐名称不能为空', trigger: 'blur' }],
+    realityMoney: [{ required: true, message: '充值金额不能为空', trigger: ['change', 'blur'] }],
+    giveMoney: [{ required: true, message: '赠送金额不能为空', trigger: ['change', 'blur'] }]
   }
 });
 
@@ -244,31 +223,17 @@ const handleSelectionChange = (selection: TableVO[]) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
-  formDetail.value = false;
   dialog.visible = true;
   dialog.title = `添加${pageTitle}`;
 };
 
-/** 修改按钮操作 */
-const handleUpdate = async (row?: TableVO) => {
-  reset();
-  const postId = row?.id || tableAttr.ids[0];
-  const res = await getInfo(postId);
-  Object.assign(form.value, res.data);
-  formDetail.value = false;
-  dialog.visible = true;
-  dialog.title = `修改${pageTitle}`;
-};
-
-/** 详情按钮操作 */
-const handleDetail = async (row?: TableVO) => {
-  reset();
-  const postId = row?.id || tableAttr.ids[0];
-  const res = await getInfo(postId);
-  Object.assign(form.value, res.data);
-  formDetail.value = true;
-  dialog.visible = true;
-  dialog.title = `${pageTitle}详情`;
+/** 启用禁用 */
+const handleState = async (row?: TableVO) => {
+  const title = row.state === '0' ? '启用' : '禁用';
+  const state = row.state === '0' ? '1' : '0';
+  await proxy?.$modal.confirm(`是否${title}？`);
+  await updateInfo({ ...row, state: state });
+  row.state = state;
 };
 
 /** 提交按钮 */
@@ -291,9 +256,28 @@ const handleDelete = async (row?: TableVO) => {
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
+
+const rechargeDiolag = reactive<DialogOption>({
+  visible: false,
+  title: ''
+});
+
+const rechargeDiolagList = reactive<DialogOption>({
+  visible: false,
+  title: ''
+});
+/** 充值 */
+const handleRecharge = async (row?: TableVO) => {};
+/** 充值记录 */
+const handleRechargeList = async (row?: TableVO) => {};
 const init = async () => {
   getTableData();
 };
 
 init();
 </script>
+<style lang="scss">
+.el-input-number {
+  width: 100%;
+}
+</style>

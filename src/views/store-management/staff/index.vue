@@ -3,7 +3,7 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.native.prevent>
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="员工岗位" prop="configPostId">
               <el-select v-model="queryParams.configPostId" value-key="post" placeholder="请选择员工岗位" clearable filterable>
                 <el-option v-for="item in dictObj.post" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -96,7 +96,7 @@
 
     <!-- 添加或修改对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.native.prevent :disabled="formDetail">
+      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent :disabled="formDetail">
         <el-form-item label="员工编号" prop="staffCode">
           <el-input v-model="form.staffCode" placeholder="请输入员工编号" />
         </el-form-item>

@@ -44,3 +44,19 @@ export function delInfo(postId: string | number | (string | number)[]) {
     method: 'delete'
   });
 }
+
+// 用户充值
+export function userRecharge(data: FormData) {
+  return request({
+    url: '/clyh/recharge/userRecharge',
+    method: 'post',
+    data: data
+  });
+}
+// 充值管理详情
+// export function delInfo(postId: string | number | (string | number)[]) {
+//   return request({
+//     url: '/clyh/recharge/' + postId,
+//     method: 'delete'
+//   });
+// }

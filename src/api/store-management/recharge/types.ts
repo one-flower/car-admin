@@ -4,7 +4,7 @@ export interface TableVO extends BaseEntity {
   realityMoney: string; //充值金额
   giveMoney: string; //赠送金额
   remarks: string;
-  state: number; //状态
+  state: string; //状态
 }
 
 export interface FormData {
@@ -13,9 +13,10 @@ export interface FormData {
   realityMoney: string; //充值金额
   giveMoney: string; //赠送金额
   remarks: string;
+  state: string; //状态
 }
 
 export interface TableQuery extends PageQuery {
   name: string;
-  state: number | undefined;
+  state: string | undefined;
 }

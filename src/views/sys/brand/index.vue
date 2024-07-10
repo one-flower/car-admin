@@ -3,7 +3,7 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.native.prevent>
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="上游机构" prop="upOrg">
               <el-select v-model="queryParams.upOrg" value-key="" placeholder="请选择上游机构" clearable filterable>
                 <el-option v-for="item in mechanismList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -70,7 +70,7 @@
 
     <!-- 添加或修改品牌对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="700px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" :disabled="formDetails" @submit.native.prevent>
+      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" :disabled="formDetails" @submit.prevent>
         <el-form-item label="品牌名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入品牌名称" />
         </el-form-item>
@@ -87,10 +87,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="品牌Logo" prop="logoUrl">
-          <imageUpload v-model="form.logoUrl" :file-size="50" :limit="1" />
+          <imageUpload v-model="form.logoUrl" :limit="1" />
         </el-form-item>
         <el-form-item label="其他资质" prop="otherCredentialUrl">
-          <imageUpload v-model="form.otherCredentialUrl" :file-size="50" :limit="3" />
+          <imageUpload v-model="form.otherCredentialUrl" :limit="3" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
