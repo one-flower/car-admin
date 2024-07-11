@@ -1,12 +1,23 @@
 <template>
   <div class="p-2">
+    {{ changeDialog.visible }}
+    {{ changeDialog.form }}
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="渠道来源" prop="label">
-              <el-input v-model="queryParams.label" placeholder="请输入渠道来源" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="客户标签" prop="tagId">
+              <el-select v-model="queryParams.tagId" value-key="" placeholder="" clearable filterable @change="">
+                <el-option v-for="item in dictObj.carManageerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
             </el-form-item>
+            <el-form-item label="客户昵称" prop="nickname">
+              <el-input v-model="queryParams.nickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="手机号码" prop="telephone">
+              <el-input v-model="queryParams.telephone" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="绑定状态" prop="label"> </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -31,11 +42,27 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="渠道来源" align="center" prop="label" />
-        <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip></el-table-column>
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="客户编号" align="center" prop="carManageNo" />
+        <el-table-column label="客户标签" align="center" prop="tagIdLabel" />
+        <el-table-column label="手机号码" align="center" prop="telephone" />
+        <el-table-column label="客户昵称" align="center" prop="nickname" />
+        <el-table-column label="账户余额" align="center" prop="accountBalance" />
+        <el-table-column label="绑定状态" align="center" prop="" />
+        <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="修改" placement="top">
+            <el-tooltip content="账户充值" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
+            </el-tooltip>
+            <el-tooltip content="更换号码" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleChangePhone(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="解绑" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
+            </el-tooltip>
+            <el-tooltip content="客户档案" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
+            </el-tooltip>
+            <el-tooltip content="编辑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
@@ -57,8 +84,27 @@
     <!-- 添加或修改对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
-        <el-form-item label="渠道来源" prop="label">
-          <el-input v-model="form.label" placeholder="请输入渠道来源" />
+        <template v-if="form.id !== undefined">
+          <el-form-item label="客户编号">
+            {{ form.carManageNo }}
+          </el-form-item>
+          <el-form-item label="手机号码"> {{ form.telephone }} </el-form-item>
+        </template>
+        <el-form-item label="客户标签" prop="tagId">
+          <el-select v-model="form.tagId" placeholder="请选择客户标签" clearable filterable>
+            <el-option v-for="item in dictObj.carManageerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="客户昵称" prop="nickname">
+          <el-input v-model="form.nickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
+        </el-form-item>
+        <el-form-item label="手机号码" prop="telephone" v-if="form.id === undefined">
+          <el-input v-model="form.telephone" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
+        </el-form-item>
+        <el-form-item label="渠道来源" prop="channel">
+          <el-select v-model="form.channel" placeholder="请选择渠道来源" clearable filterable @change="">
+            <el-option v-for="item in dictObj.carManage" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
@@ -73,10 +119,9 @@
     </el-dialog>
   </div>
 </template>
-
-<script setup name="channelSource" lang="ts">
-import { configChannelList, configChannelAdd, configChannelDel, configChannelInfo, configChannelUp } from '@/api/sys/channel-source';
-import { FormData, TableQuery, TableVO } from '@/api/sys/channel-source/types';
+<script setup name="carManage" lang="ts">
+import { carManageList, carManageAdd, carManageDel, carManageInfo, carManageUp } from '@/api/carManageer-management/car';
+import { FormData, PhoneForm, TableQuery, TableVO } from '@/api/carManageer-management/car/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -93,6 +138,11 @@ const queryFormRef = ref<ElFormInstance>();
 
 const pageTitle = '渠道来源';
 const FormDataRef = ref<ElFormInstance>();
+const dictObj = {
+  carManageerTag: [],
+  bindState: [],
+  carManage: []
+};
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -101,7 +151,10 @@ const dialog = reactive<DialogOption>({
 
 const initFormData: FormData = {
   id: undefined,
-  label: '',
+  tagId: '',
+  nickname: '',
+  telephone: '',
+  channel: '',
   remarks: ''
 };
 
@@ -110,10 +163,15 @@ const data = reactive<PageData<FormData, TableQuery>>({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    label: ''
+    tagId: '',
+    nickname: '',
+    telephone: ''
   },
   rules: {
-    label: [{ required: true, message: '渠道来源不能为空', trigger: 'blur' }]
+    tagId: [{ required: true, message: '客户标签不能为空', trigger: ['blur', 'change'] }],
+    nickname: [{ required: true, message: '客户昵称不能为空', trigger: 'blur' }],
+    telephone: [{ required: true, message: '手机号码不能为空', trigger: 'blur' }],
+    channel: [{ required: true, message: '渠道来源不能为空', trigger: ['blur', 'change'] }]
   }
 });
 
@@ -122,7 +180,7 @@ const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data
 /** 查询列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await configChannelList(queryParams.value);
+  const res = await carManageList(queryParams.value);
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;
@@ -172,7 +230,7 @@ const handleAdd = () => {
 const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
-  const res = await configChannelInfo(postId);
+  const res = await carManageInfo(postId);
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
@@ -182,7 +240,7 @@ const handleUpdate = async (row?: TableVO) => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await configChannelUp(form.value) : await configChannelAdd(form.value);
+      form.value.id ? await carManageUp(form.value) : await carManageAdd(form.value);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getTableData();
@@ -190,14 +248,43 @@ const submitForm = () => {
   });
 };
 
+/** 账户充值 */
+
+/** 修改手机号 */
+type ChangeDialog = {
+  visible: boolean;
+  form: PhoneForm;
+};
+const changeDialog = reactive<ChangeDialog>({
+  visible: false,
+  form: {
+    id: '',
+    carManageNo: '',
+    tagId: '',
+    nickname: '',
+    telephone: ''
+  }
+});
+const handleChangePhone = async (row?: TableVO) => {
+  const postId = row?.id || tableAttr.ids[0];
+  const res = await carManageInfo(postId);
+  Object.assign(changeDialog.form, res.data);
+  changeDialog.visible = true;
+};
+
+/** 客户档案 */
+
 /** 删除按钮操作 */
 const handleDelete = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids;
   await proxy?.$modal.confirm('是否删除选中项？');
-  await configChannelDel(ids);
+  await carManageDel(ids);
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
+const init = async () => {
+  getTableData();
+};
 
-getTableData();
+init();
 </script>

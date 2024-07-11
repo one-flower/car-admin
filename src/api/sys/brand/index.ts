@@ -3,7 +3,7 @@ import { FormData, TableQuery, TableVO } from './types';
 import { AxiosPromise } from 'axios';
 
 // 查询列表
-export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
+export function configProductBrandList(query: TableQuery): AxiosPromise<TableVO[]> {
   return request({
     url: '/clyh/configProductBrand/list',
     method: 'get',
@@ -12,27 +12,15 @@ export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function getInfo(postId: string | number): AxiosPromise<TableVO> {
+export function configProductBrandInfo(postId: string | number): AxiosPromise<TableVO> {
   return request({
     url: '/clyh/configProductBrand/' + postId,
     method: 'get'
   });
 }
 
-// 获取上有机构
-export function getMechanismList(): AxiosPromise<TableVO[]> {
-  return request({
-    url: '/clyh/configUpOrg/list',
-    method: 'get',
-    params: {
-      pageNum: 1,
-      pageSize: 99999
-    }
-  });
-}
-
 // 新增
-export function addInfo(data: FormData) {
+export function configProductBrandAdd(data: FormData) {
   return request({
     url: '/clyh/configProductBrand',
     method: 'post',
@@ -41,7 +29,7 @@ export function addInfo(data: FormData) {
 }
 
 // 修改
-export function updateInfo(data: FormData) {
+export function configProductBrandUp(data: FormData) {
   return request({
     url: '/clyh/configProductBrand',
     method: 'put',
@@ -50,7 +38,7 @@ export function updateInfo(data: FormData) {
 }
 
 // 删除
-export function delInfo(postId: string | number | (string | number)[]) {
+export function configProductBrandDel(postId: string | number | (string | number)[]) {
   return request({
     url: '/clyh/configProductBrand/' + postId,
     method: 'delete'

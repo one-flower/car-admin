@@ -82,7 +82,7 @@
 </template>
 
 <script setup name="Post" lang="ts">
-import { tableList, addInfo, delInfo, getInfo, updateInfo } from '@/api/sys/post';
+import { configPostList, configPostAdd, configPostDel, configPostInfo, configPostUp } from '@/api/sys/post';
 import { FormData, TableQuery, TableVO } from '@/api/sys/post/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -129,7 +129,7 @@ const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data
 /** 查询岗位列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await tableList(queryParams.value);
+  const res = await configPostList(queryParams.value);
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;
@@ -179,7 +179,7 @@ const handleAdd = () => {
 const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
-  const res = await getInfo(postId);
+  const res = await configPostInfo(postId);
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = '修改岗位';
@@ -189,7 +189,7 @@ const handleUpdate = async (row?: TableVO) => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await updateInfo(form.value) : await addInfo(form.value);
+      form.value.id ? await configPostUp(form.value) : await configPostAdd(form.value);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getTableData();
@@ -201,7 +201,7 @@ const submitForm = () => {
 const handleDelete = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids;
   await proxy?.$modal.confirm('是否删除选中项？');
-  await delInfo(ids);
+  await configPostDel(ids);
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };

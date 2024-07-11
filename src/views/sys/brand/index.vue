@@ -107,8 +107,9 @@
 </template>
 
 <script setup name="Brand" lang="ts">
-import { tableList, addInfo, delInfo, getInfo, updateInfo, getMechanismList } from '@/api/sys/brand';
+import { configProductBrandList, configProductBrandAdd, configProductBrandDel, configProductBrandInfo, configProductBrandUp } from '@/api/sys/brand';
 import { FormData, TableQuery, TableVO } from '@/api/sys/brand/types';
+import { configUpOrgList } from '@/api/sys/mechanism';
 import ImagePreview from '@/components/ImagePreview/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -162,7 +163,7 @@ const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data
 /** 查询品牌列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await tableList(queryParams.value);
+  const res = await configProductBrandList(queryParams.value);
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;
@@ -212,7 +213,7 @@ const handleAdd = () => {
 const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
-  const res = await getInfo(postId);
+  const res = await configProductBrandInfo(postId);
   Object.assign(form.value, res.data);
   formDetails.value = false;
   dialog.visible = true;
@@ -223,7 +224,7 @@ const handleUpdate = async (row?: TableVO) => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await updateInfo(form.value) : await addInfo(form.value);
+      form.value.id ? await configProductBrandUp(form.value) : await configProductBrandAdd(form.value);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getTableData();
@@ -235,14 +236,14 @@ const submitForm = () => {
 const handleDelete = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids;
   await proxy?.$modal.confirm('是否删除选中项？');
-  await delInfo(ids);
+  await configProductBrandDel(ids);
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
 
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableAttr.ids[0];
-  const res = await getInfo(postId);
+  const res = await configProductBrandInfo(postId);
   Object.assign(form.value, res.data);
   formDetails.value = true;
   dialog.visible = true;
@@ -261,7 +262,7 @@ const handleExport = () => {
 };
 
 const init = async () => {
-  const res = await getMechanismList();
+  const res = await configUpOrgList();
   mechanismList.value = res.rows.map((item) => {
     return { label: item.name, value: item.id };
   });

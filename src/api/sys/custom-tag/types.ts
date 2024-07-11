@@ -11,5 +11,5 @@ export interface FormData {
 }
 
 export interface TableQuery extends PageQuery {
-  label: string;
+  label?: string;
 }

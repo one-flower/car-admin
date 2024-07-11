@@ -3,7 +3,7 @@ import { FormData, TableQuery, TableVO } from './types';
 import { AxiosPromise } from 'axios';
 
 // 查询列表
-export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
+export function configPostList(query: TableQuery): AxiosPromise<TableVO[]> {
   return request({
     url: '/clyh/configPost/list',
     method: 'get',
@@ -12,7 +12,7 @@ export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function getInfo(postId: string | number): AxiosPromise<TableVO> {
+export function configPostInfo(postId: string | number): AxiosPromise<TableVO> {
   return request({
     url: '/clyh/configPost/' + postId,
     method: 'get'
@@ -20,7 +20,7 @@ export function getInfo(postId: string | number): AxiosPromise<TableVO> {
 }
 
 // 新增
-export function addInfo(data: FormData) {
+export function configPostAdd(data: FormData) {
   return request({
     url: '/clyh/configPost',
     method: 'post',
@@ -29,7 +29,7 @@ export function addInfo(data: FormData) {
 }
 
 // 修改
-export function updateInfo(data: FormData) {
+export function configPostUp(data: FormData) {
   return request({
     url: '/clyh/configPost',
     method: 'put',
@@ -38,7 +38,7 @@ export function updateInfo(data: FormData) {
 }
 
 // 删除
-export function delInfo(postId: string | number | (string | number)[]) {
+export function configPostDel(postId: string | number | (string | number)[]) {
   return request({
     url: '/clyh/configPost/' + postId,
     method: 'delete'

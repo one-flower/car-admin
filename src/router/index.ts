@@ -254,6 +254,39 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         meta: { title: '充值管理', activeMenu: '/storeManagement/recharge', icon: '' }
       }
     ]
+  },
+  {
+    path: '/customerManagement',
+    name: 'customerManagement',
+    component: Layout,
+    hidden: false,
+    permissions: ['superadmin'],
+    meta: {
+      'title': '客户管理',
+      'icon': '',
+      'noCache': false,
+      'link': null
+    },
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/customer-management/user/index.vue'),
+        name: 'user',
+        meta: { title: '用户管理', activeMenu: '/customerManagement/user', icon: '' }
+      },
+      {
+        path: 'customer',
+        component: () => import('@/views/customer-management/customer/index.vue'),
+        name: 'customer',
+        meta: { title: '客户管理', activeMenu: '/customerManagement/customer', icon: '' }
+      },
+      {
+        path: 'car',
+        component: () => import('@/views/customer-management/car/index.vue'),
+        name: 'car',
+        meta: { title: '车辆管理', activeMenu: '/customerManagement/car', icon: '' }
+      }
+    ]
   }
 ];
 

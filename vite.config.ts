@@ -25,7 +25,7 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
       open: true,
       proxy: {
         [env.VITE_APP_BASE_API]: {
-          target: 'http://124.220.233.131/dev-api/',
+          target: 'https://carcare.iweimutech.com/dev-api/',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp('^' + env.VITE_APP_BASE_API), '')
