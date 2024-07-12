@@ -6,7 +6,7 @@
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="上游机构" prop="upOrg">
               <el-select v-model="queryParams.upOrg" value-key="" placeholder="请选择上游机构" clearable filterable>
-                <el-option v-for="item in mechanismList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in configUpOrg__configUpOrg" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="品牌名称" prop="name">
@@ -76,14 +76,13 @@
         </el-form-item>
         <!-- <el-form-item label="上游机构" prop="isOrg">
           <el-radio-group v-model="form.isOrg" class="ml-4">
-            <el-radio :value="0">否</el-radio>
-            <el-radio :value="1">是</el-radio>
+            <el-radio v-for="item in dictEnum__projectMode" :key="item.value" :label="item.label" :value="item.value" />
           </el-radio-group>
         </el-form-item> -->
         <!-- v-if="form.isOrg === 1" -->
         <el-form-item label="上游机构" prop="upOrg">
           <el-select v-model="form.upOrg" value-key="" placeholder="请选择上游机构" clearable filterable>
-            <el-option v-for="item in mechanismList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option v-for="item in configUpOrg__configUpOrg" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="品牌Logo" prop="logoUrl">
@@ -109,10 +108,11 @@
 <script setup name="Brand" lang="ts">
 import { configProductBrandList, configProductBrandAdd, configProductBrandDel, configProductBrandInfo, configProductBrandUp } from '@/api/sys/brand';
 import { FormData, TableQuery, TableVO } from '@/api/sys/brand/types';
-import { configUpOrgList } from '@/api/sys/mechanism';
 import ImagePreview from '@/components/ImagePreview/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+
+const { configUpOrg__configUpOrg } = toRefs<any>(proxy?.useNewDict('configUpOrg__configUpOrg'));
 
 const tableData = ref<TableVO[]>([]);
 const tableAttr = reactive<TableAttr>({
@@ -126,7 +126,6 @@ const showSearch = ref(true);
 const formDetails = ref(false);
 const FormDataRef = ref<ElFormInstance>();
 const queryFormRef = ref<ElFormInstance>();
-const mechanismList = ref([]);
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -250,23 +249,7 @@ const handleDetail = async (row?: TableVO) => {
   dialog.title = '品牌详情';
 };
 
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download(
-    'system/post/export',
-    {
-      ...queryParams.value
-    },
-    `post_${new Date().getTime()}.xlsx`
-  );
-};
-
 const init = async () => {
-  const res = await configUpOrgList();
-  mechanismList.value = res.rows.map((item) => {
-    return { label: item.name, value: item.id };
-  });
-
   getTableData();
 };
 

@@ -51,3 +51,20 @@ export function delData(dictCode: string | number | Array<string | number>) {
     method: 'delete'
   });
 }
+
+// 查看字典类型--新
+export function dictGetDictModel() {
+  return request({
+    url: '/clyh/dict/getDictModel',
+    method: 'get'
+  });
+}
+// 查查看字典--新
+export function dictGetDictInfo(xxx: string) {
+  const module = xxx.split('__')[0];
+  const dictType = xxx.split('__')[1];
+  return request({
+    url: `/clyh/dict/${module}/${dictType}`,
+    method: 'get'
+  });
+}

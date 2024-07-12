@@ -3,9 +3,9 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
+          <el-form ref="queryFormRef" :model="data.queryParams" :inline="true" @submit.prevent>
             <el-form-item label="项目类型" prop="name">
-              <el-input v-model="queryParams.name" placeholder="请输入项目类型" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="data.queryParams.name" placeholder="请输入项目类型" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -48,8 +48,8 @@
 
       <pagination
         v-show="tableAttr.total > 0"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
+        v-model:page="data.queryParams.pageNum"
+        v-model:limit="data.queryParams.pageSize"
         :total="tableAttr.total"
         @pagination="getTableData"
       />
@@ -57,17 +57,17 @@
 
     <!-- 添加或修改对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
+      <el-form ref="FormDataRef" :model="data.form" :rules="data.rules" label-width="80px" @submit.prevent>
         <el-form-item label="项目类型" prop="name">
-          <el-input v-model="form.name" placeholder="请输入项目类型" />
+          <el-input v-model="data.form.name" placeholder="请输入项目类型" />
         </el-form-item>
         <el-form-item label="项目模式" prop="mode">
-          <el-radio-group v-model="form.mode" :disabled="form.id !== undefined">
-            <el-radio v-for="item in modeList" :key="item.value" :label="item.label" :value="item.value"> </el-radio>
+          <el-radio-group v-model="data.form.mode" :disabled="data.form.id !== undefined">
+            <el-radio v-for="item in dictEnum__projectMode" :key="item.value" :label="item.label" :value="item.value"> </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="data.form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -81,10 +81,11 @@
 </template>
 
 <script setup name="management" lang="ts">
-import { configProjectLis, configProjectAdd, configProjectDel, configProjectInfo, configProjectUp } from '@/api/sys/management';
+import { configProjectList, configProjectAdd, configProjectDel, configProjectInfo, configProjectUp } from '@/api/sys/management';
 import { FormData, TableQuery, TableVO } from '@/api/sys/management/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dictEnum__projectMode } = toRefs<any>(proxy?.useNewDict('dictEnum__projectMode'));
 
 const tableData = ref<TableVO[]>([]);
 const loading = ref(true);
@@ -99,10 +100,6 @@ const queryFormRef = ref<ElFormInstance>();
 
 const pageTitle = '项目';
 const FormDataRef = ref<ElFormInstance>();
-const modeList = [
-  { label: '常规模式', value: 1 },
-  { label: '替换模式', value: 2 }
-];
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -112,7 +109,7 @@ const dialog = reactive<DialogOption>({
 const initFormData: FormData = {
   id: undefined,
   name: '',
-  mode: 1,
+  mode: undefined,
   remarks: ''
 };
 
@@ -129,12 +126,10 @@ const data = reactive<PageData<FormData, TableQuery>>({
   }
 });
 
-const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data);
-
 /** 查询列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await configProjectLis(queryParams.value);
+  const res = await configProjectList(data.queryParams);
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;
@@ -148,13 +143,13 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = { ...initFormData };
+  data.form = { ...initFormData };
   FormDataRef.value?.resetFields();
 };
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
-  queryParams.value.pageNum = 1;
+  data.queryParams.pageNum = 1;
 
   getTableData();
 };
@@ -162,7 +157,7 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
-  queryParams.value.pageNum = 1;
+  data.queryParams.pageNum = 1;
 
   handleQuery();
 };
@@ -176,6 +171,8 @@ const handleSelectionChange = (selection: TableVO[]) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
+  data.form.mode = dictEnum__projectMode.value[0].value;
+
   dialog.visible = true;
   dialog.title = `添加${pageTitle}`;
 };
@@ -185,7 +182,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await configProjectInfo(postId);
-  Object.assign(form.value, res.data);
+  Object.assign(data.form, res.data);
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
 };
@@ -194,7 +191,7 @@ const handleUpdate = async (row?: TableVO) => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await configProjectUp(form.value) : await configProjectAdd(form.value);
+      data.form.id ? await configProjectUp(data.form) : await configProjectAdd(data.form);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getTableData();

@@ -44,12 +44,3 @@ export function delInfo(postId: string | number | (string | number)[]) {
     method: 'delete'
   });
 }
-
-// 查询岗位列表
-export function postList(query: PageQuery): AxiosPromise<TableVO[]> {
-  return request({
-    url: '/clyh/configPost/list',
-    method: 'get',
-    params: query
-  });
-}

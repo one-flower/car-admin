@@ -7,7 +7,7 @@ import auth from './auth';
 import animate from '@/animate';
 
 import { download as dl } from '@/utils/request';
-import { useDict } from '@/utils/dict';
+import { useDict, useNewDict } from '@/utils/dict';
 import { getConfigKey, updateConfigByKey } from '@/api/system/config';
 import { parseTime, addDateRange, handleTree, selectDictLabel, selectDictLabels } from '@/utils/ruoyi';
 
@@ -40,4 +40,6 @@ export default function installPlugin(app: App) {
   app.config.globalProperties.selectDictLabel = selectDictLabel;
   app.config.globalProperties.selectDictLabels = selectDictLabels;
   app.config.globalProperties.animate = animate;
+
+  app.config.globalProperties.useNewDict = useNewDict;
 }

@@ -3,28 +3,29 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
+          <el-form ref="queryFormRef" :model="data.queryParams" :inline="true" @submit.prevent>
             <el-form-item label="员工岗位" prop="configPostId">
-              <el-select v-model="queryParams.configPostId" value-key="post" placeholder="请选择员工岗位" clearable filterable>
-                <el-option v-for="item in dictObj.post" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-select v-model="data.queryParams.configPostId" value-key="post" placeholder="请选择员工岗位" clearable filterable>
+                <el-option v-for="item in configPost__configPost" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="性别" prop="gender">
-              <el-select v-model="queryParams.gender" value-key="" placeholder="请选择员工性别" clearable filterable>
+              <el-select v-model="data.queryParams.gender" value-key="" placeholder="请选择员工性别" clearable filterable>
                 <el-option v-for="item in sys_user_sex" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="入职日期" prop="entryTime">
-              <el-date-picker v-model="queryParams.entryTime" type="daterange" value-format="YYYY-MM-DD" placeholder="选择入职日期"> </el-date-picker>
+              <el-date-picker v-model="data.queryParams.entryTime" type="daterange" value-format="YYYY-MM-DD" placeholder="选择入职日期">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="员工编号" prop="staffCode">
-              <el-input v-model="queryParams.staffCode" placeholder="请输入员工编号" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="data.queryParams.staffCode" placeholder="请输入员工编号" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="员工姓名" prop="telephone">
-              <el-input v-model="queryParams.name" placeholder="请输入员工姓名" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="data.queryParams.name" placeholder="请输入员工姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="联系电话" prop="telephone">
-              <el-input v-model="queryParams.telephone" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="data.queryParams.telephone" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -87,8 +88,8 @@
 
       <pagination
         v-show="tableAttr.total > 0"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
+        v-model:page="data.queryParams.pageNum"
+        v-model:limit="data.queryParams.pageSize"
         :total="tableAttr.total"
         @pagination="getTableData"
       />
@@ -96,45 +97,45 @@
 
     <!-- 添加或修改对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent :disabled="formDetail">
+      <el-form ref="FormDataRef" :model="data.form" :rules="data.rules" label-width="80px" @submit.prevent :disabled="formDetail">
         <el-form-item label="员工编号" prop="staffCode">
-          <el-input v-model="form.staffCode" placeholder="请输入员工编号" />
+          <el-input v-model="data.form.staffCode" placeholder="请输入员工编号" />
         </el-form-item>
         <el-form-item label="员工姓名" prop="name">
-          <el-input v-model="form.name" placeholder="请输入员工姓名" />
+          <el-input v-model="data.form.name" placeholder="请输入员工姓名" />
         </el-form-item>
         <el-form-item label="员工岗位" prop="configPostId">
-          <el-select v-model="form.configPostId" value-key="post" placeholder="请选择员工岗位" clearable filterable>
-            <el-option v-for="item in dictObj.post" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-select v-model="data.form.configPostId" value-key="post" placeholder="请选择员工岗位" clearable filterable>
+            <el-option v-for="item in configPost__configPost" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="性别" prop="gender">
-          <el-radio-group v-model="form.gender" :disabled="form.id !== undefined">
+          <el-radio-group v-model="data.form.gender" :disabled="data.form.id !== undefined">
             <el-radio-button v-for="item in sys_user_sex" :key="item.key" :label="item.label" :value="item.value"> </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="身份证号" prop="cardNum">
-          <el-input v-model="form.cardNum" placeholder="请输入渠道来源" :disabled="form.id !== undefined" />
+          <el-input v-model="data.form.cardNum" placeholder="请输入渠道来源" :disabled="data.form.id !== undefined" />
         </el-form-item>
         <el-form-item label="联系电话" prop="telephone">
-          <el-input v-model="form.telephone" placeholder="请输入渠道来源" />
+          <el-input v-model="data.form.telephone" placeholder="请输入渠道来源" />
         </el-form-item>
         <el-form-item label="入职日期" prop="entryTime">
-          <el-date-picker v-model="form.entryTime" type="date" value-format="YYYY-MM-DD hh:mm:ss" placeholder="选择日期时间"> </el-date-picker>
+          <el-date-picker v-model="data.form.entryTime" type="date" value-format="YYYY-MM-DD hh:mm:ss" placeholder="选择日期时间"> </el-date-picker>
         </el-form-item>
         <el-form-item label="在职状态" prop="state">
-          <el-radio-group v-model="form.state">
+          <el-radio-group v-model="data.form.state">
             <el-radio-button v-for="item in clyh_staff_entry_state" :key="item.key" :label="item.label" :value="item.value"> </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="员工简介" prop="snapshot">
-          <el-input v-model="form.snapshot" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="data.form.snapshot" type="textarea" row="auto" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="员工名片" prop="staffCardUrl">
-          <imageUpload v-model="form.staffCardUrl" :file-size="50" :limit="1" />
+          <imageUpload v-model="data.form.staffCardUrl" :file-size="50" :limit="1" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="data.form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer v-if="!formDetail">
@@ -148,10 +149,13 @@
 </template>
 
 <script setup name="Post" lang="ts">
-import { tableList, addInfo, delInfo, getInfo, updateInfo, postList } from '@/api/store-management/staff';
+import { tableList, addInfo, delInfo, getInfo, updateInfo } from '@/api/store-management/staff';
 import { FormData, TableQuery, TableVO } from '@/api/store-management/staff/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+
+const { configPost__configPost } = proxy?.useNewDict('configPost__configPost');
+const { sys_user_sex, clyh_staff_entry_state } = toRefs<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
 
 const tableData = ref<TableVO[]>([]);
 const loading = ref(true);
@@ -162,11 +166,6 @@ const tableAttr = reactive<TableAttr>({
   ids: [],
   multiple: true
 });
-
-const dictObj = reactive({
-  post: []
-});
-const { sys_user_sex, clyh_staff_entry_state } = toRefs<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
 
 const queryFormRef = ref<ElFormInstance>();
 
@@ -184,11 +183,11 @@ const initFormData: FormData = {
   staffCode: '',
   name: '',
   configPostId: undefined,
-  gender: '1',
+  gender: '0',
   cardNum: '',
   telephone: '',
   entryTime: '',
-  state: '1',
+  state: '0',
   snapshot: '',
   staffCardUrl: '',
   remarks: ''
@@ -218,12 +217,10 @@ const data = reactive<PageData<FormData, TableQuery>>({
   }
 });
 
-const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data);
-
 /** 查询列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await tableList(queryParams.value);
+  const res = await tableList(data.queryParams);
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;
@@ -237,13 +234,13 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = { ...initFormData };
+  data.form = { ...initFormData };
   FormDataRef.value?.resetFields();
 };
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
-  queryParams.value.pageNum = 1;
+  data.queryParams.pageNum = 1;
 
   getTableData();
 };
@@ -251,7 +248,7 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
-  queryParams.value.pageNum = 1;
+  data.queryParams.pageNum = 1;
 
   handleQuery();
 };
@@ -275,7 +272,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
-  Object.assign(form.value, res.data);
+  Object.assign(data.form, res.data);
   formDetail.value = false;
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
@@ -286,7 +283,7 @@ const handleDetail = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
-  Object.assign(form.value, res.data);
+  Object.assign(data.form, res.data);
   formDetail.value = true;
   dialog.visible = true;
   dialog.title = `${pageTitle}详情`;
@@ -296,7 +293,7 @@ const handleDetail = async (row?: TableVO) => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await updateInfo(form.value) : await addInfo(form.value);
+      data.form.id ? await updateInfo(data.form) : await addInfo(data.form);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getTableData();
@@ -313,16 +310,6 @@ const handleDelete = async (row?: TableVO) => {
   proxy?.$modal.msgSuccess('删除成功');
 };
 const init = async () => {
-  const postRes = await postList({
-    pageNum: 1,
-    pageSize: 99990
-  });
-  dictObj.post = postRes.rows.map((item) => {
-    return {
-      label: item.name,
-      value: item.id
-    };
-  });
   getTableData();
 };
 

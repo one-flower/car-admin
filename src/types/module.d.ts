@@ -4,7 +4,7 @@ import download from '@/plugins/download';
 import auth from '@/plugins/auth';
 import cache from '@/plugins/cache';
 import animate from '@/animate';
-import { useDict } from '@/utils/dict';
+import { useDict, useNewDict } from '@/utils/dict';
 import { handleTree, addDateRange, selectDictLabel, selectDictLabels, parseTime } from '@/utils/ruoyi';
 import { getConfigKey, updateConfigByKey } from '@/api/system/config';
 import { download as rd } from '@/utils/request';
@@ -30,6 +30,8 @@ declare module 'vue' {
     selectDictLabel: typeof selectDictLabel;
     selectDictLabels: typeof selectDictLabels;
     parseTime: typeof parseTime;
+
+    useNewDict: typeof useNewDict;
   }
 }
 

@@ -96,7 +96,6 @@ const imageUploadRef = ref<ElUploadInstance>();
 watch(
   () => props.modelValue,
   async (val: string) => {
-    formItem?.validate('change');
     if (val) {
       // 首先将值转为数组
       let list: OssVO[] = [];
@@ -194,6 +193,7 @@ const handleDelete = (file: UploadFile): boolean => {
     // delOss(ossId);
     fileList.value.splice(findex, 1);
     emit('update:modelValue', listToString(fileList.value));
+    formItem?.validate('change');
     return false;
   }
   return true;
@@ -207,6 +207,7 @@ const uploadedSuccessfully = () => {
     number.value = 0;
 
     emit('update:modelValue', listToString(fileList.value));
+    formItem?.validate('change');
     proxy?.$modal.closeLoading();
   }
 };

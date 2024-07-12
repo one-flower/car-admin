@@ -40,9 +40,9 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="机构名称" align="center" prop="name" />
-        <el-table-column label="机构代码" align="center" prop="orgCode" />
-        <el-table-column label="机构地址" align="center" prop="orgAddr" />
+        <el-table-column label="机构名称" align="left" prop="name" show-overflow-tooltip />
+        <el-table-column label="机构代码" align="left" prop="orgCode" show-overflow-tooltip />
+        <el-table-column label="机构地址" align="left" prop="orgAddr" show-overflow-tooltip />
         <el-table-column label="联系人" align="center" prop="contacts" />
         <el-table-column label="联系电话" align="center" prop="contactUs" />
         <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip></el-table-column>

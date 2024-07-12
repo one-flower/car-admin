@@ -25,3 +25,29 @@
 # 客户管理没有绑定状态
 
 账户充值 更换号码 解绑 客户档案
+
+{
+"configChannel**configChannel": "configChannel",
+"configTag**configTag": "configTag",
+"dictEnum**crossStore": "crossStore",
+"configProductBrand**configProductBrand": "configProductBrand",
+"dictEnum\_\_commDistri": "commDistri",
+
+"dictEnum**orderState": "orderState",
+"dictEnum**orderIsCommission": "orderIsCommission",
+"dictEnum**projectMode": "projectMode",
+"dictEnum**payState": "payState",
+"dictEnum**warrantyState": "warrantyState",
+"clyhBrand**clyhBrand": "clyhBrand",
+"configUpOrg**configUpOrg": "configUpOrg",
+"configPost**configPost": "configPost",
+"baseArea**all": "all",
+"configProject**configProject": "configProject",
+"dictEnum**frequencyState": "frequencyState",
+"baseArea**children": "children",
+"dictEnum**orderType": "orderType",
+"dictEnum**orderIsFlow": "orderIsFlow",
+"dictEnum**payChannel": "payChannel",
+"dictEnum**carState": "carState",
+"dictEnum\_\_orderPayType": "orderPayType"
+}

@@ -11,6 +11,11 @@ import useAppStore from '@/store/modules/app';
 
 const appStore = useAppStore();
 
+// 禁止右键
+document.oncontextmenu = function (event) {
+  event.preventDefault();
+};
+
 onMounted(() => {
   nextTick(() => {
     // 初始化主题样式
