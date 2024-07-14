@@ -39,11 +39,7 @@
         <el-table-column label="套餐名称" align="center" prop="name" />
         <el-table-column label="充值金额" align="center" prop="realityMoney" />
         <el-table-column label="赠送金额" align="center" prop="giveMoney" />
-        <el-table-column label="状态" align="center" prop="state">
-          <template #default="{ row }">
-            <dict-tag :options="clyh_staff_entry_state" :value="row.configType" />
-          </template>
-        </el-table-column>
+        <el-table-column label="状态" align="center" prop="stateLabel" />
         <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip />
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -54,10 +50,13 @@
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleRechargeList(row)"></el-button>
             </el-tooltip>
             <el-tooltip :content="row.state === '0' ? '启用' : '禁用'" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleState(row)"></el-button>
+              <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
+                <svg-icon class-name="search-icon" icon-class="search" />
+              </el-button>
             </el-tooltip>
             <el-tooltip v-if="row.state === '0'" content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
+              <SvgIcon></SvgIcon>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -79,10 +78,10 @@
           <el-input v-model="form.name" placeholder="请输入员工编号" />
         </el-form-item>
         <el-form-item label="充值金额" prop="realityMoney">
-          <el-input-number v-model.number="form.realityMoney" :min="0" :max="99999.99" :controls="false" />
+          <el-input-number v-model.number="form.realityMoney as number" :precision="2" :min="0" :max="99999.99" />
         </el-form-item>
         <el-form-item label="赠送金额" prop="giveMoney">
-          <el-input-number v-model.number="form.giveMoney" :min="0" :max="99999.99" :controls="false" />
+          <el-input-number v-model.number="form.giveMoney as number" :precision="2" :min="0" :max="99999.99" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
@@ -96,32 +95,18 @@
       </template>
     </el-dialog>
 
-    <!-- 充值 -->
-    <el-dialog v-model="rechargeDiolag.visible" :title="rechargeDiolag.title" width="500px" append-to-body>
-      <el-steps style="max-width: 600px" :space="200" :active="1" finish-status="success">
-        <el-step title="充值套餐" />
-        <el-step title="选择客户" />
-        <el-step title="充值核对" />
-        <el-step title="完成" />
-      </el-steps>
-    </el-dialog>
-
+    <!-- 充值  -->
+    <UserRecharge v-model:visible="userDialog.visible" :target-info="userDialog.form"></UserRecharge>
     <!-- 充值记录 -->
-    <el-dialog v-model="rechargeDiolag.visible" :title="rechargeDiolag.title" width="500px" append-to-body>
-      <el-steps style="max-width: 600px" :space="200" :active="1" finish-status="success">
-        <el-step title="充值套餐" />
-        <el-step title="选择客户" />
-        <el-step title="充值核对" />
-        <el-step title="完成" />
-      </el-steps>
-    </el-dialog>
+    <rechargeLog v-model:visible="logDialog.visible" :target-info="logDialog.form"></rechargeLog>
   </div>
 </template>
 
 <script setup name="Post" lang="ts">
-import { tableList, addInfo, delInfo, getInfo, updateInfo } from '@/api/store-management/recharge';
+import { rechargeList, rechargeAdd, rechargeDel, rechargeInfo, rechargeUp } from '@/api/store-management/recharge';
 import { FormData, TableQuery, TableVO } from '@/api/store-management/recharge/types';
-
+import UserRecharge from './user-recharge.vue';
+import rechargeLog from './recharge-log.vue';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const tableData = ref<TableVO[]>([]);
@@ -134,13 +119,7 @@ const tableAttr = reactive<TableAttr>({
   multiple: true
 });
 
-const dictObj = reactive({
-  state: [
-    { label: '禁用', value: '0' },
-    { label: '启用', value: '1' }
-  ]
-});
-const { sys_user_sex, clyh_staff_entry_state } = toRefs<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
+const dictObj = toReactive<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
 
 const queryFormRef = ref<ElFormInstance>();
 
@@ -155,8 +134,8 @@ const dialog = reactive<DialogOption>({
 const initFormData: FormData = {
   id: undefined,
   name: '',
-  realityMoney: '',
-  giveMoney: '',
+  realityMoney: 0,
+  giveMoney: 0,
   state: '1',
   remarks: ''
 };
@@ -165,9 +144,7 @@ const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
-    name: '',
-    state: undefined
+    pageSize: 10
   },
   rules: {
     name: [{ required: true, message: '套餐名称不能为空', trigger: 'blur' }],
@@ -181,7 +158,7 @@ const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data
 /** 查询列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await tableList(queryParams.value);
+  const res = await rechargeList(queryParams.value);
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;
@@ -232,7 +209,7 @@ const handleState = async (row?: TableVO) => {
   const title = row.state === '0' ? '启用' : '禁用';
   const state = row.state === '0' ? '1' : '0';
   await proxy?.$modal.confirm(`是否${title}？`);
-  await updateInfo({ ...row, state: state });
+  await rechargeUp({ ...row, state: state });
   row.state = state;
 };
 
@@ -240,7 +217,7 @@ const handleState = async (row?: TableVO) => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await updateInfo(form.value) : await addInfo(form.value);
+      form.value.id ? await rechargeUp(form.value) : await rechargeAdd(form.value);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getTableData();
@@ -252,32 +229,38 @@ const submitForm = () => {
 const handleDelete = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids;
   await proxy?.$modal.confirm('是否删除选中项？');
-  await delInfo(ids);
+  await rechargeDel(ids);
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
 
-const rechargeDiolag = reactive<DialogOption>({
+const userDialog = reactive({
   visible: false,
-  title: ''
-});
-
-const rechargeDiolagList = reactive<DialogOption>({
-  visible: false,
-  title: ''
+  title: '',
+  form: <FormData>{}
 });
 /** 充值 */
-const handleRecharge = async (row?: TableVO) => {};
+const handleRecharge = async (row?: TableVO) => {
+  const ids = row?.id || tableAttr.ids[0];
+  const res = await rechargeInfo(ids);
+  Object.assign(userDialog.form, res.data);
+  userDialog.visible = true;
+};
+
+const logDialog = reactive({
+  visible: false,
+  title: '',
+  form: <FormData>{}
+});
+
 /** 充值记录 */
-const handleRechargeList = async (row?: TableVO) => {};
+const handleRechargeList = async (row?: TableVO) => {
+  logDialog.visible = true;
+};
+
 const init = async () => {
   getTableData();
 };
 
 init();
 </script>
-<style lang="scss">
-.el-input-number {
-  width: 100%;
-}
-</style>

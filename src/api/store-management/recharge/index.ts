@@ -1,9 +1,9 @@
 import request from '@/utils/request';
-import { FormData, TableQuery, TableVO } from './types';
+import { FormData, logTableQuery, TableQuery, TableVO, UserFormData } from './types';
 import { AxiosPromise } from 'axios';
 
 // 查询列表
-export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
+export function rechargeList(query: TableQuery): AxiosPromise<TableVO[]> {
   return request({
     url: '/clyh/recharge/list',
     method: 'get',
@@ -12,7 +12,7 @@ export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function getInfo(postId: string | number): AxiosPromise<TableVO> {
+export function rechargeInfo(postId: string | number): AxiosPromise<TableVO> {
   return request({
     url: '/clyh/recharge/' + postId,
     method: 'get'
@@ -20,7 +20,7 @@ export function getInfo(postId: string | number): AxiosPromise<TableVO> {
 }
 
 // 新增
-export function addInfo(data: FormData) {
+export function rechargeAdd(data: FormData) {
   return request({
     url: '/clyh/recharge',
     method: 'post',
@@ -29,7 +29,7 @@ export function addInfo(data: FormData) {
 }
 
 // 修改
-export function updateInfo(data: FormData) {
+export function rechargeUp(data: FormData) {
   return request({
     url: '/clyh/recharge',
     method: 'put',
@@ -38,7 +38,7 @@ export function updateInfo(data: FormData) {
 }
 
 // 删除
-export function delInfo(postId: string | number | (string | number)[]) {
+export function rechargeDel(postId: string | number | (string | number)[]) {
   return request({
     url: '/clyh/recharge/' + postId,
     method: 'delete'
@@ -46,17 +46,19 @@ export function delInfo(postId: string | number | (string | number)[]) {
 }
 
 // 用户充值
-export function userRecharge(data: FormData) {
+export function userRecharge(data: UserFormData) {
   return request({
     url: '/clyh/recharge/userRecharge',
     method: 'post',
     data: data
   });
 }
-// 充值管理详情
-// export function delInfo(postId: string | number | (string | number)[]) {
-//   return request({
-//     url: '/clyh/recharge/' + postId,
-//     method: 'delete'
-//   });
-// }
+
+// 充值记录
+export function rechargeLogList(query: logTableQuery) {
+  return request({
+    url: '/clyh/rechargeLog/list',
+    method: 'get',
+    params: query
+  });
+}

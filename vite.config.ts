@@ -5,6 +5,7 @@ import createPlugins from './vite/plugins';
 import path from 'path';
 export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
+  const isProd = process.env.NODE_ENV === 'production';
   return {
     // 部署生产环境和开发环境下的URL。
     // 默认情况下，vite 会假设你的应用是被部署在一个域名的根路径上
@@ -16,6 +17,36 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
         '@': path.resolve(__dirname, './src')
       },
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
+    },
+    build: {
+      sourcemap: isProd,
+      target: 'esnext',
+      assetsInlineLimit: 10240, //10k文件转base64,降低文件请求碎片数量,会增加包大小
+      outDir: 'dist',
+      minify: 'terser', //压缩方式
+      terserOptions: {
+        compress: {
+          drop_console: isProd,
+          drop_debugger: isProd
+        }
+      },
+      rollupOptions: {
+        input: {
+          index: path.resolve(__dirname, 'index.html')
+        },
+        //文件分包
+        output: {
+          format: 'es',
+          chunkFileNames: 'static/js/[name]-[hash].js',
+          entryFileNames: 'static/js/[name]-[hash].js',
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id.toString().split('node_modules/')[1].split('/')[0].toString();
+            }
+          }
+        }
+      }
     },
     // https://cn.vitejs.dev/config/#resolve-extensions
     plugins: createPlugins(env, command === 'build'),

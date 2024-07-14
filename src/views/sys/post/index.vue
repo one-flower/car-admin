@@ -34,9 +34,9 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="岗位编码" align="center" prop="postCode" />
-        <el-table-column label="岗位名称" align="center" prop="name" />
-        <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip></el-table-column>
+        <el-table-column label="岗位名称" align="center" prop="name" width="150" />
+        <el-table-column label="岗位编码" align="center" prop="postCode" width="150" />
+        <el-table-column label="备注" align="left" header-align="center" prop="remarks" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="修改" placement="top">

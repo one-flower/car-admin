@@ -1,4 +1,4 @@
-const carProvince = [
+export const carProvince = [
   { label: '京', value: '京' },
   { label: '津', value: '津' },
   { label: '渝', value: '渝' },
@@ -40,7 +40,7 @@ const carProvince = [
   { label: '宁', value: '宁' }
 ];
 
-const carCity = [
+export const carCity = [
   { label: 'A', value: 'A' },
   { label: 'B', value: 'B' },
   { label: 'C', value: 'C' },

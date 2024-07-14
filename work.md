@@ -1,14 +1,13 @@
-接口['https://apifox.com/apidoc/shared-608bf265-8b3d-44c9-bd51-8d2852594928/endpoint-181481037']
+接口['https://apifox.com/apidoc/shared-608bf265-8b3d-44c9-bd51-8d2852594928/endpoint-181481037']  
 原型['https://1j8ykr.axshare.com/?id=029vax&p=%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86&g=1']
 
 # 产品品牌
 
-- 缺少上游机构下拉select
 - 缺少上游机构 有/无 字段
 
 # 项目模式
 
-0/1 那个是常规，替换
+0/1 哪个是常规，替换
 
 # upload
 
@@ -17,7 +16,7 @@
 
 # 员工管理
 
-- 状态应该是number
+- 状态应该是number（字典里面的）
 - 入职日期查询是区间
 - 入职日日期是date，现在是datetime
 - 在职离职字典/性别字典
@@ -51,3 +50,7 @@
 "dictEnum**carState": "carState",
 "dictEnum\_\_orderPayType": "orderPayType"
 }
+订单列表 提成明细
+
+图标
+启用 禁用

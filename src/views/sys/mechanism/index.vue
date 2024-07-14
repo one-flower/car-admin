@@ -40,11 +40,11 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="机构名称" align="left" prop="name" show-overflow-tooltip />
-        <el-table-column label="机构代码" align="left" prop="orgCode" show-overflow-tooltip />
-        <el-table-column label="机构地址" align="left" prop="orgAddr" show-overflow-tooltip />
-        <el-table-column label="联系人" align="center" prop="contacts" />
-        <el-table-column label="联系电话" align="center" prop="contactUs" />
+        <el-table-column label="机构名称" align="left" prop="name" width="150" show-overflow-tooltip />
+        <el-table-column label="机构代码" align="left" prop="orgCode" width="150" show-overflow-tooltip />
+        <el-table-column label="机构地址" align="left" prop="orgAddr" width="150" show-overflow-tooltip />
+        <el-table-column label="联系人" align="center" prop="contacts" width="150" />
+        <el-table-column label="联系电话" align="center" prop="contactUs" width="150" />
         <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -74,22 +74,22 @@
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" :disabled="formDetail" @submit.prevent>
         <el-form-item label="机构名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入名称" />
+          <el-input v-model="form.name" placeholder="请输入机构名称" />
         </el-form-item>
         <el-form-item label="机构代码" prop="orgCode">
-          <el-input v-model="form.orgCode" placeholder="请输入编码名称" />
+          <el-input v-model="form.orgCode" placeholder="请输入机构代码" />
         </el-form-item>
         <el-form-item label="机构地址" prop="orgAddr">
-          <el-input v-model="form.orgAddr" placeholder="请输入编码名称" />
+          <el-input v-model="form.orgAddr" placeholder="请输入机构地址" />
         </el-form-item>
         <el-form-item label="联系人" prop="contacts">
-          <el-input v-model="form.contacts" placeholder="请输入编码名称" />
+          <el-input v-model="form.contacts" placeholder="请输入联系人" />
         </el-form-item>
         <el-form-item label="联系电话" prop="contactUs">
-          <el-input v-model="form.contactUs" placeholder="请输入编码名称" />
+          <el-input v-model="form.contactUs" placeholder="请输入联系电话" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template v-if="!formDetail" #footer>

@@ -37,7 +37,7 @@ defineEmits(['update:modelValue']);
 
 const props = defineProps({
   /* 编辑器的内容 */
-  modelValue: propTypes.string,
+  modelValue: propTypes.string.isRequired,
   /* 高度 */
   height: propTypes.number.def(400),
   /* 最小高度 */

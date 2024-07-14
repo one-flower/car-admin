@@ -19,9 +19,9 @@ export interface FormData {
 }
 
 export interface TableQuery extends PageQuery {
-  tagId: string; //客户标签
-  nickname: string; //客户昵称
-  telephone: string; //联系电话
+  tagId?: string; //客户标签
+  nickname?: string; //客户昵称
+  telephone?: string; //联系电话
 }
 
 export interface PhoneData {
@@ -39,11 +39,12 @@ export interface PhoneForm {
   tagId: string; //客户标签
   nickname: string; //客户昵称
   telephone: string; //联系电话
+}
+export interface ChangePhoneForm {
   oldTelephone?: string; //原联系电话
   newTelephone?: string; //新联系电话
   imgCode?: string; //图片验证码
   uuid?: string; //图片验证码UUID
   smsCode?: string;
 }
-
 export interface customerInfo {}

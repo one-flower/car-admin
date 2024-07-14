@@ -23,7 +23,7 @@
       </el-icon>
     </el-upload>
     <!-- 上传提示 -->
-    <div v-if="showTip" class="el-upload__tip">
+    <div v-if="showTip && !disabled" class="el-upload__tip">
       请上传
       <template v-if="fileSize">
         大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>

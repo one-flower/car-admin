@@ -23,8 +23,8 @@
         <div class="mb-[10px]">
           <el-card shadow="hover" class="text-center">
             <el-radio-group v-model="tab" @change="changeTab(tab)">
-              <el-radio-button value="running">运行中</el-radio-button>
-              <el-radio-button value="finish">已完成</el-radio-button>
+              <el-radio value="running">运行中</el-radio>
+              <el-radio value="finish">已完成</el-radio>
             </el-radio-group>
           </el-card>
         </div>

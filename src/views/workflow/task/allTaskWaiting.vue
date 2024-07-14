@@ -3,8 +3,8 @@
     <div class="mb-[10px]">
       <el-card shadow="hover" class="text-center">
         <el-radio-group v-model="tab" @change="changeTab(tab)">
-          <el-radio-button value="waiting">待办任务</el-radio-button>
-          <el-radio-button value="finish">已办任务</el-radio-button>
+          <el-radio value="waiting">待办任务</el-radio>
+          <el-radio value="finish">已办任务</el-radio>
         </el-radio-group>
       </el-card>
     </div>

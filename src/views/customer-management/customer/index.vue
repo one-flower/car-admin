@@ -1,13 +1,11 @@
 <template>
   <div class="p-2">
-    {{ changeDialog.visible }}
-    {{ changeDialog.form }}
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="客户标签" prop="tagId">
-              <el-select v-model="queryParams.tagId" value-key="" placeholder="" clearable filterable @change="">
+              <el-select v-model="queryParams.tagId" value-key="" placeholder="" clearable filterable>
                 <el-option v-for="item in dictObj.customerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
@@ -56,11 +54,11 @@
             <el-tooltip content="更换号码" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleChangePhone(row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="解绑" placement="top">
+            <!-- <el-tooltip content="解绑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip content="客户档案" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleInfo(row)"></el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
@@ -98,11 +96,11 @@
         <el-form-item label="客户昵称" prop="nickname">
           <el-input v-model="form.nickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
         </el-form-item>
-        <el-form-item label="手机号码" prop="telephone" v-if="form.id === undefined">
+        <el-form-item v-if="form.id === undefined" label="手机号码" prop="telephone">
           <el-input v-model="form.telephone" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item label="渠道来源" prop="channel">
-          <el-select v-model="form.channel" placeholder="请选择渠道来源" clearable filterable @change="">
+          <el-select v-model="form.channel" placeholder="请选择渠道来源" clearable filterable>
             <el-option v-for="item in dictObj.channelSource" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
@@ -118,7 +116,9 @@
       </template>
     </el-dialog>
 
-    <change-phone v-model:visible="changeDialog.visible" v-model:form="changeDialog.form"></change-phone>
+    <change-phone v-model:visible="changeDialog.visible" v-model:target-info="changeDialog.form"></change-phone>
+    <!-- <rechargeLog></rechargeLog> -->
+    <Info v-model:visible="infoDialog.visible" v-model:target-info="infoDialog.form"></Info>
   </div>
 </template>
 <script setup name="channelSource" lang="ts">
@@ -126,7 +126,9 @@ import { customList, customAdd, customDel, customInfo, customUp } from '@/api/cu
 import { FormData, PhoneForm, TableQuery, TableVO } from '@/api/customer-management/customer/types';
 import { configTagList } from '@/api/sys/custom-tag';
 import { configChannelList } from '@/api/sys/channel-source';
+import rechargeLog from './recharge-log.vue';
 import changePhone from './change-phone.vue';
+import Info from './info.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -234,8 +236,8 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = async (row?: TableVO) => {
   reset();
-  const postId = row?.id || tableAttr.ids[0];
-  const res = await customInfo(postId);
+  const ids = row?.id || tableAttr.ids[0];
+  const res = await customInfo(ids);
   Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
@@ -271,13 +273,29 @@ const changeDialog = reactive<ChangeDialog>({
   }
 });
 const handleChangePhone = async (row?: TableVO) => {
-  const postId = row?.id || tableAttr.ids[0];
-  const res = await customInfo(postId);
+  const ids = row?.id || tableAttr.ids[0];
+  const res = await customInfo(ids);
   Object.assign(changeDialog.form, res.data);
   changeDialog.visible = true;
 };
 
 /** 客户档案 */
+const infoDialog = reactive({
+  visible: false,
+  form: {
+    id: '',
+    customNo: '',
+    tagId: '',
+    nickname: '',
+    telephone: ''
+  }
+});
+const handleInfo = async (row?: TableVO) => {
+  const ids = row?.id || tableAttr.ids[0];
+  const res = await customInfo(ids);
+  Object.assign(infoDialog.form, res.data);
+  infoDialog.visible = true;
+};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: TableVO) => {

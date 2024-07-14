@@ -93,90 +93,90 @@ export const constantRoutes: RouteRecordRaw[] = [
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes: RouteRecordRaw[] = [
-  // {
-  //   path: '/system/user-auth',
-  //   component: Layout,
-  //   hidden: true,
-  //   permissions: ['system:user:edit'],
-  //   children: [
-  //     {
-  //       path: 'role/:userId(\\d+)',
-  //       component: () => import('@/views/system/user/authRole.vue'),
-  //       name: 'AuthRole',
-  //       meta: { title: '分配角色', activeMenu: '/system/user', icon: '' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/system/role-auth',
-  //   component: Layout,
-  //   hidden: true,
-  //   permissions: ['system:role:edit'],
-  //   children: [
-  //     {
-  //       path: 'user/:roleId(\\d+)',
-  //       component: () => import('@/views/system/role/authUser.vue'),
-  //       name: 'AuthUser',
-  //       meta: { title: '分配用户', activeMenu: '/system/role', icon: '' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/system/dict-data',
-  //   component: Layout,
-  //   hidden: true,
-  //   permissions: ['system:dict:list'],
-  //   children: [
-  //     {
-  //       path: 'index/:dictId(\\d+)',
-  //       component: () => import('@/views/system/dict/data.vue'),
-  //       name: 'Data',
-  //       meta: { title: '字典数据', activeMenu: '/system/dict', icon: '' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/system/oss-config',
-  //   component: Layout,
-  //   hidden: true,
-  //   permissions: ['system:ossConfig:list'],
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/system/oss/config.vue'),
-  //       name: 'OssConfig',
-  //       meta: { title: '配置管理', activeMenu: '/system/oss', icon: '' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/tool/gen-edit',
-  //   component: Layout,
-  //   hidden: true,
-  //   permissions: ['tool:gen:edit'],
-  //   children: [
-  //     {
-  //       path: 'index/:tableId(\\d+)',
-  //       component: () => import('@/views/tool/gen/editTable.vue'),
-  //       name: 'GenEdit',
-  //       meta: { title: '修改生成配置', activeMenu: '/tool/gen', icon: '' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/workflow/leaveEdit',
-  //   component: Layout,
-  //   hidden: true,
-  //   permissions: ['workflow:leave:edit'],
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/workflow/leave/leaveEdit.vue'),
-  //       name: 'leaveEdit',
-  //       meta: { title: '请假申请', activeMenu: '/workflow/leave', noCache: true }
-  //     }
-  //   ]
-  // }
+  {
+    path: '/system/user-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:edit'],
+    children: [
+      {
+        path: 'role/:userId(\\d+)',
+        component: () => import('@/views/system/user/authRole.vue'),
+        name: 'AuthRole',
+        meta: { title: '分配角色', activeMenu: '/system/user', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/system/role-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:role:edit'],
+    children: [
+      {
+        path: 'user/:roleId(\\d+)',
+        component: () => import('@/views/system/role/authUser.vue'),
+        name: 'AuthUser',
+        meta: { title: '分配用户', activeMenu: '/system/role', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/system/dict-data',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:dict:list'],
+    children: [
+      {
+        path: 'index/:dictId(\\d+)',
+        component: () => import('@/views/system/dict/data.vue'),
+        name: 'Data',
+        meta: { title: '字典数据', activeMenu: '/system/dict', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/system/oss-config',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:ossConfig:list'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/system/oss/config.vue'),
+        name: 'OssConfig',
+        meta: { title: '配置管理', activeMenu: '/system/oss', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/tool/gen-edit',
+    component: Layout,
+    hidden: true,
+    permissions: ['tool:gen:edit'],
+    children: [
+      {
+        path: 'index/:tableId(\\d+)',
+        component: () => import('@/views/tool/gen/editTable.vue'),
+        name: 'GenEdit',
+        meta: { title: '修改生成配置', activeMenu: '/tool/gen', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/workflow/leaveEdit',
+    component: Layout,
+    hidden: true,
+    permissions: ['workflow:leave:edit'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/workflow/leave/leaveEdit.vue'),
+        name: 'leaveEdit',
+        meta: { title: '请假申请', activeMenu: '/workflow/leave', noCache: true }
+      }
+    ]
+  },
   {
     path: '/sys',
     name: 'sys',
@@ -285,6 +285,81 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/customer-management/car/index.vue'),
         name: 'car',
         meta: { title: '车辆管理', activeMenu: '/customerManagement/car', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/productManagement',
+    name: 'productManagement',
+    component: Layout,
+    hidden: false,
+    permissions: ['superadmin'],
+    meta: {
+      'title': '产品管理',
+      'icon': '',
+      'noCache': false,
+      'link': null
+    },
+    children: [
+      {
+        path: 'product',
+        component: () => import('@/views/product-management/product/index.vue'),
+        name: 'product',
+        meta: { title: '产品管理', activeMenu: '/productManagement/product', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/orderManagement',
+    name: 'orderManagement',
+    component: Layout,
+    hidden: false,
+    permissions: ['superadmin'],
+    meta: {
+      'title': '订单管理',
+      'icon': '',
+      'noCache': false,
+      'link': null
+    },
+    children: [
+      {
+        path: 'order',
+        component: () => import('@/views/order-management/order/index.vue'),
+        name: 'order',
+        meta: { title: '订单管理', activeMenu: '/orderManagement/order', icon: '' }
+      },
+      {
+        path: 'commission',
+        component: () => import('@/views/order-management/commission/index.vue'),
+        name: 'commission',
+        meta: { title: '提成分配', activeMenu: '/orderManagement/commission', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/maintainManagement',
+    name: 'maintainManagement',
+    component: Layout,
+    hidden: false,
+    permissions: ['superadmin'],
+    meta: {
+      'title': '质保保养',
+      'icon': '',
+      'noCache': false,
+      'link': null
+    },
+    children: [
+      {
+        path: 'warranty',
+        component: () => import('@/views/maintain-management/warranty/index.vue'),
+        name: 'warranty',
+        meta: { title: '质保产品', activeMenu: '/customerManagement/warranty', icon: '' }
+      },
+      {
+        path: 'maintain',
+        component: () => import('@/views/maintain-management/maintain/index.vue'),
+        name: 'maintain',
+        meta: { title: '保养产品', activeMenu: '/customerManagement/maintain', icon: '' }
       }
     ]
   }

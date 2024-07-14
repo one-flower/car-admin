@@ -1,23 +1,33 @@
 <template>
   <div class="p-2">
-    {{ changeDialog.visible }}
-    {{ changeDialog.form }}
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="客户标签" prop="tagId">
-              <el-select v-model="queryParams.tagId" value-key="" placeholder="" clearable filterable @change="">
-                <el-option v-for="item in dictObj.carManageerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-form ref="queryFormRef" :model="data.queryParams" :inline="true" @submit.prevent>
+            <el-form-item label="车辆品牌" prop="tagId">
+              <el-select v-model="data.queryParams.brandId" placeholder="请选择车辆品牌" clearable filterable>
+                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="客户昵称" prop="nickname">
-              <el-input v-model="queryParams.nickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="车辆厂商" prop="nickname">
+              <el-select v-model="data.queryParams.manufacturer" placeholder="请选择车辆厂商" clearable filterable>
+                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="手机号码" prop="telephone">
-              <el-input v-model="queryParams.telephone" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="车辆系列" prop="telephone">
+              <el-input v-model="data.queryParams.typename" placeholder="请输入车辆系列" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="绑定状态" prop="label"> </el-form-item>
+            <el-form-item label="车辆型号" prop="label">
+              <el-input v-model="data.queryParams.vehicleModel" placeholder="请输入车辆型号" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="车架号码" prop="tagId">
+              <el-input v-model="data.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="车辆号码" prop="nickname">
+              <el-input v-model="data.queryParams.licensePlate" placeholder="请输入车辆号码" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户昵称" prop="telephone"> </el-form-item>
+            <el-form-item label="电话号码" prop="label"> </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -42,24 +52,27 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="客户编号" align="center" prop="carManageNo" />
-        <el-table-column label="客户标签" align="center" prop="tagIdLabel" />
-        <el-table-column label="手机号码" align="center" prop="telephone" />
-        <el-table-column label="客户昵称" align="center" prop="nickname" />
-        <el-table-column label="账户余额" align="center" prop="accountBalance" />
-        <el-table-column label="绑定状态" align="center" prop="" />
+        <el-table-column label="车辆品牌" align="center" prop="brandId" />
+        <el-table-column label="车辆号码" align="center" prop="licensePlate" />
+        <el-table-column label="车架号码" align="center" prop="vin" />
+        <el-table-column label="车辆厂商" align="center" prop="manufacturer" />
+        <el-table-column label="车辆系列" align="center" prop="typename" />
+        <el-table-column label="车辆型号" align="center" prop="vehicleModel" />
+        <el-table-column label="车辆状态" align="center" prop="" />
+        <el-table-column label="客户昵称" align="center" prop="" />
+        <el-table-column label="电话号码" align="center" prop="" />
         <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="账户充值" placement="top">
+            <el-tooltip content="装配情况" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
             </el-tooltip>
-            <el-tooltip content="更换号码" placement="top">
+            <el-tooltip content="订单记录" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleChangePhone(row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="解绑" placement="top">
+            <el-tooltip content="变更车主" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
             </el-tooltip>
-            <el-tooltip content="客户档案" placement="top">
+            <el-tooltip content="禁用、启用" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top">
@@ -74,41 +87,69 @@
 
       <pagination
         v-show="tableAttr.total > 0"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
+        v-model:page="data.queryParams.pageNum"
+        v-model:limit="data.queryParams.pageSize"
         :total="tableAttr.total"
         @pagination="getTableData"
       />
     </el-card>
 
     <!-- 添加或修改对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
-      <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
-        <template v-if="form.id !== undefined">
-          <el-form-item label="客户编号">
-            {{ form.carManageNo }}
-          </el-form-item>
-          <el-form-item label="手机号码"> {{ form.telephone }} </el-form-item>
-        </template>
-        <el-form-item label="客户标签" prop="tagId">
-          <el-select v-model="form.tagId" placeholder="请选择客户标签" clearable filterable>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
+      <el-form ref="FormDataRef" :model="data.form" :rules="data.rules" label-width="80px" @submit.prevent>
+        <el-form-item label="选择车主" prop="customId">
+          <el-select v-model="data.form.customId" placeholder="请选择客户标签" clearable filterable>
             <el-option v-for="item in dictObj.carManageerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="客户昵称" prop="nickname">
-          <el-input v-model="form.nickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
+        <el-form-item label="车辆归属" prop="toType">
+          <el-radio-group v-model="data.form.toType">
+            <el-radio v-for="item in dictObj.belong" :key="item.key" :label="item.label" :value="item.value" />
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="手机号码" prop="telephone" v-if="form.id === undefined">
-          <el-input v-model="form.telephone" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="渠道来源" prop="channel">
-          <el-select v-model="form.channel" placeholder="请选择渠道来源" clearable filterable @change="">
+        <el-form-item label="车辆品牌" prop="brandId">
+          <el-select v-model="data.form.brandId" placeholder="请选择渠道来源" clearable filterable>
             <el-option v-for="item in dictObj.carManage" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+        <el-form-item label="车牌情况" prop="licensePlateState">
+          <el-radio-group v-model="data.form.licensePlateState">
+            <el-radio v-for="item in dictObj.cardNoState" :key="item.key" :label="item.label" :value="item.value" />
+          </el-radio-group>
         </el-form-item>
+        <el-form-item label="车辆号牌" prop="licensePlate">
+          <div class="cardNo">
+            <el-select v-model="data.form.licenseProvince" placeholder="京" clearable filterable class="cardNo--province">
+              <el-option v-for="item in dictObj.carProvince" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            </el-select>
+            <el-select v-model="data.form.licenseOrg" placeholder="A" clearable filterable class="cardNo--city">
+              <el-option v-for="item in dictObj.carCity" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            </el-select>
+            <el-input v-model="data.form.licenseNum" row="auto" placeholder="请输入内容" class="cardNo--number" />
+          </div>
+        </el-form-item>
+        <el-form-item label="车辆照片" prop="remarks">
+          <image-upload v-model="data.form.remarks"></image-upload>
+        </el-form-item>
+        <el-form-item label="备注" prop="remarks">
+          <el-input v-model="data.form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="信息补全" prop="remarks">
+          <el-radio-group v-model="data.form.remarks">
+            <el-radio v-for="item in dictObj.infoComp" :key="item.key" :label="item.label" :value="item.value" />
+          </el-radio-group>
+        </el-form-item>
+
+        <el-descriptions class="margin-top" title="车辆信息" :column="2" border>
+          <el-descriptions-item label="车辆品牌"> {{}} </el-descriptions-item>
+          <el-descriptions-item label="车辆厂商"> {{}} </el-descriptions-item>
+          <el-descriptions-item label="车辆系列"> {{}} </el-descriptions-item>
+          <el-descriptions-item label="车辆型号"> {{}} </el-descriptions-item>
+          <el-descriptions-item label="车辆级别"> {{}} </el-descriptions-item>
+          <el-descriptions-item label="车身结构"> {{}} </el-descriptions-item>
+          <el-descriptions-item label="驱动方式"> {{}} </el-descriptions-item>
+          <el-descriptions-item label="能源类型"> {{}} </el-descriptions-item>
+        </el-descriptions>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -120,10 +161,26 @@
   </div>
 </template>
 <script setup name="carManage" lang="ts">
-import { carManageList, carManageAdd, carManageDel, carManageInfo, carManageUp } from '@/api/carManageer-management/car';
-import { FormData, PhoneForm, TableQuery, TableVO } from '@/api/carManageer-management/car/types';
+import { carManageList, carManageAdd, carManageDel, carManageInfo, carManageUp } from '@/api/customer-management/car';
+import { FormData, TableQuery, TableVO } from '@/api/customer-management/car/types';
+import { carProvince, carCity } from '@/utils/static-dict';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const dictObj = toReactive<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
+dictObj.carProvince = carProvince;
+dictObj.carCity = carCity;
+dictObj.belong = [
+  { label: '个人', value: '0' },
+  { label: '企业', value: '1' }
+];
+dictObj.cardNoState = [
+  { label: '已上牌', value: '0' },
+  { label: '随机车牌', value: '1' }
+];
+dictObj.infoComp = [
+  { label: '稍后补全', value: '0' },
+  { label: '立即补全', value: '1' }
+];
 
 const tableData = ref<TableVO[]>([]);
 const loading = ref(true);
@@ -138,11 +195,6 @@ const queryFormRef = ref<ElFormInstance>();
 
 const pageTitle = '渠道来源';
 const FormDataRef = ref<ElFormInstance>();
-const dictObj = {
-  carManageerTag: [],
-  bindState: [],
-  carManage: []
-};
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -151,11 +203,27 @@ const dialog = reactive<DialogOption>({
 
 const initFormData: FormData = {
   id: undefined,
-  tagId: '',
-  nickname: '',
-  telephone: '',
-  channel: '',
-  remarks: ''
+  customId: '',
+  toType: '',
+  brandId: '',
+  licensePlateState: '',
+  licenseProvince: '',
+  licenseOrg: '',
+  licenseNum: '',
+  licenseBit: '',
+  licensePlate: '',
+  imgUrls: '',
+  remarks: '',
+  // 信息补全
+  carState: '',
+  vin: '',
+  manufacturer: '',
+  typename: '',
+  vehicleModel: '',
+  sizetype: '',
+  bodytype: '',
+  drivemode: '',
+  fueltype: ''
 };
 
 const data = reactive<PageData<FormData, TableQuery>>({
@@ -163,9 +231,12 @@ const data = reactive<PageData<FormData, TableQuery>>({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    tagId: '',
-    nickname: '',
-    telephone: ''
+    brandId: '',
+    manufacturer: '',
+    typename: '',
+    vehicleModel: '',
+    vin: '',
+    licensePlate: ''
   },
   rules: {
     tagId: [{ required: true, message: '客户标签不能为空', trigger: ['blur', 'change'] }],
@@ -175,12 +246,10 @@ const data = reactive<PageData<FormData, TableQuery>>({
   }
 });
 
-const { queryParams, form, rules } = toRefs<PageData<FormData, TableQuery>>(data);
-
 /** 查询列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await carManageList(queryParams.value);
+  const res = await carManageList(data.queryParams);
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;
@@ -194,13 +263,13 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = { ...initFormData };
+  data.form = { ...initFormData };
   FormDataRef.value?.resetFields();
 };
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
-  queryParams.value.pageNum = 1;
+  data.queryParams.pageNum = 1;
 
   getTableData();
 };
@@ -208,7 +277,7 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
-  queryParams.value.pageNum = 1;
+  data.queryParams.pageNum = 1;
 
   handleQuery();
 };
@@ -231,7 +300,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await carManageInfo(postId);
-  Object.assign(form.value, res.data);
+  Object.assign(data.form, res.data);
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
 };
@@ -240,7 +309,7 @@ const handleUpdate = async (row?: TableVO) => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await carManageUp(form.value) : await carManageAdd(form.value);
+      data.form.id ? await carManageUp(data.form) : await carManageAdd(data.form);
       proxy?.$modal.msgSuccess('操作成功');
       dialog.visible = false;
       await getTableData();
@@ -288,3 +357,17 @@ const init = async () => {
 
 init();
 </script>
+<style lang="scss" scoped>
+.cardNo {
+  display: flex;
+  &--city {
+    width: 80px;
+  }
+  &--province {
+    width: 80px;
+  }
+  &--number {
+    flex: 1;
+  }
+}
+</style>

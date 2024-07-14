@@ -6,7 +6,7 @@
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="上游机构" prop="upOrg">
               <el-select v-model="queryParams.upOrg" value-key="" placeholder="请选择上游机构" clearable filterable>
-                <el-option v-for="item in configUpOrg__configUpOrg" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.configUpOrg__configUpOrg" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="品牌名称" prop="name">
@@ -36,14 +36,14 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="LOGO" align="center" prop="logoUrl">
+        <el-table-column label="LOGO" align="center" prop="logoUrl" width="150">
           <template #default="{ row }">
             <ImagePreview :width="100" :height="100" :src="row.logoUrl" />
           </template>
         </el-table-column>
-        <el-table-column label="品牌名称" align="center" prop="name" />
-        <el-table-column label="上游机构" align="center" prop="upOrg" />
-        <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip></el-table-column>
+        <el-table-column label="品牌名称" align="center" prop="name" width="150" />
+        <el-table-column label="上游机构" align="center" prop="upOrgLabel" width="150" />
+        <el-table-column label="备注" align="left" header-align="center" prop="remarks" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="修改" placement="top">
@@ -74,15 +74,14 @@
         <el-form-item label="品牌名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入品牌名称" />
         </el-form-item>
-        <!-- <el-form-item label="上游机构" prop="isOrg">
-          <el-radio-group v-model="form.isOrg" class="ml-4">
-            <el-radio v-for="item in dictEnum__projectMode" :key="item.value" :label="item.label" :value="item.value" />
+        <el-form-item label="上游机构" prop="isUpOrg">
+          <el-radio-group v-model="form.isUpOrg" class="ml-4">
+            <el-radio v-for="item in dictObj.dictEnum__isUpOrg" :key="item.value" :label="item.label" :value="item.value" />
           </el-radio-group>
-        </el-form-item> -->
-        <!-- v-if="form.isOrg === 1" -->
-        <el-form-item label="上游机构" prop="upOrg">
+        </el-form-item>
+        <el-form-item v-if="form.isUpOrg === '1'" label="选择机构" prop="upOrg">
           <el-select v-model="form.upOrg" value-key="" placeholder="请选择上游机构" clearable filterable>
-            <el-option v-for="item in configUpOrg__configUpOrg" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option v-for="item in dictObj.configUpOrg__configUpOrg" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="品牌Logo" prop="logoUrl">
@@ -112,7 +111,7 @@ import ImagePreview from '@/components/ImagePreview/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const { configUpOrg__configUpOrg } = toRefs<any>(proxy?.useNewDict('configUpOrg__configUpOrg'));
+const dictObj = toReactive<any>(proxy?.useNewDict('configUpOrg__configUpOrg', 'dictEnum__isUpOrg'));
 
 const tableData = ref<TableVO[]>([]);
 const tableAttr = reactive<TableAttr>({
@@ -136,7 +135,7 @@ const initFormData: FormData = {
   id: undefined,
   name: '',
   upOrg: '',
-  isOrg: 0,
+  isUpOrg: '1',
   logoUrl: '',
   otherCredentialUrl: '',
   remarks: ''
@@ -152,8 +151,8 @@ const data = reactive<PageData<FormData, TableQuery>>({
   },
   rules: {
     name: [{ required: true, message: '品牌名称不能为空', trigger: 'blur' }],
-    isOrg: [{ required: true, message: '上游机构不能为空', trigger: 'change' }],
-    upOrg: [{ required: true, message: '上游机构不能为空', trigger: ['blur', 'change'] }]
+    isUpOrg: [{ required: true, message: '上游机构不能为空', trigger: 'change' }],
+    upOrg: [{ required: true, message: '机构不能为空', trigger: ['blur', 'change'] }]
   }
 });
 

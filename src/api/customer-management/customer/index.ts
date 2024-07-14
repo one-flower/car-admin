@@ -53,3 +53,18 @@ export function customEditTelephone(data: PhoneData) {
     data: data
   });
 }
+// 图形验证码
+export function authCode() {
+  return request({
+    url: '/auth/code',
+    method: 'get'
+  });
+}
+// 短信验证码
+export function smsCode(query: { phonenumber: string }) {
+  return request({
+    url: '/resource/sms/code',
+    method: 'get',
+    params: query
+  });
+}

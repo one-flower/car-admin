@@ -9,7 +9,7 @@ export interface TableVO extends BaseEntity {
 export interface FormData {
   id: string | undefined;
   name: string;
-  isOrg?: number;
+  isUpOrg?: string;
   upOrg: string;
   logoUrl: string;
   otherCredentialUrl: string;
@@ -17,6 +17,6 @@ export interface FormData {
 }
 
 export interface TableQuery extends PageQuery {
-  upOrg: string;
-  name: string;
+  upOrg?: string;
+  name?: string;
 }

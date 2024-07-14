@@ -96,6 +96,29 @@ declare global {
     ids: number[] | string[];
     multiple: boolean;
   }
+  /**
+   * T : 查询参数
+   * D : 表格数据
+   */
+  declare interface TableInfo<T, D> {
+    ids?: (string | number)[]; //表格ids
+    multiple?: boolean; // 是否对选
+    showSearch?: boolean;
+    loading: boolean;
+    queryParams: T;
+    data: D;
+    total: number;
+  }
+
+  /**
+   * T : 表单数据
+   */
+  declare interface FormInfo<T> {
+    visible?: boolean;
+    title: string;
+    disabled?: boolean;
+    data: T;
+  }
 
   declare interface LayoutSetting {
     /**
