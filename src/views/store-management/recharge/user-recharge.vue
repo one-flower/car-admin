@@ -2,7 +2,7 @@
   <div class="p-2">
     <el-dialog
       :model-value="visible"
-      title="创建套餐"
+      title="套餐充值"
       width="600px"
       append-to-body
       :close-on-click-modal="false"
@@ -138,13 +138,13 @@ const formData = reactive<UserFormData>({
 });
 
 watch(
-  () => props.targetInfo,
+  () => props.visible,
   (val) => {
-    console.log(val, '123');
-    formData.realityMoney = val.realityMoney;
-    formData.giveMoney = val.giveMoney;
-  },
-  { deep: true }
+    if (!val) return;
+    formData.id = props.targetInfo.id;
+    formData.realityMoney = parseFloat(props.targetInfo.realityMoney ?? '0');
+    formData.giveMoney = parseFloat(props.targetInfo.giveMoney ?? '0');
+  }
 );
 
 const rules = {
@@ -223,9 +223,7 @@ const remoteMethod = async (query: string) => {
 const change = () => {
   selectOption.form = selectOption.options.filter((item) => item.id === formData.customId)[0] ?? {};
 };
-const toFloat = (val: string) => {
-  return parseFloat(val);
-};
+
 const countNum = (a: string | number, b: string | number, c: string | number) => {
   return Number(a) + Number(b) + Number(c);
 };

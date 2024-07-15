@@ -72,7 +72,9 @@
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="提成明细" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="warning" icon="Document" @click="handleCommExt(row)"></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link type="warning" @click="handleCommExt(row)">
+                <svg-icon class-name="search-icon" icon-class="commission"></svg-icon>
+              </el-button>
             </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
@@ -81,7 +83,9 @@
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
             <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
+              <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleDetail(row)">
+                <svg-icon class-name="search-icon" icon-class="detail"></svg-icon
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -218,7 +222,7 @@ const data = reactive<PageData<FormData, TableQuery>>({
 /** 查询列表 */
 const getTableData = async () => {
   loading.value = true;
-  const res = await tableList(data.queryParams);
+  const res = await tableList(proxy.addDateRange(data.queryParams, dateRange.value, 'entryTime'));
   tableData.value = res.rows;
   tableAttr.total = res.total;
   loading.value = false;

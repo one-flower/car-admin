@@ -4,34 +4,27 @@
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="项目类型" prop="projectType">
-              <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-form-item label="车辆品牌" prop="brandName">
+              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择车辆品牌" clearable filterable>
+                <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="车架号码" prop="vin">
               <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车牌号码" prop="licensePlate">
-              <el-input v-model="tableInfo.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="产品品牌" prop="productBrandId">
-              <el-select v-model="tableInfo.queryParams.productBrandId" value-key="" placeholder="请选择产品品牌" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
+            <el-form-item label="车牌号码" prop="brandId">
+              <el-input v-model="tableInfo.queryParams.brandId" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
               <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="质保开始" prop="upOrg">
-              <el-date-picker v-model="dateRangeStar" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+            <el-form-item label="计划日期" prop="planDate">
+              <el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
             </el-form-item>
-            <el-form-item label="质保结束" prop="upOrg">
-              <el-date-picker v-model="dateRangeEnd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
-            </el-form-item>
-            <el-form-item label="质保状态" prop="state">
+            <el-form-item label="保养状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
                 <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
@@ -104,14 +97,14 @@
   </div>
 </template>
 
-<script setup name="Brand" lang="ts">
-import { warrantyAdd, warrantyDel, warrantyUp, warrantyInfo, warrantyList } from '@/api/maintain-management/warranty';
-import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
+<script setup name="maintain" lang="ts">
+import { frequencyAdd, frequencyDel, frequencyUp, frequencyInfo, frequencyList } from '@/api/maintain-management/maintain';
+import { FormData, TableQuery, TableVO } from '@/api/maintain-management/maintain/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const dateRangeStar = ref<[DateModelType, DateModelType]>(['', '']);
-const dateRangeEnd = ref<[DateModelType, DateModelType]>(['', '']);
+const dictObj = toReactive<any>(proxy?.useDict('clyhBrand__clyhBrand', 'configProject__configProject'));
+const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   ids: [],
@@ -124,7 +117,17 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 });
 
 const initFormData: FormData = {
-  id: undefined
+  id: undefined,
+  brandName: '',
+  vin: '',
+  licensePlate: '',
+  projectType: '',
+  productBrandName: '',
+  productName: '',
+  currentNum: '',
+  planDate: '',
+  state: '',
+  orderNo: ''
 };
 const formRef = ref<ElFormInstance>();
 const formInfo = reactive<FormInfo<FormData>>({
@@ -143,9 +146,8 @@ const rules = {
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const params1 = proxy?.addDateRange(tableInfo.queryParams, dateRangeStar.value, 'startDate');
-  const params2 = proxy?.addDateRange(params1, dateRangeStar.value, 'endDate');
-  const res = await warrantyList(params2);
+
+  const res = await frequencyList(proxy?.addDateRange(tableInfo.queryParams, dateRange.value, 'planDate'));
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -193,7 +195,7 @@ const handleAdd = () => {
 const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableInfo.ids[0];
-  const res = await warrantyInfo(postId);
+  const res = await frequencyInfo(postId);
   Object.assign(formInfo.data, res.data);
 
   formInfo.visible = true;
@@ -204,7 +206,7 @@ const handleUpdate = async (row?: TableVO) => {
 const submitForm = () => {
   formRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      formInfo.data.id ? await warrantyUp(formInfo.data) : await warrantyAdd(formInfo.data);
+      formInfo.data.id ? await frequencyUp(formInfo.data) : await frequencyAdd(formInfo.data);
       proxy?.$modal.msgSuccess('操作成功');
       formInfo.visible = false;
       await getTableData();
@@ -216,14 +218,14 @@ const submitForm = () => {
 const handleDelete = async (row?: TableVO) => {
   const ids = row?.id || tableInfo.ids;
   await proxy?.$modal.confirm('是否删除选中项？');
-  await warrantyDel(ids);
+  await frequencyDel(ids);
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
 
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableInfo.ids[0];
-  const res = await warrantyInfo(postId);
+  const res = await frequencyInfo(postId);
   Object.assign(formInfo.data, res.data);
   formInfo.visible = true;
   formInfo.title = '品牌详情';

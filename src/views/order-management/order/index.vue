@@ -4,36 +4,53 @@
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="项目类型" prop="projectType">
-              <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-form-item label="订单类型" prop="type">
+              <el-select v-model="tableInfo.queryParams.type" value-key="" placeholder="请选择项目类型" clearable filterable>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="项目类型" prop="projectType">
+              <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="订单编号" prop="orderNo">
+              <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
             <el-form-item label="车架号码" prop="vin">
-              <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="车牌号码" prop="licensePlate">
               <el-input v-model="tableInfo.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="产品品牌" prop="productBrandId">
-              <el-select v-model="tableInfo.queryParams.productBrandId" value-key="" placeholder="请选择产品品牌" clearable filterable>
+            <el-form-item label="产品名称" prop="label">
+              <el-select v-model="tableInfo.queryParams.label" value-key="" placeholder="请选择产品品牌" clearable filterable>
                 <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="产品名称" prop="productId">
-              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="质保开始" prop="upOrg">
+            <el-form-item label="订单时间" prop="createTime">
               <el-date-picker v-model="dateRangeStar" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
             </el-form-item>
-            <el-form-item label="质保结束" prop="upOrg">
-              <el-date-picker v-model="dateRangeEnd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+            <el-form-item label="订单状态" prop="commState">
+              <el-select v-model="tableInfo.queryParams.commState" value-key="" placeholder="请选择质保状态" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__warrantyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="质保状态" prop="state">
+            <el-form-item label="订单提成" prop="isCommission">
+              <el-select v-model="tableInfo.queryParams.isCommission" value-key="" placeholder="请选择质保状态" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__warrantyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="质保状态" prop="payState">
+              <el-select v-model="tableInfo.queryParams.payState" value-key="" placeholder="请选择质保状态" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__warrantyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="支付状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.dictEnum__warrantyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -109,7 +126,7 @@ import { warrantyAdd, warrantyDel, warrantyUp, warrantyInfo, warrantyList } from
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-
+const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
 const dateRangeStar = ref<[DateModelType, DateModelType]>(['', '']);
 const dateRangeEnd = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();

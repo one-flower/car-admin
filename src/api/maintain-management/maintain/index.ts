@@ -3,44 +3,44 @@ import { FormData, TableQuery, TableVO } from './types';
 import { AxiosPromise } from 'axios';
 
 // 查询列表
-export function carManageList(query: TableQuery): AxiosPromise<TableVO[]> {
+export function frequencyList(query: TableQuery): AxiosPromise<TableVO[]> {
   return request({
-    url: '/clyh/carManage/list',
+    url: '/clyh/frequency/list',
     method: 'get',
     params: query
   });
 }
 
 // 查询详细
-export function carManageInfo(postId: string | number): AxiosPromise<TableVO> {
+export function frequencyInfo(postId: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/carManage/' + postId,
+    url: '/clyh/frequency/' + postId,
     method: 'get'
   });
 }
 
 // 新增
-export function carManageAdd(data: FormData) {
+export function frequencyAdd(data: FormData) {
   return request({
-    url: '/clyh/carManage',
+    url: '/clyh/frequency',
     method: 'post',
     data: data
   });
 }
 
 // 修改
-export function carManageUp(data: FormData) {
+export function frequencyUp(data: FormData) {
   return request({
-    url: '/clyh/carManage',
+    url: '/clyh/frequency',
     method: 'put',
     data: data
   });
 }
 
 // 删除
-export function carManageDel(postId: string | number | (string | number)[]) {
+export function frequencyDel(postId: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/carManage/' + postId,
+    url: '/clyh/frequency/' + postId,
     method: 'delete'
   });
 }

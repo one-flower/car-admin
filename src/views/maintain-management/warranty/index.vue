@@ -6,7 +6,8 @@
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
             <el-form-item label="项目类型" prop="projectType">
               <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="车架号码" prop="vin">
@@ -17,7 +18,8 @@
             </el-form-item>
             <el-form-item label="产品品牌" prop="productBrandId">
               <el-select v-model="tableInfo.queryParams.productBrandId" value-key="" placeholder="请选择产品品牌" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
@@ -33,7 +35,7 @@
             </el-form-item>
             <el-form-item label="质保状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.dictEnum__warrantyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -109,7 +111,7 @@ import { warrantyAdd, warrantyDel, warrantyUp, warrantyInfo, warrantyList } from
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-
+const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
 const dateRangeStar = ref<[DateModelType, DateModelType]>(['', '']);
 const dateRangeEnd = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();

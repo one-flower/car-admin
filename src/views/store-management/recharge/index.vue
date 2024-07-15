@@ -44,14 +44,18 @@
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip v-if="row.state === '1'" content="充值" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="warning" icon="Document" @click="handleRecharge(row)"></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link type="warning" @click="handleRecharge(row)">
+                <svg-icon class-name="search-icon" icon-class="recharge" />
+              </el-button>
             </el-tooltip>
             <el-tooltip content="充值记录" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleRechargeList(row)"></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" @click="handleRechargeList(row)">
+                <svg-icon class-name="search-icon" icon-class="recharge-log"
+              /></el-button>
             </el-tooltip>
             <el-tooltip :content="row.state === '0' ? '启用' : '禁用'" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
-                <svg-icon class-name="search-icon" icon-class="search" />
+                <svg-icon class-name="search-icon" :icon-class="row.state === '0' ? 'open' : 'close'" />
               </el-button>
             </el-tooltip>
             <el-tooltip v-if="row.state === '0'" content="删除" placement="top">
@@ -256,6 +260,7 @@ const logDialog = reactive({
 /** 充值记录 */
 const handleRechargeList = async (row?: TableVO) => {
   logDialog.visible = true;
+  logDialog.form.id = row.id;
 };
 
 const init = async () => {

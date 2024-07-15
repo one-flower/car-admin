@@ -55,7 +55,9 @@
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
             <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
+              <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleDetail(row)">
+                <svg-icon icon-class="detail"></svg-icon>
+              </el-button>
             </el-tooltip>
           </template>
         </el-table-column>

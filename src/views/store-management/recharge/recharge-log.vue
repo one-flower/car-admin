@@ -91,7 +91,7 @@ const queryParams = reactive<logTableQuery>({
 const getTableData = async () => {
   loading.value = true;
 
-  const res = await rechargeLogList(proxy?.addDateRange(queryParams, dateRange.value));
+  const res = await rechargeLogList(proxy?.addDateRange(queryParams, dateRange.value, 'createTime'));
   tableData.value = res.rows;
   tableInfo.totalMoney = res.rows[0]?.totalMoney;
   tableInfo.pageMoney = res.rows.reduce((a: any, b: any) => a.personalCommPrice + b.personalCommPrice, 0);
@@ -120,7 +120,9 @@ const init = async () => {
 watch(
   () => props.visible,
   (val: boolean) => {
-    if (val) init();
+    if (!val) return;
+    queryParams.rechargeId = props.targetInfo.id;
+    init();
   }
 );
 </script>
