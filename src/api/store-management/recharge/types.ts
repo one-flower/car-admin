@@ -13,7 +13,7 @@ export interface FormData {
   realityMoney: string | number; //充值金额
   giveMoney: string | number; //赠送金额
   remarks: string;
-  state: string; //状态
+  state: '0' | '1'; //状态 0禁用
   customId?: string; // 可客户id
 }
 

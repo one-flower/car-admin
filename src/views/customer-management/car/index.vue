@@ -6,7 +6,7 @@
           <el-form ref="queryFormRef" :model="data.queryParams" :inline="true" @submit.prevent>
             <el-form-item label="车辆品牌" prop="tagId">
               <el-select v-model="data.queryParams.brandId" placeholder="请选择车辆品牌" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="车辆厂商" prop="nickname">
@@ -117,30 +117,36 @@
             <el-radio v-for="item in dictObj.cardNoState" :key="item.key" :label="item.label" :value="item.value" />
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="车辆号牌" prop="licensePlate">
+        <el-form-item label="车辆号牌">
           <div class="cardNo">
-            <el-select v-model="data.form.licenseProvince" placeholder="京" clearable filterable class="cardNo--province">
-              <el-option v-for="item in dictObj.carProvince" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-            </el-select>
-            <el-select v-model="data.form.licenseOrg" placeholder="A" clearable filterable class="cardNo--city">
-              <el-option v-for="item in dictObj.carCity" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-            </el-select>
-            <el-input v-model="data.form.licenseNum" row="auto" placeholder="请输入内容" class="cardNo--number" />
+            <el-form-item prop="licenseProvince">
+              <el-select v-model="data.form.licenseProvince" placeholder="京" clearable filterable class="cardNo--province">
+                <el-option v-for="item in dictObj.carProvince" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item prop="licenseOrg">
+              <el-select v-model="data.form.licenseOrg" placeholder="A" clearable filterable class="cardNo--city">
+                <el-option v-for="item in dictObj.carCity" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item prop="licenseNum">
+              <el-input v-model="data.form.licenseNum" placeholder="请输入内容" class="cardNo--number" />
+            </el-form-item>
           </div>
         </el-form-item>
-        <el-form-item label="车辆照片" prop="remarks">
-          <image-upload v-model="data.form.remarks"></image-upload>
+        <el-form-item label="车辆照片" prop="imgUrls">
+          <image-upload v-model="data.form.imgUrls"></image-upload>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="data.form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="信息补全" prop="remarks">
-          <el-radio-group v-model="data.form.remarks">
+        <el-form-item label="信息补全" prop="">
+          <!-- <el-radio-group v-model="data.form.label">
             <el-radio v-for="item in dictObj.infoComp" :key="item.key" :label="item.label" :value="item.value" />
-          </el-radio-group>
+          </el-radio-group> -->
         </el-form-item>
 
-        <el-descriptions class="margin-top" title="车辆信息" :column="2" border>
+        <el-descriptions class="margin-top" title="车辆信息" :column="2" border v-if="false">
           <el-descriptions-item label="车辆品牌"> {{}} </el-descriptions-item>
           <el-descriptions-item label="车辆厂商"> {{}} </el-descriptions-item>
           <el-descriptions-item label="车辆系列"> {{}} </el-descriptions-item>
@@ -166,7 +172,7 @@ import { FormData, TableQuery, TableVO } from '@/api/customer-management/car/typ
 import { carProvince, carCity } from '@/utils/static-dict';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const dictObj = toReactive<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
+const dictObj = toReactive<any>(proxy?.useNewDict('clyhBrand__clyhBrand', 'dictEnum__carState'));
 dictObj.carProvince = carProvince;
 dictObj.carCity = carCity;
 dictObj.belong = [
@@ -204,9 +210,9 @@ const dialog = reactive<DialogOption>({
 const initFormData: FormData = {
   id: undefined,
   customId: '',
-  toType: '',
+  toType: '0',
   brandId: '',
-  licensePlateState: '',
+  licensePlateState: '0',
   licenseProvince: '',
   licenseOrg: '',
   licenseNum: '',
@@ -215,7 +221,7 @@ const initFormData: FormData = {
   imgUrls: '',
   remarks: '',
   // 信息补全
-  carState: '',
+  carState: '0',
   vin: '',
   manufacturer: '',
   typename: '',
@@ -225,7 +231,9 @@ const initFormData: FormData = {
   drivemode: '',
   fueltype: ''
 };
-
+const carValidator = (rule: any, value: any, callback: any, source: any, options: any) => {
+  console.log(value, 'value');
+};
 const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
@@ -239,10 +247,14 @@ const data = reactive<PageData<FormData, TableQuery>>({
     licensePlate: ''
   },
   rules: {
-    tagId: [{ required: true, message: '客户标签不能为空', trigger: ['blur', 'change'] }],
-    nickname: [{ required: true, message: '客户昵称不能为空', trigger: 'blur' }],
-    telephone: [{ required: true, message: '手机号码不能为空', trigger: 'blur' }],
-    channel: [{ required: true, message: '渠道来源不能为空', trigger: ['blur', 'change'] }]
+    customId: [{ required: true, message: '选择车主不能为空', trigger: ['blur', 'change'] }],
+    toType: [{ required: true, message: '车辆归属不能为空', trigger: 'change' }],
+    licensePlateState: [{ required: true, message: '车辆品牌不能为空', trigger: ['blur', 'change'] }],
+    carNo: [{ required: true, validator: carValidator, trigger: 'change' }],
+    licenseProvince: [{ required: true, message: '车牌号码不能为空', trigger: 'change' }],
+    licenseOrg: [{ required: true, message: '车牌号码不能为空', trigger: 'change' }],
+    licenseNum: [{ required: true, message: '车牌号码不能为空', trigger: 'change' }],
+    nickname: [{ required: true, message: '*信息补全不能为空', trigger: 'change' }]
   }
 });
 

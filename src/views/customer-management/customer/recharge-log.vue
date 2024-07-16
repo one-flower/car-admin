@@ -63,15 +63,16 @@
   </el-drawer>
 
   <!-- 添加对话框 -->
-  <UserRecharge v-model:visible="userDialog.visible" :target-info="userDialog.form">1231232</UserRecharge>
+  <UserRecharge v-model:visible="userDialog.visible" :target-info="userDialog.form" @confirmCallBack="init"></UserRecharge>
 </template>
 
 <script setup name="commExt" lang="ts">
 import { propTypes } from '@/utils/propTypes';
 import { TableQuery, TableVO } from '@/api/store-management/recharge/types';
-import UserRecharge from '@/views/store-management/recharge/user-recharge.vue';
+import UserRecharge from './user-recharge.vue';
 import { rechargeLogList } from '@/api/store-management/recharge';
-import { FormData } from '@/api/store-management/recharge/types';
+// import { FormData } from '@/api/store-management/recharge/types';
+import { FormData } from '@/api/customer-management/customer/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -125,11 +126,10 @@ const resetQuery = () => {
 
 const initFormData: FormData = {
   id: undefined,
-  name: '',
-  customId: undefined,
-  realityMoney: 0,
-  giveMoney: 0,
-  state: '0',
+  tagId: '',
+  nickname: '',
+  telephone: '',
+  channel: '',
   remarks: ''
 };
 const userDialog = reactive({
@@ -139,7 +139,7 @@ const userDialog = reactive({
 });
 /** 充值 */
 const handleRecharge = async () => {
-  userDialog.form = { ...initFormData };
+  Object.assign(userDialog.form, props.targetInfo);
   userDialog.visible = true;
 };
 

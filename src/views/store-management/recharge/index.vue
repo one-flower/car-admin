@@ -53,14 +53,16 @@
                 <svg-icon class-name="search-icon" icon-class="recharge-log"
               /></el-button>
             </el-tooltip>
-            <el-tooltip :content="row.state === '0' ? '禁用' : '启用'" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
-                <svg-icon class-name="search-icon" :icon-class="row.state === '0' ? 'open' : 'close'" />
-              </el-button>
+            <el-tooltip v-if="row.state === '1'" content="编辑" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
             </el-tooltip>
             <el-tooltip v-if="row.state === '0'" content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
-              <SvgIcon></SvgIcon>
+            </el-tooltip>
+            <el-tooltip :content="row.state === '0' ? '启用' : '禁用'" placement="top">
+              <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
+                <svg-icon class-name="search-icon" :icon-class="row.state === '0' ? 'open' : 'close'" />
+              </el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -82,10 +84,10 @@
           <el-input v-model="form.name" placeholder="请输入员工编号" />
         </el-form-item>
         <el-form-item label="充值金额" prop="realityMoney">
-          <el-input-number v-model.number="form.realityMoney as number" :precision="2" :min="0" :max="99999.99" />
+          <el-input-number v-model="form.realityMoney as number" :precision="2" :min="0" :max="99999.99" />
         </el-form-item>
         <el-form-item label="赠送金额" prop="giveMoney">
-          <el-input-number v-model.number="form.giveMoney as number" :precision="2" :min="0" :max="99999.99" />
+          <el-input-number v-model="form.giveMoney as number" :precision="2" :min="0" :max="99999.99" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
@@ -140,7 +142,7 @@ const initFormData: FormData = {
   name: '',
   realityMoney: 0,
   giveMoney: 0,
-  state: '0',
+  state: '1',
   remarks: ''
 };
 
@@ -183,7 +185,6 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
-
   getTableData();
 };
 
@@ -191,7 +192,6 @@ const handleQuery = () => {
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
   queryParams.value.pageNum = 1;
-
   handleQuery();
 };
 
@@ -216,7 +216,17 @@ const handleState = async (row?: TableVO) => {
   await rechargeUp({ ...row, state: state });
   row.state = state;
 };
-
+/** 修改按钮操作 */
+const handleUpdate = async (row?: TableVO) => {
+  reset();
+  const postId = row?.id || tableAttr.ids[0];
+  const res = await rechargeInfo(postId);
+  res.data.giveMoney = parseFloat(res.data.giveMoney as string);
+  res.data.realityMoney = parseFloat(res.data.realityMoney as string);
+  Object.assign(form.value, res.data);
+  dialog.visible = true;
+  dialog.title = `修改${pageTitle}`;
+};
 /** 提交按钮 */
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
@@ -228,7 +238,6 @@ const submitForm = () => {
     }
   });
 };
-
 /** 删除按钮操作 */
 const handleDelete = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids;

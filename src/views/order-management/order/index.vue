@@ -64,14 +64,14 @@
     <el-card shadow="hover">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <!-- <el-col :span="1.5">
+          <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableInfo.multiple" @click="handleDelete()">
               删除
             </el-button>
-          </el-col> -->
+          </el-col>
           <right-toolbar v-model:showSearch="tableInfo.showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
@@ -128,7 +128,6 @@ import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warrant
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
 const dateRangeStar = ref<[DateModelType, DateModelType]>(['', '']);
-const dateRangeEnd = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   ids: [],

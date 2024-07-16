@@ -97,7 +97,7 @@ h6 {
     }
   }
   .el-table__body-wrapper {
-    .el-button [class*='el-icon-'] + span {
+    .el-button [class*="el-icon-"] + span {
       margin-left: 1px;
     }
   }
@@ -287,4 +287,8 @@ h6 {
 /* 表格右侧工具栏样式 */
 .top-right-btn {
   margin-left: auto;
+}
+
+.center {
+  text-align: center;
 }
