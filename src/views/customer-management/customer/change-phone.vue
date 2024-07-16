@@ -85,7 +85,7 @@ const getCode = async () => {
 
 /** 表单重置 */
 const reset = () => {
-  changeForm.value = {};
+  changeForm = {};
   FormDataRef.value?.resetFields();
 };
 
@@ -107,10 +107,10 @@ const cancel = () => {
 watch(
   () => props.visible,
   (val) => {
+    if (!val) return;
     getCode();
     changeForm.oldoldTelephone = val.telephone;
-  },
-  { deep: true }
+  }
 );
 
 const smsInfo = reactive({

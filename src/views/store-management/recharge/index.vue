@@ -53,7 +53,7 @@
                 <svg-icon class-name="search-icon" icon-class="recharge-log"
               /></el-button>
             </el-tooltip>
-            <el-tooltip :content="row.state === '0' ? '启用' : '禁用'" placement="top">
+            <el-tooltip :content="row.state === '0' ? '禁用' : '启用'" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
                 <svg-icon class-name="search-icon" :icon-class="row.state === '0' ? 'open' : 'close'" />
               </el-button>
@@ -140,7 +140,7 @@ const initFormData: FormData = {
   name: '',
   realityMoney: 0,
   giveMoney: 0,
-  state: '1',
+  state: '0',
   remarks: ''
 };
 

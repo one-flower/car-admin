@@ -14,19 +14,13 @@ export interface FormData {
   giveMoney: string | number; //赠送金额
   remarks: string;
   state: string; //状态
+  customId?: string; // 可客户id
 }
 
 export interface TableQuery extends PageQuery {
   name?: string;
-  state?: string | undefined;
-}
-
-export interface UserFormData {
-  id: string | undefined;
-  customId: string | undefined;
-  realityMoney: string | number; //充值金额
-  giveMoney: string | number; //赠送金额
-  remarks: string;
+  state?: string;
+  customId?: number;
 }
 
 export interface logTableVO extends BaseEntity {
@@ -42,7 +36,9 @@ export interface logTableVO extends BaseEntity {
   remarks?: string; //备注
 }
 export interface logTableQuery extends PageQuery {
+  customId?: number; // 客户id
+  rechargeId?: number; // 套餐id
   createTime?: string;
-  customName?: string;
+  customName?: string; //客户昵称
   customTelephone?: string;
 }

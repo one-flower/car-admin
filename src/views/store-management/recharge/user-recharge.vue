@@ -20,7 +20,9 @@
       </div>
 
       <el-form v-if="active === 0" ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
-        <el-form-item label="套餐名称" prop="name"> {{ targetInfo.name }} </el-form-item>
+        <el-form-item label="套餐名称" prop="name">
+          <el-input v-model="formData.name" placeholder="请输入内容" clearable :disabled="targetInfo.id" />
+        </el-form-item>
         <el-form-item label="充值金额" prop="realityMoney">
           <el-input-number v-model.number="formData.realityMoney as number" :precision="2" :min="0" :max="99999.99" />
         </el-form-item>
@@ -28,7 +30,7 @@
           <el-input-number v-model.number="formData.giveMoney as number" :precision="2" :min="0" :max="99999.99" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="formData.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="formData.remarks" type="textarea" row="auto" clearable :maxlength="255" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <el-form v-else-if="active === 1" ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
@@ -107,11 +109,19 @@
 </template>
 
 <script setup name="Post" lang="ts">
+/**
+ * 有套餐 选客户
+ * 添加套餐 有客户
+ *
+ */
 import { propTypes } from '@/utils/propTypes';
+import { rechargeAdd } from '@/api/store-management/recharge';
 import { userRecharge } from '@/api/store-management/recharge';
-import { UserFormData } from '@/api/store-management/recharge/types';
+import { FormData } from '@/api/store-management/recharge/types';
 import { customList } from '@/api/customer-management/customer';
 import useUserStore from '@/store/modules/user';
+
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const emit = defineEmits(['update:visible', 'confirmCallBack']);
 const props = defineProps({
@@ -128,13 +138,18 @@ const props = defineProps({
 
 const active = ref(0);
 
-const FormDataRef = ref<ElFormInstance>();
-const formData = reactive<UserFormData>({
+const initFormData: FormData = {
   id: undefined,
+  name: '',
   customId: undefined,
   realityMoney: 0,
   giveMoney: 0,
+  state: '0',
   remarks: ''
+};
+const FormDataRef = ref<ElFormInstance>();
+const formData = reactive<FormData>({
+  ...initFormData
 });
 
 watch(
@@ -142,6 +157,7 @@ watch(
   (val) => {
     if (!val) return;
     formData.id = props.targetInfo.id;
+    formData.name = props.targetInfo.name;
     formData.realityMoney = parseFloat(props.targetInfo.realityMoney ?? '0');
     formData.giveMoney = parseFloat(props.targetInfo.giveMoney ?? '0');
   }
@@ -156,7 +172,12 @@ const saveLoading = ref(false);
 const handleNext = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (active.value === 2) {
+      if (active.value === 0) {
+        if (formData.id === undefined) {
+          await rechargeAdd(formData);
+          proxy?.$modal.msgSuccess('操作成功');
+        }
+      } else if (active.value === 2) {
         saveLoading.value = true;
         await userRecharge(formData);
         saveLoading.value = false;

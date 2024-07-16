@@ -49,16 +49,22 @@
         <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="账户充值" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link @click="handleRechargeLog(row)">
+                <svg-icon class-name="search-icon" icon-class="recharge" />
+              </el-button>
             </el-tooltip>
             <el-tooltip content="更换号码" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleChangePhone(row)"></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link @click="handleChangePhone(row)">
+                <svg-icon class-name="search-icon" icon-class="change-phone" />
+              </el-button>
             </el-tooltip>
             <!-- <el-tooltip content="解绑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
             </el-tooltip> -->
             <el-tooltip content="客户档案" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleInfo(row)"></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link @click="handleInfo(row)">
+                <svg-icon class-name="search-icon" icon-class="customer-log" />
+              </el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
@@ -116,8 +122,11 @@
       </template>
     </el-dialog>
 
+    <!-- 改变手机号 -->
     <change-phone v-model:visible="changeDialog.visible" v-model:target-info="changeDialog.form"></change-phone>
-    <!-- <rechargeLog></rechargeLog> -->
+    <!-- 充值记录 -->
+    <rechargeLog v-model:visible="rechargeLogDialog.visible" v-model:target-info="rechargeLogDialog.form"></rechargeLog>
+    <!-- 客户档案 -->
     <Info v-model:visible="infoDialog.visible" v-model:target-info="infoDialog.form"></Info>
   </div>
 </template>
@@ -256,6 +265,22 @@ const submitForm = () => {
 };
 
 /** 账户充值 */
+const rechargeLogDialog = reactive<any>({
+  visible: false,
+  form: {
+    id: '',
+    customNo: '',
+    tagId: '',
+    nickname: '',
+    telephone: ''
+  }
+});
+const handleRechargeLog = async (row?: TableVO) => {
+  const ids = row?.id || tableAttr.ids[0];
+  const res = await customInfo(ids);
+  Object.assign(rechargeLogDialog.form, res.data);
+  rechargeLogDialog.visible = true;
+};
 
 /** 修改手机号 */
 type ChangeDialog = {
