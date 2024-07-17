@@ -74,7 +74,7 @@
     </el-card>
 
     <!-- 添加或修改品牌对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="项目类型" prop="projectType">
           <el-select v-model="form.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>

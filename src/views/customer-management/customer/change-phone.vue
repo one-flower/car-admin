@@ -85,7 +85,7 @@ const getCode = async () => {
 
 /** 表单重置 */
 const reset = () => {
-  changeForm = {};
+  Object.assign(changeForm, {});
   FormDataRef.value?.resetFields();
 };
 

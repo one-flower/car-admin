@@ -12,9 +12,9 @@ export function configTagList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function configTagInfo(postId: string | number): AxiosPromise<TableVO> {
+export function configTagInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/configTag/' + postId,
+    url: '/clyh/configTag/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function configTagUp(data: FormData) {
 }
 
 // 删除
-export function configTagDel(postId: string | number | (string | number)[]) {
+export function configTagDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/configTag/' + postId,
+    url: '/clyh/configTag/' + id,
     method: 'delete'
   });
 }

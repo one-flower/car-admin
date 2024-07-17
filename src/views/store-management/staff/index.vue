@@ -101,7 +101,7 @@
     </el-card>
 
     <!-- 添加或修改对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="data.form" :rules="data.rules" label-width="80px" :disabled="formDetail" @submit.prevent>
         <el-form-item label="员工编号" prop="staffCode">
           <el-input v-model="data.form.staffCode" placeholder="请输入员工编号" />

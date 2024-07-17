@@ -12,9 +12,9 @@ export function carManageList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function carManageInfo(postId: string | number): AxiosPromise<TableVO> {
+export function carManageInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/carManage/' + postId,
+    url: '/clyh/carManage/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,17 @@ export function carManageUp(data: FormData) {
 }
 
 // 删除
-export function carManageDel(postId: string | number | (string | number)[]) {
+export function carManageDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/carManage/' + postId,
+    url: '/clyh/carManage/' + id,
     method: 'delete'
+  });
+}
+
+// 查询vin吗
+export function clyhVinInfo(id: string | number) {
+  return request({
+    url: '/clyh/vin/' + id,
+    method: 'get'
   });
 }

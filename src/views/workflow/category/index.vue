@@ -56,7 +56,7 @@
       </el-table>
     </el-card>
     <!-- 添加或修改流程分类对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="categoryFormRef" v-loading="loading" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="父级分类" prop="parentId">
           <el-tree-select

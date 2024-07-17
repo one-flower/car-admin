@@ -73,7 +73,7 @@
     </el-card>
 
     <!-- 添加或修改对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" :disabled="formDetail" @submit.prevent>
         <el-form-item label="机构名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入机构名称" />

@@ -135,7 +135,7 @@ const initFormData: FormData = {
   id: undefined,
   name: '',
   upOrg: '',
-  isUpOrg: '1',
+  isUpOrg: '0',
   logoUrl: '',
   otherCredentialUrl: '',
   remarks: ''

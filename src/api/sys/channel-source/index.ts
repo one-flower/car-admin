@@ -12,9 +12,9 @@ export function configChannelList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function configChannelInfo(postId: string | number): AxiosPromise<TableVO> {
+export function configChannelInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/configChannel/' + postId,
+    url: '/clyh/configChannel/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function configChannelUp(data: FormData) {
 }
 
 // 删除
-export function configChannelDel(postId: string | number | (string | number)[]) {
+export function configChannelDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/configChannel/' + postId,
+    url: '/clyh/configChannel/' + id,
     method: 'delete'
   });
 }

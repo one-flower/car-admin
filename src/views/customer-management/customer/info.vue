@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :model-value="visible" title="客户档案" direction="rtl" size="80%" close-on-click-modal @close="handleCancel">
+  <el-drawer :model-value="visible" title="客户档案" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
     <div class="mb10">
       <el-descriptions class="margin-top" title="客户信息" :column="2" border>
         <el-descriptions-item label="客户编号" min-width="100" column="2"> {{ targetInfo.customNo }} </el-descriptions-item>
@@ -102,7 +102,13 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 });
 
 const initFormData: FormData = {
-  id: undefined
+  id: '',
+  customNo: '',
+  tagIdLabel: '',
+  nickname: '',
+  telephone: '',
+  channel: '',
+  accountBalance: ''
 };
 const formRef = ref<ElFormInstance>();
 const formInfo = reactive<FormInfo<FormData>>({

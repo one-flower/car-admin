@@ -12,9 +12,9 @@ export function orderList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function orderInfo(postId: string | number): AxiosPromise<TableVO> {
+export function orderInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/order/' + postId,
+    url: '/clyh/order/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function orderUp(data: FormData) {
 }
 
 // 删除
-export function orderDel(postId: string | number | (string | number)[]) {
+export function orderDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/order/' + postId,
+    url: '/clyh/order/' + id,
     method: 'delete'
   });
 }

@@ -5,7 +5,7 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="客户标签" prop="tagId">
-              <el-select v-model="queryParams.tagId" value-key="" placeholder="" clearable filterable>
+              <el-select v-model="queryParams.tagId" value-key="" placeholder="请选择客户标签" clearable filterable>
                 <el-option v-for="item in dictObj.customerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
@@ -40,11 +40,11 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="客户编号" align="center" prop="customNo" />
-        <el-table-column label="客户标签" align="center" prop="tagIdLabel" />
-        <el-table-column label="手机号码" align="center" prop="telephone" />
-        <el-table-column label="客户昵称" align="center" prop="nickname" />
-        <el-table-column label="账户余额" align="center" prop="accountBalance" />
+        <el-table-column label="客户编号" align="left" prop="customNo" />
+        <el-table-column label="客户标签" align="left" prop="tagIdLabel" />
+        <el-table-column label="手机号码" align="left" prop="telephone" />
+        <el-table-column label="客户昵称" align="left" prop="nickname" />
+        <el-table-column label="账户余额" align="left" prop="accountBalance" />
         <el-table-column label="绑定状态" align="center" prop="" />
         <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -86,7 +86,7 @@
     </el-card>
 
     <!-- 添加或修改对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <template v-if="form.id !== undefined">
           <el-form-item label="客户编号">
@@ -125,7 +125,7 @@
     <!-- 改变手机号 -->
     <change-phone v-model:visible="changeDialog.visible" v-model:target-info="changeDialog.form"></change-phone>
     <!-- 充值记录 -->
-    <rechargeLog v-model:visible="rechargeLogDialog.visible" v-model:target-info="rechargeLogDialog.form"></rechargeLog>
+    <rechargeLog v-model:visible="rechargeLogDialog.visible" v-model:target-id="rechargeLogDialog.id"></rechargeLog>
     <!-- 客户档案 -->
     <Info v-model:visible="infoDialog.visible" v-model:target-info="infoDialog.form"></Info>
   </div>
@@ -135,6 +135,8 @@ import { customList, customAdd, customDel, customInfo, customUp } from '@/api/cu
 import { FormData, PhoneForm, TableQuery, TableVO } from '@/api/customer-management/customer/types';
 import { configTagList } from '@/api/sys/custom-tag';
 import { configChannelList } from '@/api/sys/channel-source';
+import { FormData as warrantyFormData } from '@/api/maintain-management/warranty/types';
+
 import rechargeLog from './recharge-log.vue';
 import changePhone from './change-phone.vue';
 import Info from './info.vue';
@@ -152,7 +154,7 @@ const tableAttr = reactive<TableAttr>({
 
 const queryFormRef = ref<ElFormInstance>();
 
-const pageTitle = '渠道来源';
+const pageTitle = '客户';
 const FormDataRef = ref<ElFormInstance>();
 const dictObj = {
   customerTag: [],
@@ -171,7 +173,8 @@ const initFormData: FormData = {
   nickname: '',
   telephone: '',
   channel: '',
-  remarks: ''
+  remarks: '',
+  tagIdLabel: ''
 };
 
 const data = reactive<PageData<FormData, TableQuery>>({
@@ -267,18 +270,11 @@ const submitForm = () => {
 /** 账户充值 */
 const rechargeLogDialog = reactive<any>({
   visible: false,
-  form: {
-    id: '',
-    customNo: '',
-    tagId: '',
-    nickname: '',
-    telephone: ''
-  }
+  id: ''
 });
 const handleRechargeLog = async (row?: TableVO) => {
-  const ids = row?.id || tableAttr.ids[0];
-  const res = await customInfo(ids);
-  Object.assign(rechargeLogDialog.form, res.data);
+  console.log(row.id);
+  rechargeLogDialog.id = row?.id;
   rechargeLogDialog.visible = true;
 };
 
@@ -307,13 +303,7 @@ const handleChangePhone = async (row?: TableVO) => {
 /** 客户档案 */
 const infoDialog = reactive({
   visible: false,
-  form: {
-    id: '',
-    customNo: '',
-    tagId: '',
-    nickname: '',
-    telephone: ''
-  }
+  form: <warrantyFormData>{}
 });
 const handleInfo = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids[0];

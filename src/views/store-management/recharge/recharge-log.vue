@@ -1,12 +1,26 @@
 <template>
-  <el-drawer :model-value="visible" title="充值记录" direction="rtl" size="80%" close-on-click-modal @close="() => emit('update:visible', false)">
+  <el-drawer
+    :model-value="visible"
+    title="充值记录"
+    direction="rtl"
+    size="800px"
+    close-on-click-modal
+    :before-close="() => emit('update:visible', false)"
+  >
     <div class="p-2">
       <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
         <div v-show="showSearch" class="mb-[10px]">
           <el-card shadow="hover">
             <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
               <el-form-item label="充值时间" prop="type">
-                <el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+                <el-date-picker
+                  v-model="dateRange"
+                  value-format="YYYY-MM-DD"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                />
               </el-form-item>
               <el-form-item label="客户昵称" prop="projectType">
                 <el-input v-model="queryParams.customName" placeholder="请输入客户昵称" />

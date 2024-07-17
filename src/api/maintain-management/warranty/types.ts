@@ -14,6 +14,13 @@ export interface TableVO extends BaseEntity {
 
 export interface FormData {
   id: string | undefined;
+  customId?: string;
+  customNo: string;
+  tagIdLabel: string;
+  nickname: string;
+  telephone: string;
+  channel: string;
+  accountBalance: string;
 }
 
 export interface TableQuery extends PageQuery {

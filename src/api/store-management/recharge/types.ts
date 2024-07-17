@@ -20,7 +20,7 @@ export interface FormData {
 export interface TableQuery extends PageQuery {
   name?: string;
   state?: string;
-  customId?: number;
+  customId?: string;
 }
 
 export interface logTableVO extends BaseEntity {

@@ -8,17 +8,9 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :show-close="!saveLoading"
-      @close="handleCancel"
+      :before-close="handleCancel"
     >
-      <div class="mb-[20px]">
-        <el-steps :active="active" finish-status="success">
-          <el-step title="选择客户" />
-          <el-step title="充值核对" />
-          <!-- <el-step title="完成" /> -->
-        </el-steps>
-      </div>
-
-      <el-form v-if="active === 0" ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
+      <el-form ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="选择客户" prop="customId">
           <el-select
             v-model="formData.customId"
@@ -34,46 +26,37 @@
             <el-option v-for="item in selectOption.options" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-descriptions class="margin-top" title="" :column="2" border>
-          <el-descriptions-item label="客户昵称" min-width="100" column="2"> {{ selectOption.form.nickname }} </el-descriptions-item>
+      </el-form>
+      <div class="mb10">
+        <el-descriptions class="margin-top" title="充值套餐" :column="2" border>
+          <el-descriptions-item label="套餐名称" min-width="100" :span="2"> {{ targetInfo.name }} </el-descriptions-item>
+          <el-descriptions-item label="充值金额" min-width="100" :span="1"> {{ formData.realityMoney }} 元</el-descriptions-item>
+          <el-descriptions-item label="赠送金额" min-width="100" :span="1"> {{ formData.giveMoney }} 元</el-descriptions-item>
+        </el-descriptions>
+      </div>
+      <div class="mb10">
+        <el-descriptions class="margin-top" title="会员信息" :column="2" border>
+          <el-descriptions-item label="客户昵称" min-width="100"> {{ selectOption.form.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话" min-width="100"> {{ selectOption.form.telephone }} </el-descriptions-item>
           <el-descriptions-item label="客户标签" min-width="100"> {{ selectOption.form.tagIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户余额" min-width="100"> {{ selectOption.form.giveBalance ?? 0 }} 元 </el-descriptions-item>
+          <el-descriptions-item label="账户余额" min-width="100"> {{ selectOption.form.accountBalance ?? '0.00' }} 元</el-descriptions-item>
         </el-descriptions>
-      </el-form>
-      <el-form v-else-if="active === 1" ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
-        <div class="mb10">
-          <el-descriptions class="margin-top" title="充值套餐" :column="2" border>
-            <el-descriptions-item label="套餐名称" min-width="100" :span="2"> {{ targetInfo.name }} </el-descriptions-item>
-            <el-descriptions-item label="充值金额" min-width="100" :span="1"> {{ formData.realityMoney }} 元</el-descriptions-item>
-            <el-descriptions-item label="赠送金额" min-width="100" :span="1"> {{ formData.giveMoney }} 元</el-descriptions-item>
-          </el-descriptions>
-        </div>
-        <div class="mb10">
-          <el-descriptions class="margin-top" title="会员信息" :column="2" border>
-            <el-descriptions-item label="客户昵称" min-width="100"> {{ selectOption.form.nickname }} </el-descriptions-item>
-            <el-descriptions-item label="预留电话" min-width="100"> {{ selectOption.form.telephone }} </el-descriptions-item>
-            <el-descriptions-item label="客户标签" min-width="100"> {{ selectOption.form.tagIdLabel }} </el-descriptions-item>
-            <el-descriptions-item label="账户余额" min-width="100"> {{ selectOption.form.giveBalance }} 元</el-descriptions-item>
-          </el-descriptions>
-        </div>
-
-        <div class="mb10">
-          <el-descriptions class="margin-top" title="充值结果" :column="2" border>
-            <el-descriptions-item label="账户余额" min-width="100">
-              {{ countNum(formData.realityMoney, formData.giveMoney, selectOption.form.giveBalance) }} 元</el-descriptions-item
-            >
-            <el-descriptions-item label="经办人" min-width="100">{{ useUserStore().nickname }} </el-descriptions-item>
-            <el-descriptions-item label="充值时间" min-width="100">
-              {{ new Date().toLocaleDateString() }} {{ new Date().toLocaleTimeString() }}
-            </el-descriptions-item>
-          </el-descriptions>
-        </div>
-      </el-form>
+      </div>
+      <div class="mb10">
+        <el-descriptions class="margin-top" title="充值结果" :column="2" border>
+          <el-descriptions-item label="账户余额" min-width="100">
+            {{ countNum(formData.realityMoney, formData.giveMoney, selectOption.form.accountBalance) }} 元</el-descriptions-item
+          >
+          <el-descriptions-item label="经办人" min-width="100">{{ useUserStore().nickname }} </el-descriptions-item>
+          <el-descriptions-item label="充值时间" min-width="100">
+            {{ new Date().toLocaleDateString() }} {{ new Date().toLocaleTimeString() }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="handleCancel">取 消</el-button>
-          <el-button type="primary" @click="handleNext">{{ active === 1 ? '确认' : '下一步' }}</el-button>
+          <el-button type="primary" @click="handleNext">确认</el-button>
         </div>
       </template>
     </el-dialog>
@@ -85,6 +68,7 @@ import { propTypes } from '@/utils/propTypes';
 import { userRecharge } from '@/api/store-management/recharge';
 import { FormData } from '@/api/store-management/recharge/types';
 import { customList } from '@/api/customer-management/customer';
+import { FormData as customerFormData } from '@/api/customer-management/customer/types';
 import useUserStore from '@/store/modules/user';
 
 const emit = defineEmits(['update:visible', 'confirmCallBack']);
@@ -100,7 +84,6 @@ const props = defineProps({
   }
 });
 
-const active = ref(0);
 const initFormData: FormData = {
   id: undefined,
   customId: undefined,
@@ -119,8 +102,8 @@ watch(
     if (!val) return;
     remoteMethod();
     formData.id = props.targetInfo.id;
-    formData.realityMoney = parseFloat(props.targetInfo.realityMoney ?? '0');
-    formData.giveMoney = parseFloat(props.targetInfo.giveMoney ?? '0');
+    formData.realityMoney = props.targetInfo.realityMoney ?? '0.00';
+    formData.giveMoney = props.targetInfo.giveMoney ?? '0.00';
   }
 );
 
@@ -131,22 +114,18 @@ const saveLoading = ref(false);
 const handleNext = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (active.value === 1) {
-        saveLoading.value = true;
-        await userRecharge(formData);
-        handleCancel();
-        saveLoading.value = false;
-      } else {
-        active.value++;
-      }
+      saveLoading.value = true;
+      await userRecharge(formData);
+      handleCancel();
+      saveLoading.value = false;
     }
   });
 };
 const handleCancel = () => {
   Object.assign(formData, initFormData);
   FormDataRef.value?.resetFields();
-  selectOption.form = {};
-  active.value = 0;
+  Object.assign(selectOption.form, initSelectOptionForm);
+
   emit('update:visible', false);
 };
 
@@ -154,18 +133,22 @@ type SelectOption = {
   loading: boolean;
   options: any;
   cache: any;
-  form: {
-    nickname?: string;
-    telephone?: string;
-    tagIdLabel?: string;
-    giveBalance?: string;
-  };
+  form: customerFormData;
+};
+const initSelectOptionForm: customerFormData = {
+  id: '',
+  tagId: '',
+  nickname: '',
+  telephone: '',
+  channel: '',
+  remarks: '',
+  tagIdLabel: ''
 };
 const selectOption = reactive<SelectOption>({
   loading: false,
   options: [],
   cache: [],
-  form: {}
+  form: { ...initSelectOptionForm }
 });
 const remoteMethod = async (query?: string) => {
   // if (query) {
@@ -198,6 +181,6 @@ const change = () => {
 };
 
 const countNum = (a: string | number, b: string | number, c: string | number) => {
-  return Number(a) + Number(b) + Number(c);
+  return (Number(a ?? 0) + Number(b ?? 0) + Number(c ?? 0)).toFixed(2);
 };
 </script>

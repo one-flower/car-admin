@@ -56,7 +56,7 @@
       </el-table>
     </el-card>
     <!-- 添加或修改测试树对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="treeFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="父id" prop="parentId">
           <el-tree-select

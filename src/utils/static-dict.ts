@@ -30,14 +30,12 @@ export const carProvince = [
   { label: '藏', value: '藏' },
   { label: '新', value: '新' },
   { label: '使', value: '使' },
-  { label: '领', value: '宁' },
-  { label: '警', value: '宁' },
-  { label: '学', value: '宁' },
-  { label: '港', value: '宁' },
-  { label: '澳', value: '宁' },
-  { label: '临', value: '宁' },
-  { label: '宁', value: '宁' },
-  { label: '宁', value: '宁' }
+  { label: '领', value: '领' },
+  { label: '警', value: '警' },
+  { label: '学', value: '学' },
+  { label: '港', value: '港' },
+  { label: '澳', value: '澳' },
+  { label: '临', value: '临' }
 ];
 
 export const carCity = [

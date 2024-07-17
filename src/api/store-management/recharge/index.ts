@@ -12,9 +12,9 @@ export function rechargeList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function rechargeInfo(postId: string | number): AxiosPromise<TableVO> {
+export function rechargeInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/recharge/' + postId,
+    url: '/clyh/recharge/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function rechargeUp(data: FormData) {
 }
 
 // 删除
-export function rechargeDel(postId: string | number | (string | number)[]) {
+export function rechargeDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/recharge/' + postId,
+    url: '/clyh/recharge/' + id,
     method: 'delete'
   });
 }

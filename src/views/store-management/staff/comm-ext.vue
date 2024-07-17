@@ -1,5 +1,12 @@
 <template>
-  <el-drawer :model-value="visible" title="提成明细" direction="rtl" size="80%" close-on-click-modal @close="() => emit('update:visible', false)">
+  <el-drawer
+    :model-value="visible"
+    title="提成明细"
+    direction="rtl"
+    size="800px"
+    close-on-click-modal
+    :before-close="() => emit('update:visible', false)"
+  >
     <div class="p-2">
       <div class="mb-[10px]">
         <el-descriptions class="margin-top" title="员工信息" :column="3" border>

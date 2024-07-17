@@ -4,30 +4,32 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="data.queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="车辆品牌" prop="tagId">
+            <el-form-item label="车辆品牌" prop="brandId">
               <el-select v-model="data.queryParams.brandId" placeholder="请选择车辆品牌" clearable filterable>
                 <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="车辆厂商" prop="nickname">
-              <el-select v-model="data.queryParams.manufacturer" placeholder="请选择车辆厂商" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
+            <el-form-item label="车辆厂商" prop="manufacturer">
+              <el-input v-model="data.queryParams.manufacturer" placeholder="请输入车辆厂商" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车辆系列" prop="telephone">
+            <el-form-item label="车辆系列" prop="typename">
               <el-input v-model="data.queryParams.typename" placeholder="请输入车辆系列" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车辆型号" prop="label">
+            <el-form-item label="车辆型号" prop="vehicleModel">
               <el-input v-model="data.queryParams.vehicleModel" placeholder="请输入车辆型号" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车架号码" prop="tagId">
+            <el-form-item label="车架号码" prop="vin">
               <el-input v-model="data.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车辆号码" prop="nickname">
+            <el-form-item label="车辆号码" prop="licensePlate">
               <el-input v-model="data.queryParams.licensePlate" placeholder="请输入车辆号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="客户昵称" prop="telephone"> </el-form-item>
-            <el-form-item label="电话号码" prop="label"> </el-form-item>
+            <el-form-item label="客户昵称" prop="customNickname">
+              <el-input v-model="data.queryParams.customNickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="电话号码" prop="customtelephone">
+              <el-input v-model="data.queryParams.customtelephone" placeholder="请输入电话号码" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -98,7 +100,7 @@
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="data.form" :rules="data.rules" label-width="80px" @submit.prevent>
         <el-form-item label="选择车主" prop="customId">
-          <el-select v-model="data.form.customId" placeholder="请选择客户标签" clearable filterable>
+          <el-select v-model="data.form.customId" placeholder="请选择车主" clearable filterable>
             <el-option v-for="item in dictObj.carManageerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
@@ -108,7 +110,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="车辆品牌" prop="brandId">
-          <el-select v-model="data.form.brandId" placeholder="请选择渠道来源" clearable filterable>
+          <el-select v-model="data.form.brandId" placeholder="请选择车辆品牌" clearable filterable>
             <el-option v-for="item in dictObj.carManage" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
@@ -141,20 +143,26 @@
           <el-input v-model="data.form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="信息补全" prop="">
-          <!-- <el-radio-group v-model="data.form.label">
+          <el-radio-group v-model="data.form.label">
             <el-radio v-for="item in dictObj.infoComp" :key="item.key" :label="item.label" :value="item.value" />
-          </el-radio-group> -->
+          </el-radio-group>
         </el-form-item>
-
-        <el-descriptions class="margin-top" title="车辆信息" :column="2" border v-if="false">
-          <el-descriptions-item label="车辆品牌"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="车辆厂商"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="车辆系列"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="车辆型号"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="车辆级别"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="车身结构"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="驱动方式"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="能源类型"> {{}} </el-descriptions-item>
+        <el-form-item label="车架号码" prop="vin">
+          <el-input v-model="data.form.vin" row="auto" placeholder="请输入内容">
+            <template #append>
+              <el-button @click="handleVinInfo">查询</el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-descriptions v-if="data.form.brand" class="margin-top" title="车辆信息" :column="2" border>
+          <el-descriptions-item label="车辆品牌"> {{ data.form.brand }} </el-descriptions-item>
+          <el-descriptions-item label="车辆厂商"> {{ data.form.manufacturer }} </el-descriptions-item>
+          <el-descriptions-item label="车辆系列"> {{ data.form.typename }} </el-descriptions-item>
+          <el-descriptions-item label="车辆型号"> {{ data.form.module }} </el-descriptions-item>
+          <el-descriptions-item label="车辆级别"> {{ data.form.sizetype }} </el-descriptions-item>
+          <el-descriptions-item label="车身结构"> {{ data.form.bodytype }} </el-descriptions-item>
+          <el-descriptions-item label="驱动方式"> {{ data.form.drivemode }} </el-descriptions-item>
+          <el-descriptions-item label="能源类型"> {{ data.form.fueltype }} </el-descriptions-item>
         </el-descriptions>
       </el-form>
       <template #footer>
@@ -167,7 +175,7 @@
   </div>
 </template>
 <script setup name="carManage" lang="ts">
-import { carManageList, carManageAdd, carManageDel, carManageInfo, carManageUp } from '@/api/customer-management/car';
+import { carManageList, carManageAdd, carManageDel, carManageInfo, carManageUp, clyhVinInfo } from '@/api/customer-management/car';
 import { FormData, TableQuery, TableVO } from '@/api/customer-management/car/types';
 import { carProvince, carCity } from '@/utils/static-dict';
 
@@ -317,6 +325,16 @@ const handleUpdate = async (row?: TableVO) => {
   dialog.title = `修改${pageTitle}`;
 };
 
+// 查询车架号码
+const handleVinInfo = async () => {
+  if (!data.form.vin) {
+    proxy?.$modal.msgError('请输入车架号码');
+    return;
+  }
+  const res = await clyhVinInfo(data.form.vin);
+  // console.log(res,'sss');
+  Object.assign(data.form, res.data);
+};
 /** 提交按钮 */
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {

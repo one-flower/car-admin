@@ -12,9 +12,9 @@ export function configProductBrandList(query: TableQuery): AxiosPromise<TableVO[
 }
 
 // 查询详细
-export function configProductBrandInfo(postId: string | number): AxiosPromise<TableVO> {
+export function configProductBrandInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/configProductBrand/' + postId,
+    url: '/clyh/configProductBrand/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function configProductBrandUp(data: FormData) {
 }
 
 // 删除
-export function configProductBrandDel(postId: string | number | (string | number)[]) {
+export function configProductBrandDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/configProductBrand/' + postId,
+    url: '/clyh/configProductBrand/' + id,
     method: 'delete'
   });
 }

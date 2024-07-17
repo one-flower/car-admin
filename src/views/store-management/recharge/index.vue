@@ -53,9 +53,9 @@
                 <svg-icon class-name="search-icon" icon-class="recharge-log"
               /></el-button>
             </el-tooltip>
-            <el-tooltip v-if="row.state === '1'" content="编辑" placement="top">
+            <!-- <el-tooltip v-if="row.state === '1'" content="编辑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip v-if="row.state === '0'" content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
@@ -78,7 +78,7 @@
     </el-card>
 
     <!-- 添加或修改对话框 -->
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="套餐名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入员工编号" />

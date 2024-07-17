@@ -12,10 +12,12 @@ export interface FormData {
   id: string | undefined;
   customNo?: string; //客户编号
   tagId: string; //客户标签
+  tagIdLabel: string;
   nickname: string; //客户昵称
   telephone: string; //联系电话
   channel: string; //渠道来源
   remarks: string;
+  accountBalance?: string; //账户余额
 }
 
 export interface TableQuery extends PageQuery {
@@ -47,4 +49,3 @@ export interface ChangePhoneForm {
   uuid?: string; //图片验证码UUID
   smsCode?: string;
 }
-export interface customerInfo {}

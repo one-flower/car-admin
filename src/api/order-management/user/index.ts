@@ -12,9 +12,9 @@ export function registerList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function registerInfo(postId: string | number): AxiosPromise<TableVO> {
+export function registerInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/register/' + postId,
+    url: '/clyh/register/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function registerUp(data: FormData) {
 }
 
 // 删除
-export function registerDel(postId: string | number | (string | number)[]) {
+export function registerDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/register/' + postId,
+    url: '/clyh/register/' + id,
     method: 'delete'
   });
 }

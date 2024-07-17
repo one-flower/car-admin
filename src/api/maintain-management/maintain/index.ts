@@ -12,9 +12,9 @@ export function frequencyList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function frequencyInfo(postId: string | number): AxiosPromise<TableVO> {
+export function frequencyInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/frequency/' + postId,
+    url: '/clyh/frequency/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function frequencyUp(data: FormData) {
 }
 
 // 删除
-export function frequencyDel(postId: string | number | (string | number)[]) {
+export function frequencyDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/frequency/' + postId,
+    url: '/clyh/frequency/' + id,
     method: 'delete'
   });
 }

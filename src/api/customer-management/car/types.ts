@@ -46,6 +46,6 @@ export interface TableQuery extends PageQuery {
   vehicleModel: string; //车辆型号
   vin: string; //vin
   licensePlate: string; //车牌号
-  // 客户昵称
-  // 电话号码
+  customNickname?: string; // 客户昵称
+  customtelephone?: string; // 电话号码
 }

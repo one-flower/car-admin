@@ -12,9 +12,9 @@ export function configUpOrgList(query?: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function configUpOrgInfo(postId: string | number): AxiosPromise<TableVO> {
+export function configUpOrgInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/configUpOrg/' + postId,
+    url: '/clyh/configUpOrg/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function configUpOrgUp(data: FormData) {
 }
 
 // 删除
-export function configUpOrgDel(postId: string | number | (string | number)[]) {
+export function configUpOrgDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/configUpOrg/' + postId,
+    url: '/clyh/configUpOrg/' + id,
     method: 'delete'
   });
 }

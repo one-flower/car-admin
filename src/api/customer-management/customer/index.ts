@@ -12,9 +12,9 @@ export function customList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function customInfo(postId: string | number): AxiosPromise<TableVO> {
+export function customInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/custom/' + postId,
+    url: '/clyh/custom/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function customUp(data: FormData) {
 }
 
 // 删除
-export function customDel(postId: string | number | (string | number)[]) {
+export function customDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/custom/' + postId,
+    url: '/clyh/custom/' + id,
     method: 'delete'
   });
 }

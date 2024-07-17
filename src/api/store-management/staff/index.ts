@@ -12,9 +12,9 @@ export function tableList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function getInfo(postId: string | number): AxiosPromise<TableVO> {
+export function getInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/staff/' + postId,
+    url: '/clyh/staff/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function updateInfo(data: FormData) {
 }
 
 // 删除
-export function delInfo(postId: string | number | (string | number)[]) {
+export function delInfo(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/staff/' + postId,
+    url: '/clyh/staff/' + id,
     method: 'delete'
   });
 }

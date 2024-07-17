@@ -12,9 +12,9 @@ export function warrantyList(query: TableQuery): AxiosPromise<TableVO[]> {
 }
 
 // 查询详细
-export function warrantyInfo(postId: string | number): AxiosPromise<TableVO> {
+export function warrantyInfo(id: string | number): AxiosPromise<TableVO> {
   return request({
-    url: '/clyh/warranty/' + postId,
+    url: '/clyh/warranty/' + id,
     method: 'get'
   });
 }
@@ -38,9 +38,9 @@ export function warrantyUp(data: FormData) {
 }
 
 // 删除
-export function warrantyDel(postId: string | number | (string | number)[]) {
+export function warrantyDel(id: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/warranty/' + postId,
+    url: '/clyh/warranty/' + id,
     method: 'delete'
   });
 }

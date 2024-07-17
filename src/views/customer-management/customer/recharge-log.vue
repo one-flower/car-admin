@@ -1,14 +1,11 @@
 <template>
-  <el-drawer :model-value="visible" title="充值记录" direction="rtl" size="80%" close-on-click-modal @close="handleCancel">
+  <el-drawer :model-value="visible" title="充值记录" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
     <div class="p-2">
       <div class="mb10">
-        <el-descriptions class="margin-top" title="客户信息" :column="2" border>
-          <el-descriptions-item label="车主昵称" min-width="100" column="2"> {{ targetInfo.nickname }} </el-descriptions-item>
-          <el-descriptions-item label="手机号码" min-width="100"> {{ targetInfo.telephone }} </el-descriptions-item>
-          <el-descriptions-item label="账户余额" min-width="100"> {{ targetInfo.accountBalance }} </el-descriptions-item>
-          <el-descriptions-item label="客户姓名" min-width="100"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="客户性别" min-width="100"> {{}} </el-descriptions-item>
-          <el-descriptions-item label="出生日期" min-width="100"> {{}} </el-descriptions-item>
+        <el-descriptions class="margin-top" title="客户信息" :column="3" border>
+          <el-descriptions-item label="车主昵称" min-width="100"> {{ userDialog.form.nickname }} </el-descriptions-item>
+          <el-descriptions-item label="手机号码" min-width="100"> {{ userDialog.form.telephone }} </el-descriptions-item>
+          <el-descriptions-item label="账户余额" min-width="100"> {{ userDialog.form.accountBalance }} </el-descriptions-item>
         </el-descriptions>
       </div>
 
@@ -17,7 +14,14 @@
           <el-card shadow="hover">
             <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
               <el-form-item label="充值时间" prop="type">
-                <el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+                <el-date-picker
+                  v-model="dateRange"
+                  value-format="YYYY-MM-DD"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                />
               </el-form-item>
               <el-form-item label="套餐名称" prop="rechargeId">
                 <!-- <el-input v-model="tableInfo.queryParams.rechargeId" placeholder="请输入套餐名称" /> -->
@@ -46,7 +50,6 @@
           <el-table-column label="套餐名称" align="center" prop="rechargeName" />
           <el-table-column label="充值金额" align="center" prop="realityMoney" />
           <el-table-column label="赠送金额" align="center" prop="giveMoney" />
-          <el-table-column label="账户余额" align="center" prop="remainingSum" />
           <el-table-column label="经办人" align="center" prop="" />
           <el-table-column label="充值时间" align="center" prop="" />
         </el-table>
@@ -63,7 +66,7 @@
   </el-drawer>
 
   <!-- 添加对话框 -->
-  <UserRecharge v-model:visible="userDialog.visible" :target-info="userDialog.form" @confirmCallBack="init"></UserRecharge>
+  <UserRecharge v-model:visible="userDialog.visible" :target-info="userDialog.form" @confirm-call-back="init"></UserRecharge>
 </template>
 
 <script setup name="commExt" lang="ts">
@@ -71,21 +74,15 @@ import { propTypes } from '@/utils/propTypes';
 import { TableQuery, TableVO } from '@/api/store-management/recharge/types';
 import UserRecharge from './user-recharge.vue';
 import { rechargeLogList } from '@/api/store-management/recharge';
-// import { FormData } from '@/api/store-management/recharge/types';
 import { FormData } from '@/api/customer-management/customer/types';
+import { customInfo } from '@/api/customer-management/customer';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const emit = defineEmits(['update:visible']);
 const props = defineProps({
   visible: propTypes.bool.def(false).isRequired,
-  targetInfo: {
-    type: Object,
-    default: () => {
-      return [];
-    },
-    required: true
-  }
+  targetId: propTypes.string.def('').isRequired
 });
 
 const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
@@ -130,7 +127,8 @@ const initFormData: FormData = {
   nickname: '',
   telephone: '',
   channel: '',
-  remarks: ''
+  remarks: '',
+  tagIdLabel: ''
 };
 const userDialog = reactive({
   visible: false,
@@ -139,7 +137,7 @@ const userDialog = reactive({
 });
 /** 充值 */
 const handleRecharge = async () => {
-  Object.assign(userDialog.form, props.targetInfo);
+  Object.assign(userDialog.form, {});
   userDialog.visible = true;
 };
 
@@ -148,6 +146,10 @@ const handleCancel = () => {
 };
 
 const init = async () => {
+  const res = await customInfo(props.targetId);
+  Object.assign(userDialog.form, res.data);
+  tableInfo.queryParams.customId = props.targetId;
+
   getTableData();
 };
 
@@ -155,9 +157,7 @@ watch(
   () => props.visible,
   (val) => {
     if (!val) return;
-    tableInfo.queryParams.customId = props.targetInfo.id;
     init();
   }
 );
-// init();
 </script>
