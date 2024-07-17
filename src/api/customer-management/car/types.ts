@@ -14,6 +14,7 @@ export interface TableVO extends BaseEntity {
 
 export interface FormData {
   id: string | undefined;
+  carState: string; //车辆状态
   customId: string; //车主id
   toType: string; //车辆归属
   brandId: string; //车辆品牌id
@@ -27,9 +28,10 @@ export interface FormData {
   licensePlate: string; //车牌号
   imgUrls: string; //车辆照片组
   remarks: string; //备注
-  // 信息补全
-  carState: string; //车辆状态
+  infoCompletion: string; // 信息补全
+
   vin: string; //vin
+  brand: string; //车辆品牌
   manufacturer: string; //车辆厂商
   typename: string; //车辆系列
   vehicleModel: string; //车辆型号

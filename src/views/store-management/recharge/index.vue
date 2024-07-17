@@ -9,7 +9,7 @@
             </el-form-item>
             <el-form-item label="状态" prop="state">
               <el-select v-model="queryParams.state" value-key="post" placeholder="请选择状态" clearable filterable>
-                <el-option v-for="item in dictObj.state" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.clyh_recharge_state" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -125,7 +125,7 @@ const tableAttr = reactive<TableAttr>({
   multiple: true
 });
 
-const dictObj = toReactive<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
+const dictObj = toReactive<any>(proxy?.useDict('clyh_recharge_state'));
 
 const queryFormRef = ref<ElFormInstance>();
 
@@ -142,7 +142,7 @@ const initFormData: FormData = {
   name: '',
   realityMoney: 0,
   giveMoney: 0,
-  state: '1',
+  state: '1', // 1启用
   remarks: ''
 };
 

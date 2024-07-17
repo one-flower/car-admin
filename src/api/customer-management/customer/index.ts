@@ -68,3 +68,10 @@ export function smsCode(query: { phonenumber: string }) {
     params: query
   });
 }
+// 查询车主 套餐名称
+export function customDropdown(id?: string | number) {
+  return request({
+    url: '/clyh/custom/dropdown',
+    method: 'get'
+  });
+}

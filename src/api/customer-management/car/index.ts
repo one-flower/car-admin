@@ -44,11 +44,26 @@ export function carManageDel(id: string | number | (string | number)[]) {
     method: 'delete'
   });
 }
+// 查询车主 套餐名称
+export function customDropdown(id?: string | number) {
+  return request({
+    url: '/clyh/custom/dropdown',
+    method: 'get'
+  });
+}
 
 // 查询vin吗
-export function clyhVinInfo(id: string | number) {
+export function vinInfo(id: string | number) {
   return request({
     url: '/clyh/vin/' + id,
+    method: 'get'
+  });
+}
+
+// 车辆装配
+export function fabricateList() {
+  return request({
+    url: '/clyh/fabricate/list',
     method: 'get'
   });
 }
