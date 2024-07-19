@@ -54,25 +54,35 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="车辆品牌" align="center" prop="brandIdLabel" />
-        <el-table-column label="车辆号码" align="center" prop="licensePlate" />
-        <el-table-column label="车架号码" align="center" prop="vin" />
-        <el-table-column label="车辆厂商" align="center" prop="manufacturer" />
-        <el-table-column label="车辆系列" align="center" prop="typename" />
-        <el-table-column label="车辆型号" align="center" prop="vehicleModel" />
-        <el-table-column label="车辆状态" align="center" prop="carStateLabel" />
-        <el-table-column label="客户昵称" align="center" prop="nickname" />
-        <el-table-column label="电话号码" align="center" prop="telephone" />
+        <el-table-column label="车辆品牌" align="left" prop="brandIdLabel" width="100" />
+        <el-table-column label="车辆号码" align="left" prop="licensePlate" width="100" />
+        <el-table-column label="车架号码" align="left" prop="vin" show-overflow-tooltip />
+        <el-table-column label="车辆厂商" align="left" prop="manufacturer" show-overflow-tooltip />
+        <el-table-column label="车辆系列" align="left" prop="typename" show-overflow-tooltip />
+        <el-table-column label="车辆型号" align="left" prop="vehicleModel" />
+        <el-table-column label="车辆状态" align="left" prop="carStateLabel" />
+        <el-table-column label="客户昵称" align="left" prop="nickname">
+          <template #default="{ row }">{{ row.customIdObj.nickname }}</template>
+        </el-table-column>
+        <el-table-column label="电话号码" align="left" prop="telephone" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.customIdObj.telephone }}</template>
+        </el-table-column>
         <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="装配情况" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link @click="handleFabricate(row)">
+                <svg-icon class-name="search-icon" icon-class="car-change" />
+              </el-button>
             </el-tooltip>
             <el-tooltip content="订单记录" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleChangePhone(row)"></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link @click="handleOrderLog(row)">
+                <svg-icon class-name="search-icon" icon-class="order-log"
+              /></el-button>
             </el-tooltip>
             <el-tooltip content="变更车主" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
+              <el-button v-hasPermi="['system:post:edit']" link @click="handleUser(row)">
+                <svg-icon class-name="search-icon" icon-class="car-user-change"
+              /></el-button>
             </el-tooltip>
             <el-tooltip :content="row.carState === '0' ? '启用' : '禁用'" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
@@ -151,7 +161,7 @@
           <image-upload v-model="data.form.imgUrls"></image-upload>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="data.form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="data.form.remarks" type="textarea" maxlength="255" show-word-limit row="auto" placeholder="请输入内容" />
         </el-form-item>
         <template v-if="!(data.form.id && data.form.brand)">
           <el-form-item label="信息补全" prop="infoCompletion">
@@ -169,7 +179,7 @@
             </el-form-item>
           </template>
         </template>
-        <el-descriptions v-if="data.form.brand" class="margin-top" title="车辆信息" :column="2" border>
+        <el-descriptions v-if="data.form.brand" title="车辆信息" :column="2" border>
           <el-descriptions-item label="车辆品牌"> {{ data.form.brand }} </el-descriptions-item>
           <el-descriptions-item label="车辆厂商"> {{ data.form.manufacturer }} </el-descriptions-item>
           <el-descriptions-item label="车辆系列"> {{ data.form.typename }} </el-descriptions-item>
@@ -187,34 +197,77 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 车辆装配 -->
+    <car-fabricate v-model:visible="fabricateInfo.visible" :target-info="fabricateInfo.data"></car-fabricate>
+
+    <!-- 订单记录 -->
+    <order-log v-model:visible="orderLogInfo.visible" :target-info="orderLogInfo.data"></order-log>
+
+    <!-- 变更车主,后续分页 -->
+    <el-dialog v-model="userInfo.visible" :title="userInfo.title" width="600px" append-to-body>
+      <el-descriptions title="车辆信息" :column="2" border min-width="100" class="mb10">
+        <el-descriptions-item label="车辆归属" min-width="100"> {{ userInfo.describeData.toTypeLabel }} </el-descriptions-item>
+        <el-descriptions-item label="车牌号码" min-width="100"> {{ userInfo.describeData.licensePlate }} </el-descriptions-item>
+        <el-descriptions-item label="车辆品牌" min-width="100"> {{ userInfo.describeData.brandIdLabel }} </el-descriptions-item>
+        <el-descriptions-item label="车辆厂商" min-width="100"> {{ userInfo.describeData.manufacturer }} </el-descriptions-item>
+        <el-descriptions-item label="车辆系列"> {{ userInfo.describeData.typename }} </el-descriptions-item>
+        <el-descriptions-item label="车辆型号"> {{ userInfo.describeData.vehicleModel }} </el-descriptions-item>
+        <el-descriptions-item label="车辆级别"> {{ userInfo.describeData.sizetype }} </el-descriptions-item>
+        <el-descriptions-item label="车身结构"> {{ userInfo.describeData.bodytype }} </el-descriptions-item>
+        <el-descriptions-item label="驱动方式"> {{ userInfo.describeData.drivemode }} </el-descriptions-item>
+        <el-descriptions-item label="能源类型"> {{ userInfo.describeData.fueltype }} </el-descriptions-item>
+        <el-descriptions-item label="备注" :span="2"> {{ userInfo.describeData.remarks }} </el-descriptions-item>
+        <el-descriptions-item label="车辆照片" :span="2">
+          <image-preview :height="100" :src="userInfo.describeData.imgUrls" :preview-src-list="[userInfo.describeData.imgUrls]"></image-preview>
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-descriptions title="原车主信息" :column="2" border class="mb10">
+        <el-descriptions-item label="车主昵称" min-width="100"> {{ userInfo.describeData.customIdObj.nickname }} </el-descriptions-item>
+        <el-descriptions-item label="预留电话" min-width="100"> {{ userInfo.describeData.customIdObj.telephone }} </el-descriptions-item>
+      </el-descriptions>
+      <el-descriptions title="新车主" :column="2" border></el-descriptions>
+      <el-form ref="UserFormRef" :model="userInfo.data" :rules="userRules" label-width="80px" @submit.prevent>
+        <el-form-item label="选择车主" prop="customId">
+          <el-select v-model="userInfo.data.customId" placeholder="请选择车主" clearable filterable>
+            <el-option v-for="item in userInfo.customList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="变更原因" prop="remarks">
+          <el-input v-model="userInfo.data.remarks" type="textarea" maxlength="255" show-word-limit row="auto" placeholder="请输入内容" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="userSubmit">确 定</el-button>
+          <el-button @click="userCanecl">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script setup name="carManage" lang="ts">
-import { carManageList, carManageAdd, carManageDel, carManageInfo, carManageUp, customDropdown, vinInfo } from '@/api/customer-management/car';
+import {
+  carManageList,
+  carManageAdd,
+  carManageDel,
+  carManageInfo,
+  carManageUp,
+  customDropdown,
+  vinInfo,
+  carManageEditCusetom
+} from '@/api/customer-management/car';
 import { FormData, TableQuery, TableVO } from '@/api/customer-management/car/types';
 import { carProvince, carCity } from '@/utils/static-dict';
+import CarFabricate from './car-fabricate.vue';
+import OrderLog from './order-log.vue';
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useNewDict('clyhBrand__clyhBrand', 'dictEnum__carState'));
 const oldDictObj = toReactive<any>(proxy?.useDict('clyh_to_type', 'clyh_license_plate_state', 'clyh_info_completion'));
-// toRefs<any>(proxy?.useDict('sys_normal_disable'));
 
 dictObj.carProvince = carProvince;
 dictObj.carCity = carCity;
-
-// Object.assign(dictObj, oldDictObj);
-// console.log(dictObj, oldDictObj);
-// dictObj.belong = [
-//   { label: '个人', value: '0' },
-//   { label: '企业', value: '1' }
-// ];
-// dictObj.cardNoState = [
-//   { label: '已上牌', value: '0' },
-//   { label: '随机车牌', value: '1' }
-// ];
-// dictObj.infoComp = [
-//   { label: '稍后补全', value: '0' },
-//   { label: '立即补全', value: '1' }
-// ];
 
 const tableData = ref<TableVO[]>([]);
 const loading = ref(true);
@@ -227,7 +280,7 @@ const tableAttr = reactive<TableAttr>({
 
 const queryFormRef = ref<ElFormInstance>();
 
-const pageTitle = '渠道来源';
+const pageTitle = '车辆信息';
 const FormDataRef = ref<ElFormInstance>();
 
 const dialog = reactive<DialogOption>({
@@ -260,9 +313,6 @@ const initFormData: FormData = {
   fueltype: '',
   brand: ''
 };
-const carValidator = (rule: any, value: any, callback: any, source: any, options: any) => {
-  console.log(value, 'value');
-};
 const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
@@ -281,7 +331,10 @@ const data = reactive<PageData<FormData, TableQuery>>({
     licensePlateState: [{ required: true, message: '车辆品牌不能为空', trigger: ['blur', 'change'] }],
     licenseProvince: [{ required: true, message: '不能为空', trigger: 'change' }],
     licenseOrg: [{ required: true, message: ' 不能为空', trigger: 'change' }],
-    licenseNum: [{ required: true, message: ' 不能为空', trigger: 'blur' }],
+    licenseNum: [
+      { required: true, message: ' 不能为空', trigger: 'blur' },
+      { message: '请填写真实车牌', type: 'string', min: 5, max: 6, trigger: 'blur' }
+    ],
     infoCompletion: [{ required: true, message: '信息补全不能为空', trigger: 'change' }],
     vin: [
       { required: true, message: '车架号码不能为空', trigger: 'change' },
@@ -338,7 +391,7 @@ const handleAdd = () => {
   dialog.visible = true;
   dialog.title = `添加${pageTitle}`;
 };
-//启用禁用
+
 /** 启用禁用 */
 const handleState = async (row?: TableVO) => {
   const title = row.carState === '0' ? '启用' : '禁用';
@@ -351,8 +404,8 @@ const handleState = async (row?: TableVO) => {
 /** 修改按钮操作 */
 const handleUpdate = async (row?: TableVO) => {
   reset();
-  const postId = row?.id || tableAttr.ids[0];
-  const res = await carManageInfo(postId);
+  const ids = row?.id || tableAttr.ids[0];
+  const res = await carManageInfo(ids);
   Object.assign(data.form, res.data);
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
@@ -388,13 +441,98 @@ const handleDelete = async (row?: TableVO) => {
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');
 };
+
+// 车辆装配
+const fabricateInfo = reactive({
+  visible: false,
+  title: '车辆装配',
+  data: {}
+});
+const handleFabricate = async (row: TableVO) => {
+  // const res = await carManageInfo(row?.id);
+  Object.assign(fabricateInfo.data, row);
+  fabricateInfo.visible = true;
+};
+
+// 订单记录
+const orderLogInfo = reactive({
+  visible: false,
+  title: '订单记录',
+  data: {}
+});
+const handleOrderLog = async (row: TableVO) => {
+  Object.assign(orderLogInfo.data, row);
+  orderLogInfo.visible = true;
+};
+
+// 变更车主
+const UserFormRef = ref<ElFormInstance>();
+type UserInfo = {
+  visible: boolean;
+  title: string;
+  describeData: any;
+  data: any;
+  customList: any;
+};
+const userInfo = reactive<UserInfo>({
+  visible: false,
+  title: '变更车主',
+  describeData: {},
+  data: {},
+  customList: []
+});
+const userRules = {
+  customId: [{ required: true, message: '选择车主不能为空', trigger: ['blur', 'change'] }],
+  remarks: [{ required: true, message: '变更原因不能为空', trigger: ['blur', 'change'] }]
+};
+const UserReset = () => {
+  Object.assign(userInfo.describeData, {});
+  Object.assign(userInfo.data, {});
+  UserFormRef.value?.resetFields();
+};
+const handleUser = async (row: any) => {
+  UserReset();
+  // const res = await carManageInfo(row?.id);
+
+  Object.assign(userInfo.describeData, row);
+  Object.assign(userInfo.data, {
+    id: row.id
+  });
+  userInfo.customList = dictObj.customList.filter((item: any) => {
+    return item.id !== userInfo.describeData.customIdObj.id;
+  });
+  userInfo.visible = true;
+};
+const userSubmit = () => {
+  UserFormRef.value?.validate(async (valid: boolean) => {
+    if (valid) {
+      await carManageEditCusetom({
+        id: userInfo.describeData.id,
+        brandId: userInfo.describeData.brandId,
+        licensePlateState: userInfo.describeData.licensePlateState,
+        toType: userInfo.describeData.toType,
+        imgUrls: userInfo.describeData.imgUrls,
+        vin: userInfo.describeData.vin,
+        infoCompletion: userInfo.describeData.infoCompletion,
+        customId: userInfo.data.customId
+      });
+      proxy?.$modal.msgSuccess('操作成功');
+      userInfo.visible = false;
+      await getTableData();
+    }
+  });
+};
+const userCanecl = async () => {
+  userInfo.visible = false;
+};
+
 const init = async () => {
   const res = await customDropdown();
 
   dictObj.customList = res.map((item) => {
     return {
       ...item,
-      label: item.nickname,
+      label: `${item.nickname}/${item.telephone}`,
       value: item.id
     };
   });

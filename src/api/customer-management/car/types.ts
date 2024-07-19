@@ -42,12 +42,12 @@ export interface FormData {
 }
 
 export interface TableQuery extends PageQuery {
-  brandId: string; //车辆品牌id
-  manufacturer: string; //车辆厂商
-  typename: string; //车辆系列
-  vehicleModel: string; //车辆型号
-  vin: string; //vin
-  licensePlate: string; //车牌号
+  brandId?: string; //车辆品牌id
+  manufacturer?: string; //车辆厂商
+  typename?: string; //车辆系列
+  vehicleModel?: string; //车辆型号
+  vin?: string; //vin
+  licensePlate?: string; //车牌号
   customNickname?: string; // 客户昵称
   customtelephone?: string; // 电话号码
 }

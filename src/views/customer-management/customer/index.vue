@@ -123,11 +123,11 @@
     </el-dialog>
 
     <!-- 改变手机号 -->
-    <change-phone v-model:visible="changeDialog.visible" v-model:target-info="changeDialog.form"></change-phone>
+    <change-phone v-model:visible="changeDialog.visible" :target-info="changeDialog.form"></change-phone>
     <!-- 充值记录 -->
-    <rechargeLog v-model:visible="rechargeLogDialog.visible" v-model:target-id="rechargeLogDialog.id"></rechargeLog>
+    <rechargeLog v-model:visible="rechargeLogDialog.visible" :target-id="rechargeLogDialog.id"></rechargeLog>
     <!-- 客户档案 -->
-    <Info v-model:visible="infoDialog.visible" v-model:target-info="infoDialog.form"></Info>
+    <Info v-model:visible="infoDialog.visible" :target-info="infoDialog.form"></Info>
   </div>
 </template>
 <script setup name="channelSource" lang="ts">

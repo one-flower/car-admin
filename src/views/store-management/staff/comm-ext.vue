@@ -9,7 +9,7 @@
   >
     <div class="p-2">
       <div class="mb-[10px]">
-        <el-descriptions class="margin-top" title="员工信息" :column="3" border>
+        <el-descriptions title="员工信息" :column="3" border>
           <el-descriptions-item label="员工编号" :min-width="100"> {{ pesronInfo.staffCode }} </el-descriptions-item>
           <el-descriptions-item label="员工姓名" :min-width="100"> {{ pesronInfo.name }} </el-descriptions-item>
           <el-descriptions-item label="员工岗位" :min-width="100"> {{ pesronInfo.configPostIdLabel }} </el-descriptions-item>

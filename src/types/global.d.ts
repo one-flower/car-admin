@@ -117,7 +117,7 @@ declare global {
     visible?: boolean;
     title: string;
     disabled?: boolean;
-    data: T;
+    data?: T;
   }
 
   declare interface LayoutSetting {

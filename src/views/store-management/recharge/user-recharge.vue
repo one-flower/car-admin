@@ -28,14 +28,14 @@
         </el-form-item>
       </el-form>
       <div class="mb10">
-        <el-descriptions class="margin-top" title="充值套餐" :column="2" border>
+        <el-descriptions title="充值套餐" :column="2" border>
           <el-descriptions-item label="套餐名称" min-width="100" :span="2"> {{ targetInfo.name }} </el-descriptions-item>
           <el-descriptions-item label="充值金额" min-width="100" :span="1"> {{ formData.realityMoney }} 元</el-descriptions-item>
           <el-descriptions-item label="赠送金额" min-width="100" :span="1"> {{ formData.giveMoney }} 元</el-descriptions-item>
         </el-descriptions>
       </div>
       <div class="mb10">
-        <el-descriptions class="margin-top" title="会员信息" :column="2" border>
+        <el-descriptions title="会员信息" :column="2" border>
           <el-descriptions-item label="客户昵称" min-width="100"> {{ selectOption.form.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话" min-width="100"> {{ selectOption.form.telephone }} </el-descriptions-item>
           <el-descriptions-item label="客户标签" min-width="100"> {{ selectOption.form.tagIdLabel }} </el-descriptions-item>
@@ -43,7 +43,7 @@
         </el-descriptions>
       </div>
       <div class="mb10">
-        <el-descriptions class="margin-top" title="充值结果" :column="2" border>
+        <el-descriptions title="充值结果" :column="2" border>
           <el-descriptions-item label="账户余额" min-width="100">
             {{ countNum(formData.realityMoney, formData.giveMoney, selectOption.form.accountBalance) }} 元</el-descriptions-item
           >

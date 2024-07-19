@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :model-value="visible" title="车辆装配" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
+  <el-drawer :model-value="visible" title="订单记录" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
     <div class="p-2">
       <div class="mb10">
         <el-descriptions title="车辆信息" :column="3" border>
@@ -16,11 +16,26 @@
         <div v-show="tableInfo.showSearch" class="mb-[10px]">
           <el-card shadow="hover">
             <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
+              <el-form-item label="订单类型" prop="type">
+                <el-select v-model="tableInfo.queryParams.projectType" placeholder="请选择订单类型" clearable filterable>
+                  <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item label="项目类型" prop="type">
                 <el-select v-model="tableInfo.queryParams.projectType" placeholder="请选择项目类型" clearable filterable>
                   <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
+              </el-form-item>
+              <el-form-item label="订单编号" prop="type">
+                <el-input
+                  v-model="tableInfo.queryParams.productBrandId"
+                  placeholder="请输入订单编号"
+                  clearable
+                  @change=""
+                  @keyup.enter="handleQuery"
+                ></el-input>
               </el-form-item>
               <el-form-item label="产品品牌" prop="rechargeId">
                 <el-select v-model="tableInfo.queryParams.productBrandId" placeholder="请选择产品品牌" clearable filterable>
@@ -30,6 +45,26 @@
               </el-form-item>
               <el-form-item label="产品名称" prop="rechargeId">
                 <el-select v-model="tableInfo.queryParams.productId" placeholder="请选择产品名称" clearable filterable>
+                  <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="支付状态" prop="rechargeId">
+                <el-select v-model="tableInfo.queryParams.productId" placeholder="请选择支付状态" clearable filterable>
+                  <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="订单时间" prop="rechargeId">
+                <el-date-picker
+                  v-model="dateRange"
+                  type="daterange"
+                  value-format="YYYY-MM-DD"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                />
+              </el-form-item>
+              <el-form-item label="订单状态" prop="rechargeId">
+                <el-select v-model="tableInfo.queryParams.productId" placeholder="请选择订单状态" clearable filterable>
                   <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
@@ -49,15 +84,21 @@
           </el-row>
         </template>
         <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips">
-          <el-table-column label="项目类型" align="center" prop="customName" />
-          <el-table-column label="产品品牌" align="center" prop="customTelephone" />
-          <el-table-column label="产品名称" align="center" prop="rechargeName" />
-          <el-table-column label="质保服务" align="center" prop="realityMoney" />
-          <el-table-column label="保养服务" align="center" prop="giveMoney" />
-          <el-table-column label="装配时间" align="center" prop="" />
-          <el-table-column label="订单编号" align="center" prop="">
+          <el-table-column label="订单类型" align="center" prop="customName" />
+          <el-table-column label="服务编号" align="center" prop="customTelephone" />
+          <el-table-column label="项目类型" align="center" prop="rechargeName" />
+          <el-table-column label="产品品牌" align="center" prop="realityMoney" />
+          <el-table-column label="订单产品" align="center" prop="giveMoney" />
+          <el-table-column label="订单状态" align="center" prop="" />
+          <el-table-column label="订单更新时间" align="center" prop="" />
+          <el-table-column label="订单价格(/元)" align="center" prop="" />
+          <el-table-column label="实际支付(/元)" align="center" prop="" />
+          <el-table-column label="支付状态" align="center" prop="" />
+          <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
             <template #default="{ row }">
-              <el-button type="text" @click="handleDetail(row)"> {{ row.id }}</el-button>
+              <el-tooltip content="详情" placement="top">
+                <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
+              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
@@ -96,9 +137,9 @@
 
 <script setup name="commExt" lang="ts">
 import { propTypes } from '@/utils/propTypes';
-import { TableQuery, TableVO } from '@/api/customer-management/car/types';
+import { TableQuery, TableVO } from '@/api/store-management/recharge/types';
 import UserRecharge from './user-recharge.vue';
-import { fabricateList } from '@/api/customer-management/car';
+import { rechargeLogList } from '@/api/store-management/recharge';
 import { FormData } from '@/api/customer-management/customer/types';
 import { customInfo } from '@/api/customer-management/customer';
 
@@ -116,6 +157,7 @@ const props = defineProps({
   }
 });
 
+const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   ids: [],
@@ -129,10 +171,9 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 
 /** 查询列表 */
 const getTableData = async () => {
-  console.log(tableInfo.queryParams, 'sss');
   tableInfo.loading = true;
 
-  const res = await fabricateList({ ...tableInfo.queryParams, id: props.targetInfo.id });
+  const res = await rechargeLogList(tableInfo.queryParams);
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -146,6 +187,7 @@ const handleQuery = () => {
 
 /** 重置按钮操作 */
 const resetQuery = () => {
+  dateRange.value = ['', ''];
   queryFormRef.value?.resetFields();
   tableInfo.queryParams.pageNum = 1;
   handleQuery();
@@ -153,7 +195,7 @@ const resetQuery = () => {
 
 const dialog = reactive({
   visible: false,
-  title: '订单详情'
+  title: '详情'
 });
 const orderData = reactive({});
 const handleDetail = (row?: TableVO) => {

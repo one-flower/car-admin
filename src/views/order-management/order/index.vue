@@ -31,7 +31,14 @@
               </el-select>
             </el-form-item>
             <el-form-item label="订单时间" prop="createTime">
-              <el-date-picker v-model="dateRangeStar" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+              <el-date-picker
+                v-model="dateRange"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
             </el-form-item>
             <el-form-item label="订单状态" prop="commState">
               <el-select v-model="tableInfo.queryParams.commState" value-key="" placeholder="请选择质保状态" clearable filterable>
@@ -76,23 +83,37 @@
         </el-row>
       </template>
       <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
-        <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column label="品牌名称" align="center" prop="brandName" />
-        <el-table-column label="车架号码" align="center" prop="vin" />
-        <el-table-column label="车牌号码" align="center" prop="licensePlate" />
-        <el-table-column label="项目类型" align="center" prop="projectType" />
-        <el-table-column label="产品品牌" align="center" prop="productBrandName" />
-        <el-table-column label="产品名称" align="center" prop="productName" />
-        <el-table-column label="质保开始" align="center" prop="startDate" />
-        <el-table-column label="质保结束" align="center" prop="endDate" />
-        <el-table-column label="质保状态" align="center" prop="state" />
-        <el-table-column label="更新时间" align="center" prop="updateTime" />
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="订单类型" align="center" prop="brandName" />
+        <el-table-column label="订单编号" align="center" prop="vin" />
+        <el-table-column label="车辆品牌" align="center" prop="licensePlate" />
+        <el-table-column label="车架号码" align="center" prop="projectType" />
+        <el-table-column label="车牌号码" align="center" prop="productBrandName" />
+        <el-table-column label="项目类型" align="center" prop="productName" />
+        <el-table-column label="产品品牌" align="center" prop="startDate" />
+        <el-table-column label="订单产品" align="center" prop="endDate" />
+        <el-table-column label="订单施工" align="center" prop="state" />
+        <el-table-column label="订单状态" align="center" prop="updateTime" />
+        <el-table-column label="订单提成" align="center" prop="state" />
+        <el-table-column label="订单更新事件" align="center" prop="updateTime" />
+        <el-table-column label="订单价格(/元)" align="center" prop="state" />
+        <el-table-column label="实际支付(/元)" align="center" prop="updateTime" />
+        <el-table-column label="支付状态" align="center" prop="state" />
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="保养记录" placement="top">
+            <el-tooltip content="支付" placement="top">
+              <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="开始施工" placement="top">
+              <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="编辑订单" placement="top">
+              <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="取消订单" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
           </template>
@@ -109,7 +130,7 @@
     </el-card>
 
     <!-- 添加或修改品牌对话框 -->
-    <el-dialog v-model="formInfo.visible" :title="formInfo.title" width="700px" append-to-body>
+    <!-- <el-dialog v-model="formInfo.visible" :title="formInfo.title" width="700px" append-to-body>
       <el-form ref="FormDataRef" :model="formInfo.data" :rules="rules" label-width="80px" :disabled="formInfo.disabled" @submit.prevent> </el-form>
       <template v-if="!formInfo.disabled" #footer>
         <div class="dialog-footer">
@@ -117,17 +138,21 @@
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
-    </el-dialog>
+    </el-dialog> -->
+
+    <!-- 添加 -->
+    <create-order v-model:visible="formInfo.visible"></create-order>
   </div>
 </template>
 
-<script setup name="Brand" lang="ts">
+<script setup name="Order" lang="ts">
 import { warrantyAdd, warrantyDel, warrantyUp, warrantyInfo, warrantyList } from '@/api/maintain-management/warranty';
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
+import createOrder from './create-order.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
-const dateRangeStar = ref<[DateModelType, DateModelType]>(['', '']);
+const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   ids: [],
@@ -140,7 +165,13 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 });
 
 const initFormData: FormData = {
-  id: undefined
+  id: undefined,
+  customNo: '',
+  tagIdLabel: '',
+  nickname: '',
+  telephone: '',
+  channel: '',
+  accountBalance: ''
 };
 const formRef = ref<ElFormInstance>();
 const formInfo = reactive<FormInfo<FormData>>({
@@ -159,9 +190,7 @@ const rules = {
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const params1 = proxy?.addDateRange(tableInfo.queryParams, dateRangeStar.value, 'startDate');
-  const params2 = proxy?.addDateRange(params1, dateRangeStar.value, 'endDate');
-  const res = await warrantyList(params2);
+  const res = await warrantyList(proxy?.addDateRange(tableInfo.queryParams, dateRange.value, 'startDate'));
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -187,6 +216,7 @@ const handleQuery = () => {
 
 /** 重置按钮操作 */
 const resetQuery = () => {
+  dateRange.value = ['', ''];
   queryFormRef.value?.resetFields();
   tableInfo.queryParams.pageNum = 1;
   handleQuery();
@@ -208,8 +238,8 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = async (row?: TableVO) => {
   reset();
-  const postId = row?.id || tableInfo.ids[0];
-  const res = await warrantyInfo(postId);
+  const ids = row?.id || tableInfo.ids[0];
+  const res = await warrantyInfo(ids);
   Object.assign(formInfo.data, res.data);
 
   formInfo.visible = true;
@@ -238,8 +268,8 @@ const handleDelete = async (row?: TableVO) => {
 };
 
 const handleDetail = async (row?: TableVO) => {
-  const postId = row?.id || tableInfo.ids[0];
-  const res = await warrantyInfo(postId);
+  const ids = row?.id || tableInfo.ids[0];
+  const res = await warrantyInfo(ids);
   Object.assign(formInfo.data, res.data);
   formInfo.visible = true;
   formInfo.title = '品牌详情';

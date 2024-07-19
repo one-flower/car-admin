@@ -1,7 +1,7 @@
 <template>
   <el-drawer :model-value="visible" title="客户档案" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
     <div class="mb10">
-      <el-descriptions class="margin-top" title="客户信息" :column="2" border>
+      <el-descriptions title="客户信息" :column="2" border>
         <el-descriptions-item label="客户编号" min-width="100" column="2"> {{ targetInfo.customNo }} </el-descriptions-item>
         <el-descriptions-item label="客户标签" min-width="100"> {{ targetInfo.tagIdLabel }} </el-descriptions-item>
         <el-descriptions-item label="客户昵称" min-width="100"> {{ targetInfo.nickname }} </el-descriptions-item>
@@ -10,7 +10,7 @@
         <el-descriptions-item label="账户余额" min-width="100"> {{ targetInfo.accountBalance }} </el-descriptions-item>
       </el-descriptions>
     </div>
-    <!-- <el-descriptions class="margin-top" title="个人信息" :column="2" border>
+    <!-- <el-descriptions  title="个人信息" :column="2" border>
       <el-descriptions-item label="数据来源" min-width="100" column="2"> {{}} </el-descriptions-item>
       <el-descriptions-item label="注册时间" min-width="100"> {{}} </el-descriptions-item>
       <el-descriptions-item label="客户姓名" min-width="100"> {{}} </el-descriptions-item>
@@ -23,7 +23,7 @@
       <el-descriptions-item label="上次登录时间" min-width="100"> {{}} 元</el-descriptions-item>
     </el-descriptions> -->
     <div class="mb10">
-      <el-descriptions class="margin-top" title="车辆信息" :column="2" border></el-descriptions>
+      <el-descriptions title="车辆信息" :column="2" border></el-descriptions>
 
       <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->

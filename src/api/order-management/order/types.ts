@@ -35,3 +35,17 @@ export interface TableQuery extends PageQuery {
   isCommission?: string; // 订单提成
   payState?: string; // 支付状态
 }
+
+export interface OrderForm {
+  id: string | undefined;
+  noValue: any;
+  type: string; // 订单类型
+  projectType: string; // 项目类型
+  carManageId: number; // 选择车辆
+  brandId: string; // 产品名称
+  productId: string; // 选择产品
+  orderPrice: number; // 订单价格
+  remarks: string; // 备注
+}
+
+export interface OrderBoForm {}

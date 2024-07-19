@@ -44,6 +44,16 @@ export function carManageDel(id: string | number | (string | number)[]) {
     method: 'delete'
   });
 }
+
+// 更换车主
+export function carManageEditCusetom(data: any) {
+  return request({
+    url: '/clyh/carManage/editCustom',
+    method: 'put',
+    data: data
+  });
+}
+
 // 查询车主 套餐名称
 export function customDropdown(id?: string | number) {
   return request({
@@ -61,9 +71,10 @@ export function vinInfo(id: string | number) {
 }
 
 // 车辆装配
-export function fabricateList() {
+export function fabricateList(query: any) {
   return request({
     url: '/clyh/fabricate/list',
-    method: 'get'
+    method: 'get',
+    params: query
   });
 }
