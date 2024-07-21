@@ -3,9 +3,9 @@
     <div class="p-2">
       <div class="mb10">
         <el-descriptions title="客户信息" :column="3" border>
-          <el-descriptions-item label="车主昵称" min-width="100"> {{ userDialog.form.nickname }} </el-descriptions-item>
-          <el-descriptions-item label="手机号码" min-width="100"> {{ userDialog.form.telephone }} </el-descriptions-item>
-          <el-descriptions-item label="账户余额" min-width="100"> {{ userDialog.form.accountBalance }} </el-descriptions-item>
+          <el-descriptions-item label="车主昵称"> {{ userDialog.form.nickname }} </el-descriptions-item>
+          <el-descriptions-item label="手机号码"> {{ userDialog.form.telephone }} </el-descriptions-item>
+          <el-descriptions-item label="账户余额"> {{ userDialog.form.accountBalance }} </el-descriptions-item>
         </el-descriptions>
       </div>
 

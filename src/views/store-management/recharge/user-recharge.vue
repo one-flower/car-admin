@@ -29,28 +29,26 @@
       </el-form>
       <div class="mb10">
         <el-descriptions title="充值套餐" :column="2" border>
-          <el-descriptions-item label="套餐名称" min-width="100" :span="2"> {{ targetInfo.name }} </el-descriptions-item>
-          <el-descriptions-item label="充值金额" min-width="100" :span="1"> {{ formData.realityMoney }} 元</el-descriptions-item>
-          <el-descriptions-item label="赠送金额" min-width="100" :span="1"> {{ formData.giveMoney }} 元</el-descriptions-item>
+          <el-descriptions-item label="套餐名称" :span="2"> {{ targetInfo.name }} </el-descriptions-item>
+          <el-descriptions-item label="充值金额" :span="1"> {{ formData.realityMoney }} 元</el-descriptions-item>
+          <el-descriptions-item label="赠送金额" :span="1"> {{ formData.giveMoney }} 元</el-descriptions-item>
         </el-descriptions>
       </div>
       <div class="mb10">
         <el-descriptions title="会员信息" :column="2" border>
-          <el-descriptions-item label="客户昵称" min-width="100"> {{ selectOption.form.nickname }} </el-descriptions-item>
-          <el-descriptions-item label="预留电话" min-width="100"> {{ selectOption.form.telephone }} </el-descriptions-item>
-          <el-descriptions-item label="客户标签" min-width="100"> {{ selectOption.form.tagIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户余额" min-width="100"> {{ selectOption.form.accountBalance ?? '0.00' }} 元</el-descriptions-item>
+          <el-descriptions-item label="客户昵称"> {{ selectOption.form.nickname }} </el-descriptions-item>
+          <el-descriptions-item label="预留电话"> {{ selectOption.form.telephone }} </el-descriptions-item>
+          <el-descriptions-item label="客户标签"> {{ selectOption.form.tagIdLabel }} </el-descriptions-item>
+          <el-descriptions-item label="账户余额"> {{ selectOption.form.accountBalance ?? '0.00' }} 元</el-descriptions-item>
         </el-descriptions>
       </div>
       <div class="mb10">
         <el-descriptions title="充值结果" :column="2" border>
-          <el-descriptions-item label="账户余额" min-width="100">
-            {{ countNum(formData.realityMoney, formData.giveMoney, selectOption.form.accountBalance) }} 元</el-descriptions-item
+          <el-descriptions-item label="账户余额">
+            {{ countList([formData.realityMoney, formData.giveMoney, selectOption.form.accountBalance], 2) }} 元</el-descriptions-item
           >
-          <el-descriptions-item label="经办人" min-width="100">{{ useUserStore().nickname }} </el-descriptions-item>
-          <el-descriptions-item label="充值时间" min-width="100">
-            {{ new Date().toLocaleDateString() }} {{ new Date().toLocaleTimeString() }}
-          </el-descriptions-item>
+          <el-descriptions-item label="经办人">{{ useUserStore().nickname }} </el-descriptions-item>
+          <el-descriptions-item label="充值时间"> {{ new Date().toLocaleDateString() }} {{ new Date().toLocaleTimeString() }} </el-descriptions-item>
         </el-descriptions>
       </div>
       <template #footer>
@@ -70,6 +68,7 @@ import { FormData } from '@/api/store-management/recharge/types';
 import { customList } from '@/api/customer-management/customer';
 import { FormData as customerFormData } from '@/api/customer-management/customer/types';
 import useUserStore from '@/store/modules/user';
+import { countList } from '@/utils/index';
 
 const emit = defineEmits(['update:visible', 'confirmCallBack']);
 const props = defineProps({
@@ -178,9 +177,5 @@ const remoteMethod = async (query?: string) => {
 };
 const change = () => {
   selectOption.form = selectOption.options.filter((item) => item.id === formData.customId)[0] ?? {};
-};
-
-const countNum = (a: string | number, b: string | number, c: string | number) => {
-  return (Number(a ?? 0) + Number(b ?? 0) + Number(c ?? 0)).toFixed(2);
 };
 </script>

@@ -316,3 +316,14 @@ export const removeClass = (ele: HTMLElement, cls: string) => {
 export const isExternal = (path: string) => {
   return /^(https?:|http?:|mailto:|tel:)/.test(path);
 };
+
+/**
+ *
+ * @param arr
+ * @param fixed
+ * @returns
+ */
+export const countList = (arr: (number | string)[], fixed?: number) => {
+  const sum: number = arr.reduce((a, b) => Number(a ?? 0) + Number(b ?? 0), 0);
+  return sum.toFixed(fixed ?? 2);
+};

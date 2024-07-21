@@ -47,14 +47,6 @@
     <el-card shadow="hover">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <!-- <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableInfo.multiple" @click="handleDelete()">
-              删除
-            </el-button>
-          </el-col> -->
           <right-toolbar v-model:showSearch="tableInfo.showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
@@ -72,11 +64,18 @@
         <el-table-column label="更新时间" align="center" prop="updateTime" />
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="详情" placement="top">
+            <!-- <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
+            </el-tooltip> -->
+            <el-tooltip content="进店保养" placement="top">
+              <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'MAINTAIN')">
+                <svg-icon icon-class="cancel-order"></svg-icon>
+              </el-button>
             </el-tooltip>
-            <el-tooltip content="保养记录" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
+            <el-tooltip content="跨店保养" placement="top">
+              <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'CROSS_STORE')">
+                <svg-icon icon-class="cancel-order"></svg-icon>
+              </el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -91,23 +90,20 @@
       />
     </el-card>
 
-    <!-- 添加或修改品牌对话框 -->
-    <el-dialog v-model="formInfo.visible" :title="formInfo.title" width="700px" append-to-body>
-      <el-form ref="FormDataRef" :model="formInfo.data" :rules="rules" label-width="80px" :disabled="formInfo.disabled" @submit.prevent> </el-form>
-      <template v-if="!formInfo.disabled" #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <!-- 添加 -->
+    <order-form-item
+      v-model:visible="formInfo.visible"
+      :title="formInfo.title"
+      :target-data="formInfo.data"
+      @confirm="getTableData"
+    ></order-form-item>
   </div>
 </template>
 
 <script setup name="maintain" lang="ts">
 import { frequencyAdd, frequencyDel, frequencyUp, frequencyInfo, frequencyList } from '@/api/maintain-management/maintain';
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/maintain/types';
-
+import orderFormItem from '@/views/order-management/order/order-form.vue';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const dictObj = toReactive<any>(proxy?.useDict('clyhBrand__clyhBrand', 'configProject__configProject'));
@@ -137,11 +133,11 @@ const initFormData: FormData = {
   orderNo: ''
 };
 const formRef = ref<ElFormInstance>();
-const formInfo = reactive<FormInfo<FormData>>({
+const formInfo = reactive({
   visible: false,
   title: '',
   disabled: true,
-  data: { ...initFormData }
+  data: {}
 });
 
 const rules = {
@@ -158,18 +154,6 @@ const getTableData = async () => {
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
-};
-
-/** 取消按钮 */
-const cancel = () => {
-  reset();
-  formInfo.visible = false;
-};
-
-/** 表单重置 */
-const reset = () => {
-  formInfo.data = { ...initFormData };
-  formRef.value?.resetFields();
 };
 
 /** 搜索按钮操作 */
@@ -192,33 +176,9 @@ const handleSelectionChange = (selection: TableVO[]) => {
 };
 
 /** 新增按钮操作 */
-const handleAdd = () => {
-  reset();
+const handleAdd = (row, type) => {
+  formInfo.data.type = type;
   formInfo.visible = true;
-  formInfo.title = '添加品牌';
-};
-
-/** 修改按钮操作 */
-const handleUpdate = async (row?: TableVO) => {
-  reset();
-  const postId = row?.id || tableInfo.ids[0];
-  const res = await frequencyInfo(postId);
-  Object.assign(formInfo.data, res.data);
-
-  formInfo.visible = true;
-  formInfo.title = '修改品牌';
-};
-
-/** 提交按钮 */
-const submitForm = () => {
-  formRef.value?.validate(async (valid: boolean) => {
-    if (valid) {
-      formInfo.data.id ? await frequencyUp(formInfo.data) : await frequencyAdd(formInfo.data);
-      proxy?.$modal.msgSuccess('操作成功');
-      formInfo.visible = false;
-      await getTableData();
-    }
-  });
 };
 
 /** 删除按钮操作 */
@@ -236,17 +196,6 @@ const handleDetail = async (row?: TableVO) => {
   Object.assign(formInfo.data, res.data);
   formInfo.visible = true;
   formInfo.title = '品牌详情';
-};
-
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download(
-    'system/post/export',
-    {
-      ...tableInfo.queryParams
-    },
-    `post_${new Date().getTime()}.xlsx`
-  );
 };
 
 const init = async () => {

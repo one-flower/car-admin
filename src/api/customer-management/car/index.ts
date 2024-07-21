@@ -55,9 +55,10 @@ export function carManageEditCusetom(data: any) {
 }
 
 // 查询车主 套餐名称
-export function customDropdown(id?: string | number) {
+export function carManageDropdown(id?: string | number) {
+  const params = id ? `/${id}` : '';
   return request({
-    url: '/clyh/custom/dropdown',
+    url: `/clyh/carManage/dropdown${params}`,
     method: 'get'
   });
 }

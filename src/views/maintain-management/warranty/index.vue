@@ -74,11 +74,11 @@
         <el-table-column label="更新时间" align="center" prop="updateTime" />
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="详情" placement="top">
+            <!-- <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip content="保养记录" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
+              <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleLog(row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -98,17 +98,20 @@
       <el-form ref="FormDataRef" :model="formInfo.data" :rules="rules" label-width="80px" :disabled="formInfo.disabled" @submit.prevent> </el-form>
       <template v-if="!formInfo.disabled" #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
     </el-dialog>
+
+    <FrequencyLogItem v-model:visible="frequencyInfo.visible" :basic-data="frequencyInfo.data"></FrequencyLogItem>
   </div>
 </template>
 
 <script setup name="Brand" lang="ts">
 import { warrantyAdd, warrantyDel, warrantyUp, warrantyInfo, warrantyList } from '@/api/maintain-management/warranty';
+
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
+import FrequencyLogItem from './frequency-log.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
@@ -178,51 +181,6 @@ const resetQuery = () => {
   handleQuery();
 };
 
-/** 多选框选中数据 */
-const handleSelectionChange = (selection: TableVO[]) => {
-  tableInfo.ids = selection.map((item) => item.id);
-  tableInfo.multiple = !selection.length;
-};
-
-/** 新增按钮操作 */
-const handleAdd = () => {
-  reset();
-  formInfo.visible = true;
-  formInfo.title = '添加品牌';
-};
-
-/** 修改按钮操作 */
-const handleUpdate = async (row?: TableVO) => {
-  reset();
-  const postId = row?.id || tableInfo.ids[0];
-  const res = await warrantyInfo(postId);
-  Object.assign(formInfo.data, res.data);
-
-  formInfo.visible = true;
-  formInfo.title = '修改品牌';
-};
-
-/** 提交按钮 */
-const submitForm = () => {
-  formRef.value?.validate(async (valid: boolean) => {
-    if (valid) {
-      formInfo.data.id ? await warrantyUp(formInfo.data) : await warrantyAdd(formInfo.data);
-      proxy?.$modal.msgSuccess('操作成功');
-      formInfo.visible = false;
-      await getTableData();
-    }
-  });
-};
-
-/** 删除按钮操作 */
-const handleDelete = async (row?: TableVO) => {
-  const ids = row?.id || tableInfo.ids;
-  await proxy?.$modal.confirm('是否删除选中项？');
-  await warrantyDel(ids);
-  await getTableData();
-  proxy?.$modal.msgSuccess('删除成功');
-};
-
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableInfo.ids[0];
   const res = await warrantyInfo(postId);
@@ -231,15 +189,14 @@ const handleDetail = async (row?: TableVO) => {
   formInfo.title = '品牌详情';
 };
 
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download(
-    'system/post/export',
-    {
-      ...tableInfo.queryParams
-    },
-    `post_${new Date().getTime()}.xlsx`
-  );
+const frequencyInfo = reactive({
+  visible: false,
+  title: '',
+  data: {}
+});
+const handleLog = async (row?: TableVO) => {
+  frequencyInfo.data = row;
+  frequencyInfo.visible = true;
 };
 
 const init = async () => {

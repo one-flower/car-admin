@@ -6,7 +6,7 @@ export interface TableVO extends BaseEntity {
   vin: string; //vin
   manufacturer: string; //车辆厂商
   typename: string; //车辆系列
-  vehicleModel: string; //车辆型号
+  model: string; //车辆型号
   carState: string; //车辆状态
   // 客户昵称
   // 电话号码
@@ -31,10 +31,10 @@ export interface FormData {
   infoCompletion: string; // 信息补全
 
   vin: string; //vin
-  brand: string; //车辆品牌
+  brandIdLabel: string; //车辆品牌
   manufacturer: string; //车辆厂商
   typename: string; //车辆系列
-  vehicleModel: string; //车辆型号
+  module: string; //车辆型号
   sizetype: string; //车辆级别
   bodytype: string; //车身结构
   drivemode: string; //驱动方式
@@ -45,7 +45,7 @@ export interface TableQuery extends PageQuery {
   brandId?: string; //车辆品牌id
   manufacturer?: string; //车辆厂商
   typename?: string; //车辆系列
-  vehicleModel?: string; //车辆型号
+  model?: string; //车辆型号
   vin?: string; //vin
   licensePlate?: string; //车牌号
   customNickname?: string; // 客户昵称

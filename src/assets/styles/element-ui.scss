@@ -153,3 +153,10 @@
 .el-range-editor.el-input__wrapper {
   width: 240px !important;
 }
+
+.el-descriptions__label {
+  width: 100px;
+}
+.el-descriptions__content {
+  min-width: 100px;
+}

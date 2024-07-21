@@ -3,12 +3,12 @@
     <div class="p-2">
       <div class="mb10">
         <el-descriptions title="车辆信息" :column="3" border>
-          <el-descriptions-item label="车辆品牌" min-width="100"> {{ targetInfo.brandIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="车牌号码" min-width="100"> {{ targetInfo.licensePlate }} </el-descriptions-item>
-          <el-descriptions-item label="车架号码" min-width="100"> {{ targetInfo.vin }} </el-descriptions-item>
-          <el-descriptions-item label="车辆归属" min-width="100"> {{ targetInfo.toTypeLabel }} </el-descriptions-item>
-          <el-descriptions-item label="车主昵称" min-width="100"> {{ targetInfo.customIdObj.nickname }} </el-descriptions-item>
-          <el-descriptions-item label="预留电话" min-width="100"> {{ targetInfo.customIdObj.telephone }} </el-descriptions-item>
+          <el-descriptions-item label="车辆品牌"> {{ basicData.brandIdLabel }} </el-descriptions-item>
+          <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
+          <el-descriptions-item label="车架号码"> {{ basicData.vin }} </el-descriptions-item>
+          <el-descriptions-item label="车辆归属"> {{ basicData.toTypeLabel }} </el-descriptions-item>
+          <el-descriptions-item label="车主昵称"> {{ basicData.customIdObj.nickname }} </el-descriptions-item>
+          <el-descriptions-item label="预留电话"> {{ basicData.customIdObj.telephone }} </el-descriptions-item>
         </el-descriptions>
       </div>
 
@@ -49,13 +49,13 @@
           </el-row>
         </template>
         <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips">
-          <el-table-column label="项目类型" align="center" prop="customName" />
-          <el-table-column label="产品品牌" align="center" prop="customTelephone" />
-          <el-table-column label="产品名称" align="center" prop="rechargeName" />
-          <el-table-column label="质保服务" align="center" prop="realityMoney" />
-          <el-table-column label="保养服务" align="center" prop="giveMoney" />
+          <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
+          <el-table-column label="产品品牌" align="center" prop="productBrandIdLabel" />
+          <el-table-column label="产品名称" align="center" prop="productIdLabel" />
+          <el-table-column label="质保服务" align="center" prop="warrantyDate" />
+          <el-table-column label="保养服务" align="center" prop="frequencyDate" />
           <el-table-column label="装配时间" align="center" prop="" />
-          <el-table-column label="订单编号" align="center" prop="">
+          <el-table-column label="订单编号" align="center" prop="orderNum" width="200">
             <template #default="{ row }">
               <el-button type="text" @click="handleDetail(row)"> {{ row.id }}</el-button>
             </template>
@@ -75,17 +75,6 @@
 
   <!-- 添加对话框 -->
   <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
-    <el-descriptions title="订单详情" :column="2" border>
-      <el-descriptions-item label="车辆品牌"> {{ orderData.brand }} </el-descriptions-item>
-      <el-descriptions-item label="车辆厂商"> {{ orderData.manufacturer }} </el-descriptions-item>
-      <el-descriptions-item label="车辆系列"> {{ orderData.typename }} </el-descriptions-item>
-      <el-descriptions-item label="车辆型号"> {{ orderData.vehicleModel }} </el-descriptions-item>
-      <el-descriptions-item label="车辆级别"> {{ orderData.sizetype }} </el-descriptions-item>
-      <el-descriptions-item label="车身结构"> {{ orderData.bodytype }} </el-descriptions-item>
-      <el-descriptions-item label="驱动方式"> {{ orderData.drivemode }} </el-descriptions-item>
-      <el-descriptions-item label="能源类型"> {{ orderData.fueltype }} </el-descriptions-item>
-    </el-descriptions>
-
     <template #footer>
       <div class="dialog-footer">
         <el-button type="primary" @click="">关闭</el-button>
@@ -108,7 +97,7 @@ const emit = defineEmits(['update:visible']);
 const props = defineProps({
   visible: propTypes.bool.def(false).isRequired,
   // targetId: propTypes.string.def('').isRequired,
-  targetInfo: {
+  basicData: {
     type: Object,
     default: () => {
       return {};
@@ -129,10 +118,8 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 
 /** 查询列表 */
 const getTableData = async () => {
-  console.log(tableInfo.queryParams, 'sss');
   tableInfo.loading = true;
-
-  const res = await fabricateList({ ...tableInfo.queryParams, id: props.targetInfo.id });
+  const res = await fabricateList({ ...tableInfo.queryParams, id: props.basicData.id });
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -151,22 +138,49 @@ const resetQuery = () => {
   handleQuery();
 };
 
-const dialog = reactive({
+const detailInfo = reactive({
   visible: false,
-  title: '订单详情'
+  title: '详情',
+  orderData: <OrderDesc>{},
+  configPayData: <ConfigPayDesc>{},
+  orderLogObj: []
 });
-const orderData = reactive({});
-const handleDetail = (row?: TableVO) => {
-  Object.assign(orderData, {});
-  dialog.visible = true;
+const handleDetail = async (row?: TableVO) => {
+  const res = await orderInfo(row?.id);
+  detailInfo.orderData = {
+    projectTypeLabel: res.data.projectTypeLabel, //项目类型
+    productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
+    orderPrice: res.data.orderPrice, //订单价格
+    carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    nickname: res.data.customIdObj.nickname, //客户昵称
+    telephone: res.data.customIdObj.telephone, //预留电话
+    tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
+    accountBalance: res.data.customIdObj.accountBalance //账户余额
+  };
+  detailInfo.configPayData = {
+    directorIdLabel: res.data.directorLabel, //负责人
+    workTeamLabel: res.data.constructionTeam, //作业团队
+    isFlow: res.data.isFlow, //订单施工
+    isFlowLabel: res.data.isFlowLabel, //订单施工
+    isCommission: res.data.isCommission, // 订单提成
+    isCommissionLabel: res.data.isCommissionLabel, //
+    commDistriLabel: res.data.isCommission, // 提成分配
+    commPrice: res.data.commPrice, // 提成价格
+    orderPayType: res.data.payState, // 订单出伏
+    orderPayTypeLabel: res.data.payStateLabel, //
+    accountPrice: res.data.accountPrice, // 账号支付
+    cashPrice: res.data.cashPrice, // 现金支付
+    realityPrice: res.data.realityPrice, // 最终支付
+    remarks: res.data.remarks
+  };
+  detailInfo.orderLogObj = res.data.orderLogObj;
+  detailInfo.visible = true;
 };
 const handleCancel = () => {
   emit('update:visible', false);
 };
 
 const init = async () => {
-  tableInfo.queryParams.customId = props.targetId;
-
   getTableData();
 };
 

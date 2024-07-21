@@ -44,3 +44,12 @@ export function productDel(id: string | number | (string | number)[]) {
     method: 'delete'
   });
 }
+
+// 产品下拉
+export function productDropdown(data: { productBrandId: string }) {
+  return request({
+    url: '/clyh/product/dropdown',
+    method: 'post',
+    data: data
+  });
+}

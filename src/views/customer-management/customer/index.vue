@@ -50,20 +50,22 @@
           <template #default="{ row }">
             <el-tooltip content="账户充值" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleRechargeLog(row)">
-                <svg-icon class-name="search-icon" icon-class="recharge" />
+                <svg-icon icon-class="recharge" />
               </el-button>
             </el-tooltip>
             <el-tooltip content="更换号码" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleChangePhone(row)">
-                <svg-icon class-name="search-icon" icon-class="change-phone" />
+                <svg-icon icon-class="change-phone" />
               </el-button>
             </el-tooltip>
-            <!-- <el-tooltip content="解绑" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click=""></el-button>
-            </el-tooltip> -->
+            <el-tooltip content="解绑" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link @click="handleUnbid()">
+                <svg-icon icon-class="unbind" />
+              </el-button>
+            </el-tooltip>
             <el-tooltip content="客户档案" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleInfo(row)">
-                <svg-icon class-name="search-icon" icon-class="customer-log" />
+                <svg-icon icon-class="customer-log" />
               </el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top">
@@ -127,7 +129,7 @@
     <!-- 充值记录 -->
     <rechargeLog v-model:visible="rechargeLogDialog.visible" :target-id="rechargeLogDialog.id"></rechargeLog>
     <!-- 客户档案 -->
-    <Info v-model:visible="infoDialog.visible" :target-info="infoDialog.form"></Info>
+    <InfoItem v-model:visible="infoDialog.visible" :basic-data="infoDialog.form"></InfoItem>
   </div>
 </template>
 <script setup name="channelSource" lang="ts">
@@ -139,7 +141,7 @@ import { FormData as warrantyFormData } from '@/api/maintain-management/warranty
 
 import rechargeLog from './recharge-log.vue';
 import changePhone from './change-phone.vue';
-import Info from './info.vue';
+import InfoItem from './info/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -298,6 +300,11 @@ const handleChangePhone = async (row?: TableVO) => {
   const res = await customInfo(ids);
   Object.assign(changeDialog.form, res.data);
   changeDialog.visible = true;
+};
+
+// 解除绑定
+const handleUnbid = (row?: TableVO) => {
+  proxy.$modal.msgWarning('未装载');
 };
 
 /** 客户档案 */
