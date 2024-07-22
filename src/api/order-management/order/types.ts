@@ -1,3 +1,15 @@
+interface CustomIdObj {
+  accountBalance: string;
+  channel: string;
+  customNo: string;
+  giveBalance: string;
+  id: string;
+  nickname: string;
+  remarks: string;
+  tagId: string;
+  tagIdLabel: string;
+  telephone: string;
+}
 export interface TableVO extends BaseEntity {
   isCommissionLabel: any;
   id: string;
@@ -28,20 +40,9 @@ export interface TableVO extends BaseEntity {
   orderLogObj: any[]; //日志
   constructionTeam: string; //作业团队label
   state: OrderState;
+  orderLogList: any;
 }
 export type OrderState = 'WAIT_CONSTRUCTED' | 'DURING_CONSTRUCTION' | 'CONSTRUCTED_COMPLETE' | 'WAIT_DELIVERED' | 'ORDER_COMPLETED' | 'CANCEL_ORDER';
-interface CustomIdObj {
-  accountBalance: string;
-  channel: string;
-  customNo: string;
-  giveBalance: string;
-  id: string;
-  nickname: string;
-  remarks: string;
-  tagId: string;
-  tagIdLabel: string;
-  telephone: string;
-}
 
 export interface FormData {
   id: string | undefined;
@@ -129,8 +130,8 @@ export interface ConfigPayDesc {
   commPrice: number; // 提成价格
   orderPayType: 'PROMPTLY_PAY' | 'LATER_ON_PAY'; // 订单出伏
   orderPayTypeLabel: string; //
-  accountPrice: number; // 账户余额
-  cashPrice: number; // 现金支付
+  accountPrice: number | string; // 账户余额
+  cashPrice: number | string; // 现金支付
   realityPrice: string; // 最终支付
   remarks: string;
 }
@@ -141,4 +142,41 @@ export interface payForm {
   cashMoney: number;
   payChannel?: string;
   remarks?: string;
+}
+
+export interface commExtTableVO extends BaseEntity {
+  id: string;
+  projectTypeLabel: string; //项目类型
+  productBrandIdLabel: string; //产品品牌id
+  name: string; //产品名称
+  model: string; //产品型号
+  price: number; //定价
+  warranty: number; //质保
+  frequency: number; //频率
+  isCrossStoreLabel: string; //跨店
+  totalMoney: number; //总金额
+}
+
+export interface commExtFormData {
+  id: string | undefined;
+  projectType: string; //订单类型
+  orderNo: string; //订单编号
+  projectTypeLabel: string; //项目类型
+  productBrandLabel: string; //产品品牌
+  productIdLabel: number; //订单产品
+  createTime: string; //订单创建时间
+  commPrice: number; //订单提成
+  constructionTeam: string; //作业团队
+  personalCommPrice: number; //个人提成
+  commDistri: string; //提成方式
+  commState: string; //分配状态
+}
+
+export interface commExtTableQuery extends PageQuery {
+  id: string;
+  type?: string; //订单类型
+  projectType?: string; //项目类型
+  createTime?: string; //订单时间
+  commDistri?: string; //提成方式
+  commState?: string; //分配状态
 }

@@ -113,8 +113,9 @@
 
 <script setup name="commExt" lang="ts">
 import { propTypes } from '@/utils/propTypes';
-import { orderCommExtlist, addInfo, delInfo, getInfo, updateInfo } from '@/api/store-management/staff';
-import { FormData, commExtTableVO, commExtFormData, commExtTableQuery } from '@/api/store-management/staff/types';
+import { FormData } from '@/api/store-management/staff/types';
+import { orderCommExtlist } from '@/api/order-management/order';
+import { commExtTableVO, commExtFormData, commExtTableQuery } from '@/api/order-management/order/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 

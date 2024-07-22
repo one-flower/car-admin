@@ -7,7 +7,6 @@
       append-to-body
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      :show-close="!formInfo.visible"
       :before-close="handleCancel"
     >
       <el-steps :active="active" direction="horizontal" process-status="process" finish-status="success" class="mb10">
@@ -16,34 +15,34 @@
         <el-step title="订单支付" />
         <el-step title="完成" />
       </el-steps>
-      <el-form ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
+      <el-form ref="FormDataRef" :model="formInfo.data" :rules="rules" label-width="80px" @submit.prevent>
         <template v-if="active === 0">
           <el-form-item label="订单类型" prop="type">
-            <el-select v-model="formData.type" placeholder="订单类型" disabled>
+            <el-select v-model="formInfo.data.type" placeholder="订单类型" disabled>
               <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" disabled :label="item.label" :value="item.value">
               </el-option> </el-select
           ></el-form-item>
           <el-form-item label="项目类型" prop="projectTypeLabel">
-            <el-input v-model="formData.projectTypeLabel" placeholder="项目类型" disabled></el-input>
+            <el-input v-model="formInfo.data.projectTypeLabel" placeholder="项目类型" disabled></el-input>
           </el-form-item>
           <el-form-item label="选择车辆" prop="carManageId">
-            <el-select v-model="formData.carManageId" placeholder="请选择车辆" clearable filterable>
+            <el-select v-model="formInfo.data.carManageId" placeholder="请选择车辆" clearable filterable>
               <el-option v-for="item in dictObj.carList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="产品品牌" prop="productBrandId">
-            <el-select v-model="formData.productBrandId" placeholder="请选择产品品牌" clearable filterable @change="changeBrand">
+            <el-select v-model="formInfo.data.productBrandId" placeholder="请选择产品品牌" clearable filterable @change="changeBrand">
               <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="选择产品" prop="productId">
             <el-select
-              v-model="formData.productId"
+              v-model="formInfo.data.productId"
               placeholder="请选择产品"
               clearable
               filterable
-              :disabled="!formData.productBrandId || productLoading"
+              :disabled="!formInfo.data.productBrandId || productLoading"
               @change="productChange"
             >
               <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -51,8 +50,8 @@
           </el-form-item>
           <el-form-item label="订单价格" prop="orderPrice">
             <el-input-number
-              v-model="formData.orderPrice"
-              :disabled="!formData.productId"
+              v-model="formInfo.data.orderPrice"
+              :disabled="!formInfo.data.productId"
               placeholder="订单价格"
               :min="0"
               :max="99999.99"
@@ -61,83 +60,91 @@
             </el-input-number>
           </el-form-item>
           <el-form-item label="备注" prop="remarks">
-            <el-input v-model="formData.remarks" placeholder="请输入" type="textarea" row="auto" maxlength="255" show-word-limit clearable></el-input>
+            <el-input
+              v-model="formInfo.data.remarks"
+              placeholder="请输入"
+              type="textarea"
+              row="auto"
+              maxlength="255"
+              show-word-limit
+              clearable
+            ></el-input>
           </el-form-item>
         </template>
         <template v-else-if="active === 1">
           <el-descriptions title="" :column="2" border class="mb10">
             <el-descriptions-item label="订单类型"> 服务订单 </el-descriptions-item>
-            <el-descriptions-item label="项目类型"> {{ formData.projectTypeLabel }} </el-descriptions-item>
-            <el-descriptions-item label="品牌名称"> {{ formData.productLabel }} </el-descriptions-item>
-            <el-descriptions-item label="订单价格"> {{ formData.orderPrice }} </el-descriptions-item>
+            <el-descriptions-item label="项目类型"> {{ formInfo.data.projectTypeLabel }} </el-descriptions-item>
+            <el-descriptions-item label="品牌名称"> {{ formInfo.data.productLabel }} </el-descriptions-item>
+            <el-descriptions-item label="订单价格"> {{ formInfo.data.orderPrice }} </el-descriptions-item>
           </el-descriptions>
           <el-form-item label="负责人" prop="directorId">
-            <el-select v-model="formData.directorId" placeholder="负责人" clearable filterable>
+            <el-select v-model="formInfo.data.directorId" placeholder="负责人" clearable filterable>
               <el-option v-for="item in postPersonList" :key="item.value" :disabled="item.disabled" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="作业团队" prop="workTeam">
-            <el-select v-model="formData.workTeam" placeholder="请选择作业团队" clearable filterable multiple :multiple-limit="4">
+            <el-select v-model="formInfo.data.workTeam" placeholder="请选择作业团队" clearable filterable multiple :multiple-limit="4">
               <el-option v-for="item in postTeamList" :key="item.value" :disabled="item.disabled" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="订单施工" prop="isFlow">
-            <el-radio-group v-model="formData.isFlow" class="ml-4">
+            <el-radio-group v-model="formInfo.data.isFlow" class="ml-4">
               <el-radio v-for="item in dictObj.dictEnum__orderIsFlow" :key="item.id" :value="item.value" :label="item.label" />
             </el-radio-group>
           </el-form-item>
           <el-form-item label="订单提成" prop="isCommission">
-            <el-radio-group v-model="formData.isCommission" class="ml-4">
+            <el-radio-group v-model="formInfo.data.isCommission" class="ml-4">
               <el-radio v-for="item in dictObj.dictEnum__orderIsCommission" :key="item.id" :value="item.value" :label="item.label" />
             </el-radio-group>
           </el-form-item>
-          <template v-if="formData.isCommission === '1'">
+          <template v-if="formInfo.data.isCommission === '1'">
             <el-form-item label="提成金额" prop="commPrice">
-              <el-input-number v-model="formData.commPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+              <el-input-number v-model="formInfo.data.commPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
             </el-form-item>
             <el-form-item label="提成分配" prop="commDistri">
-              <el-radio-group v-model="formData.commDistri" class="ml-4">
+              <el-radio-group v-model="formInfo.data.commDistri" class="ml-4">
                 <el-radio v-for="item in dictObj.dictEnum__commDistri" :key="item.id" :value="item.value" :label="item.label" />
               </el-radio-group>
             </el-form-item>
           </template>
         </template>
         <template v-else-if="active === 2">
-          <order-pay-desc-item :readonly="true" :order-data="orderDetail"></order-pay-desc-item>
+          <order-detail :orderData="orderDetail" :configPayShow="false"></order-detail>
           <template v-if="true">
             <el-form-item label="订单支付" prop="orderPayType">
-              <el-radio-group v-model="formData.orderPayType" class="ml-4">
+              <el-radio-group v-model="formInfo.data.orderPayType" class="ml-4">
                 <el-radio v-for="item in dictObj.dictEnum__orderPayType" :key="item.id" :value="item.value" :label="item.label" />
               </el-radio-group>
             </el-form-item>
-            <template v-if="formData.orderPayType === 'PROMPTLY_PAY'">
+            <template v-if="formInfo.data.orderPayType === 'PROMPTLY_PAY'">
               <el-form-item label="账户支付" prop="accountPrice">
-                <el-input-number v-model="formData.accountPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+                <el-input-number v-model="formInfo.data.accountPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
               </el-form-item>
               <el-form-item label="现金支付" prop="cashPrice">
                 <div class="formItemBox">
                   <el-form-item prop="cashPrice">
-                    <el-input-number v-model="formData.cashPrice" placeholder=" " :min="0" :max="99999.99" :precision="2"> </el-input-number>
+                    <el-input-number v-model="formInfo.data.cashPrice" placeholder=" " :min="0" :max="99999.99" :precision="2"> </el-input-number>
                   </el-form-item>
-                  <el-form-item v-if="formData.cashPrice !== 0" prop="payChannel">
-                    <el-select v-model="formData.payChannel" placeholder="请选择支付渠道" clearable filterable class="formItemBox__right">
+                  <el-form-item v-if="formInfo.data.cashPrice !== 0" prop="payChannel">
+                    <el-select v-model="formInfo.data.payChannel" placeholder="请选择支付渠道" clearable filterable class="formItemBox__right">
                       <el-option v-for="item in dictObj.dictEnum__payChannel" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                   </el-form-item>
                 </div>
               </el-form-item>
               <el-form-item label="支付合计" prop="customId">
-                <div :class="{ 'warn': countList([formData.accountPrice, formData.cashPrice]) !== formData.orderPrice.toFixed(2) }">
-                  {{ countList([formData.accountPrice, formData.cashPrice]) }} 元
+                <div :class="{ 'warn': countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2) }">
+                  {{ countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) }} 元
                 </div>
               </el-form-item>
             </template>
           </template>
         </template>
         <template v-else-if="active === 3">
-          <order-desc-item :order-data="orderDetail" :config-pya-data="configPayDetail"></order-desc-item>
+          <order-detail :orderData="orderDetail" :configPayShow="true" :configPyaData="configPayDetail"></order-detail>
         </template>
       </el-form>
 
@@ -152,13 +159,13 @@
   </div>
 </template>
 <script setup name="CreateOrder" lang="ts">
+import { staffDropdown } from '@/api/store-management/staff';
 import { productDropdown } from '@/api/product-management/product';
 import { carManageDropdown } from '@/api/customer-management/car';
 import { orderAdd } from '@/api/order-management/order';
 import { OrderForm, OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
+import OrderDetail from '@/components/order-detail/index.vue';
 import propTypes from '@/utils/propTypes';
-import OrderPayDescItem from './order-pay-desc.vue';
-import OrderDescItem from './order-desc.vue';
 import { countList } from '@/utils/index';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -179,7 +186,7 @@ const emit = defineEmits(['update:visible', 'confirm', 'cancel']);
 const props = defineProps({
   visible: propTypes.bool.def(false).isRequired,
   title: propTypes.string.def(''),
-  targetData: {
+  basicData: {
     type: Object,
     default: () => {
       return {};
@@ -217,11 +224,9 @@ const FormDataRef = ref<ElFormInstance>();
 const formInfo = reactive<FormInfo<any>>({
   title: '',
   visible: false,
-  loading: false
+  data: { ...initFormData }
 });
-const formData = reactive<OrderForm>({
-  ...initFormData
-});
+
 const rules = {
   projectTypeLabel: [{ required: true, message: '项目类型不能为空', trigger: 'change' }],
   carManageId: [{ required: true, message: '车辆不能为空', trigger: 'change' }],
@@ -251,10 +256,10 @@ const dictToLabel = (data: any, value: string | number) => {
 // 选择产品，触发级联
 const productChange = (val) => {
   const data = dictToLabel(dictObj.productList, val);
-  formData.orderPrice = parseFloat(data.productPrice);
-  formData.projectType = data.projectType;
-  formData.projectTypeLabel = data.projectTypeLabel + '-' + data.modeLabel;
-  formData.productLabel = data.label;
+  formInfo.data.orderPrice = parseFloat(data.productPrice);
+  formInfo.data.projectType = data.projectType;
+  formInfo.data.projectTypeLabel = data.projectTypeLabel + '-' + data.modeLabel;
+  formInfo.data.productLabel = data.label;
 };
 
 // 赋予选项对应的label
@@ -262,7 +267,7 @@ const productChange = (val) => {
 // 车辆相关信息
 const carData = computed(() => {
   return (
-    dictObj.carList?.find((x: any) => x.value === formData.carManageId) ?? {
+    dictObj.carList?.find((x: any) => x.value === formInfo.data.carManageId) ?? {
       label: '',
       customIdObj: {
         nickname: '',
@@ -276,11 +281,11 @@ const carData = computed(() => {
 // 订单信息
 const orderDetail = computed((): OrderDesc => {
   return {
-    typeLabel: formData.typeLabel,
-    projectTypeLabel: formData.projectTypeLabel,
-    productBrandIdLabel: formData.productLabel,
+    typeLabel: formInfo.data.typeLabel,
+    projectTypeLabel: formInfo.data.projectTypeLabel,
+    productBrandIdLabel: formInfo.data.productLabel,
     carBrandLabel: carData.value.label,
-    orderPrice: formData.orderPrice,
+    orderPrice: formInfo.data.orderPrice,
     nickname: carData.value.customIdObj.nickname,
     telephone: carData.value.customIdObj.telephone,
     tagIdLabel: carData.value.customIdObj.tagIdLabel,
@@ -292,44 +297,43 @@ const configPayDetail = computed((): ConfigPayDesc => {
   let directorIdLabel = '',
     workTeamLabellist = [];
   dictObj.configPost__configPost.forEach((item: any) => {
-    if (formData.directorId === item.value) {
+    if (formInfo.data.directorId === item.value) {
       directorIdLabel = item.label;
-    } else if (formData.workTeam.includes(item.value)) {
+    } else if (formInfo.data.workTeam.includes(item.value)) {
       workTeamLabellist.push(item.label);
     }
   });
   return {
     directorIdLabel: directorIdLabel,
     workTeamLabel: workTeamLabellist.join(','),
-    isFlow: formData.isFlow,
-    isFlowLabel: dictToLabel(dictObj.dictEnum__orderIsFlow, formData.isFlow).label,
-    isCommission: formData.isCommission,
-    isCommissionLabel: dictToLabel(dictObj.dictEnum__orderIsCommission, formData.isCommission).label,
-    commPrice: formData.commPrice,
-    commDistriLabel: dictToLabel(dictObj.dictEnum__commDistri, formData.commDistri).label,
-    orderPayType: formData.orderPayType,
-    orderPayTypeLabel: dictToLabel(dictObj.dictEnum__orderPayType, formData.orderPayType).label,
-    accountPrice: formData.accountPrice,
-    cashPrice: formData.cashPrice,
-    realityPrice: countList([formData.accountPrice, formData.cashPrice]),
-    remarks: formData.remarks
+    isFlow: formInfo.data.isFlow,
+    isFlowLabel: dictToLabel(dictObj.dictEnum__orderIsFlow, formInfo.data.isFlow).label,
+    isCommission: formInfo.data.isCommission,
+    isCommissionLabel: dictToLabel(dictObj.dictEnum__orderIsCommission, formInfo.data.isCommission).label,
+    commPrice: formInfo.data.commPrice,
+    commDistriLabel: dictToLabel(dictObj.dictEnum__commDistri, formInfo.data.commDistri).label,
+    orderPayType: formInfo.data.orderPayType,
+    orderPayTypeLabel: dictToLabel(dictObj.dictEnum__orderPayType, formInfo.data.orderPayType).label,
+    accountPrice: formInfo.data.accountPrice,
+    cashPrice: formInfo.data.cashPrice,
+    realityPrice: countList([formInfo.data.accountPrice, formInfo.data.cashPrice]),
+    remarks: formInfo.data.remarks
   };
 });
 // 负责人 作业团队的disabled
 const postPersonList = computed(() => {
   return dictObj.configPost__configPost.filter((item) => {
-    return !formData.workTeam.includes(item.value);
+    return !formInfo.data.workTeam.includes(item.value);
   });
 });
 const postTeamList = computed(() => {
   return dictObj.configPost__configPost.filter((item) => {
-    return item.value !== formData.directorId;
+    return item.value !== formInfo.data.directorId;
   });
 });
 
 const handleCancel = () => {
   active.value = 0;
-  Object.assign(formData, initFormData);
   FormDataRef.value.resetFields();
   emit('update:visible', false);
 };
@@ -337,7 +341,7 @@ const handleCancel = () => {
 const handleNext = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (active.value === 2 && countList([formData.accountPrice, formData.cashPrice]) !== formData.orderPrice.toFixed(2)) {
+      if (active.value === 2 && countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2)) {
         await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
         active.value++;
       } else {
@@ -349,10 +353,8 @@ const handleNext = () => {
 const handleSubmit = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      formInfo.loading = true;
-      await orderAdd(formData);
+      await orderAdd(formInfo.data);
       proxy?.$modal.msgSuccess('操作成功');
-      formInfo.loading = false;
       handleCancel();
       emit('confirm');
     }
@@ -360,8 +362,11 @@ const handleSubmit = () => {
 };
 
 const init = async () => {
+  //   dictObj.cunstomList = await staffDropdown();
+  dictObj.cunstomList = [];
   dictObj.carList = await carManageDropdown();
-  Object.assign(formData, props.targetData);
+  formInfo.data = Object.assign(initFormData, props.basicData);
+  FormDataRef.value?.resetFields();
 };
 
 watch(

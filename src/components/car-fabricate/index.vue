@@ -7,8 +7,8 @@
           <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
           <el-descriptions-item label="车架号码"> {{ basicData.vin }} </el-descriptions-item>
           <el-descriptions-item label="车辆归属"> {{ basicData.toTypeLabel }} </el-descriptions-item>
-          <el-descriptions-item label="车主昵称"> {{ basicData.customIdObj.nickname }} </el-descriptions-item>
-          <el-descriptions-item label="预留电话"> {{ basicData.customIdObj.telephone }} </el-descriptions-item>
+          <el-descriptions-item label="车主昵称"> {{ basicData.customIdObj?.nickname }} </el-descriptions-item>
+          <el-descriptions-item label="预留电话"> {{ basicData.customIdObj?.telephone }} </el-descriptions-item>
         </el-descriptions>
       </div>
 
@@ -23,14 +23,14 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="产品品牌" prop="rechargeId">
-                <el-select v-model="tableInfo.queryParams.productBrandId" placeholder="请选择产品品牌" clearable filterable>
+                <el-select v-model="tableInfo.queryParams.productBrandId" @change="changeBrand" placeholder="请选择产品品牌" clearable filterable>
                   <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="产品名称" prop="rechargeId">
-                <el-select v-model="tableInfo.queryParams.productId" placeholder="请选择产品名称" clearable filterable>
-                  <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-select :disabled="productLoading" v-model="tableInfo.queryParams.productId" placeholder="请选择产品名称" clearable filterable>
+                  <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item>
@@ -75,7 +75,12 @@
 
   <!-- 详情 -->
   <el-dialog v-model="detailInfo.visible" :title="detailInfo.title" width="600px" append-to-body>
-    <OrderDesc :order-data="detailInfo.orderData" :config-pya-data="detailInfo.configPayData" :order-log-list="detailInfo.orderLogList"></OrderDesc>
+    <OrderDetail
+      :readonly="true"
+      :order-data="detailInfo.orderData"
+      :config-pya-data="detailInfo.configPayData"
+      :order-log-list="detailInfo.orderLogList"
+    ></OrderDetail>
     <template #footer>
       <div class="dialog-footer">
         <el-button type="primary" @click="cancel">关闭</el-button>
@@ -88,10 +93,10 @@
 import { propTypes } from '@/utils/propTypes';
 import { fabricateList } from '@/api/customer-management/car';
 import { TableQuery, TableVO } from '@/api/customer-management/car/types';
-import { customInfo } from '@/api/customer-management/customer';
-import { FormData } from '@/api/customer-management/customer/types';
-import { orderList, orderInfo } from '@/api/order-management/order';
-import OrderDesc from '@/components/order-desc';
+import { orderInfo } from '@/api/order-management/order';
+import { productDropdown } from '@/api/product-management/product';
+import { ConfigPayDesc, OrderDesc } from '@/api/order-management/order/types';
+import OrderDetail from '@/components/order-detail/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy.useNewDict('configProject__configProject', 'configProductBrand__configProductBrand'));
@@ -120,10 +125,23 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 /** 查询列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const res = await fabricateList({ ...tableInfo.queryParams, id: props.basicData.id });
+  const res = await fabricateList({
+    ...tableInfo.queryParams,
+    id: props.basicData.id,
+    customId: props.basicData.customId
+  });
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
+};
+
+const productLoading = ref(false);
+const changeBrand = async (val: string) => {
+  productLoading.value = true;
+  dictObj.productList = await productDropdown({
+    productBrandId: val
+  });
+  productLoading.value = false;
 };
 
 /** 搜索按钮操作 */
@@ -150,6 +168,7 @@ const detailInfo = reactive({
 const handleDetail = async (row?: TableVO) => {
   const res = await orderInfo(row?.orderId);
   detailInfo.orderData = {
+    typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格

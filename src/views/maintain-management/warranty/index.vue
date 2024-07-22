@@ -74,11 +74,10 @@
         <el-table-column label="更新时间" align="center" prop="updateTime" />
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <!-- <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
-            </el-tooltip> -->
             <el-tooltip content="保养记录" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleLog(row)"></el-button>
+              <el-button v-hasPermi="['system:post:remove']" link @click="handleLog(row)">
+                <svg-icon class-name="search-icon" icon-class="order-log"></svg-icon>
+              </el-button>
             </el-tooltip>
           </template>
         </el-table-column>

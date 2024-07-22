@@ -10,6 +10,7 @@ export interface TableVO extends BaseEntity {
   carState: string; //车辆状态
   // 客户昵称
   // 电话号码
+  orderId: string; //订单id
 }
 
 export interface FormData {
@@ -50,4 +51,8 @@ export interface TableQuery extends PageQuery {
   licensePlate?: string; //车牌号
   customNickname?: string; // 客户昵称
   customtelephone?: string; // 电话号码
+
+  projectType?: string; //项目类型
+  productBrandId?: string; //产品品牌
+  productId?: string; //产品
 }

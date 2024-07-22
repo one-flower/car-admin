@@ -165,15 +165,16 @@
     </el-card>
 
     <!-- 添加 -->
-    <order-form-item v-model:visible="formInfo.visible" :title="formInfo.title" :target-data="formData" @confirm="getTableData"></order-form-item>
+    <order-add v-model:visible="formInfo.visible" :title="formInfo.title" :basic-data="formInfo.data" @confirm="getTableData"></order-add>
 
     <!-- 详情 -->
     <el-dialog v-model="detailInfo.visible" :title="detailInfo.title" width="700px" append-to-body>
-      <order-desc-item
-        :order-data="detailInfo.orderData"
-        :config-pya-data="detailInfo.configPayData"
-        :order-log-obj="detailInfo.orderLogObj"
-      ></order-desc-item>
+      <order-detail
+        :readonly="true"
+        :orderData="detailInfo.orderData"
+        :configPyaData="detailInfo.configPayData"
+        :order-log-list="detailInfo.orderLogObj"
+      ></order-detail>
       <template v-if="!formInfo.disabled" #footer>
         <div class="dialog-footer">
           <el-button @click="detailCancel">取 消</el-button>
@@ -183,29 +184,39 @@
 
     <!-- 支付 -->
     <el-dialog v-model="payInfo.visible" :title="payInfo.title" width="700px" append-to-body>
-      <order-pay-desc-itme :readonly="false" :order-data="payInfo.orderData"></order-pay-desc-itme>
-      <el-form ref="PayFormRef" :model="payData" :rules="payRules" label-width="80px" @submit.prevent>
+      <order-detail :orderData="payInfo.orderData" :config-pay-show="false"></order-detail>
+      <el-form ref="PayFormRef" :model="payInfo.data" :rules="payRules" label-width="80px" @submit.prevent>
         <el-form-item label="账户支付" prop="accMoney">
-          <el-input-number v-model="payData.accMoney" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+          <el-input-number v-model="payInfo.data.accMoney" :min="0" :max="99999.99" :precision="2"> </el-input-number>
         </el-form-item>
         <el-form-item label="现金支付" prop="cashMoney">
           <div class="formItemBox">
             <el-form-item prop="cashMoney">
-              <el-input-number v-model="payData.cashMoney" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+              <el-input-number v-model="payInfo.data.cashMoney" :min="0" :max="99999.99" :precision="2"> </el-input-number>
             </el-form-item>
-            <el-form-item v-if="payData.cashMoney !== 0" prop="payChannel">
-              <el-select v-model="payData.payChannel" placeholder="请选择支付渠道" clearable filterable class="formItemBox__right">
+            <el-form-item v-if="payInfo.data.cashMoney !== 0" prop="payChannel">
+              <el-select v-model="payInfo.data.payChannel" placeholder="请选择支付渠道" clearable filterable class="formItemBox__right">
                 <el-option v-for="item in dictObj.dictEnum__payChannel" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
           </div>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="payData.remarks" placeholder="请输入" type="textarea" row="auto" maxlength="255" show-word-limit clearable></el-input>
+          <el-input
+            v-model="payInfo.data.remarks"
+            placeholder="请输入"
+            type="textarea"
+            row="auto"
+            maxlength="255"
+            show-word-limit
+            clearable
+          ></el-input>
         </el-form-item>
         <el-form-item label="支付合计" prop="customId">
-          <div :class="{ 'warn': countList([payData.accMoney, payData.cashMoney]) !== (payInfo.orderData?.orderPrice as unknown as string) }">
-            {{ countList([payData.accMoney, payData.cashMoney]) }} 元
+          <div
+            :class="{ 'warn': countList([payInfo.data.accMoney, payInfo.data.cashMoney]) !== (payInfo.orderData?.orderPrice as unknown as string) }"
+          >
+            {{ countList([payInfo.data.accMoney, payInfo.data.cashMoney]) }} 元
           </div>
         </el-form-item>
       </el-form>
@@ -220,13 +231,12 @@
 </template>
 
 <script setup name="Order" lang="ts">
-import { orderAdd, orderDel, orderUp, orderInfo, orderList, orderUpState, orderPay } from '@/api/order-management/order';
+import { orderAdd, orderDel, orderInfo, orderList, orderUpState, orderPay } from '@/api/order-management/order';
 import { FormData, TableQuery, TableVO, OrderState, payForm } from '@/api/order-management/order/types';
-import OrderFormItem from './order-form.vue';
+import OrderAdd from '@/components/order-add/index.vue';
 import { OrderForm, OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
-import OrderDescItem from './order-desc.vue';
-import OrderPayDescItme from './order-pay-desc.vue';
 import { countList } from '@/utils/index';
+import OrderDetail from '@/components/order-detail/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(
@@ -267,12 +277,12 @@ const initFormData: FormData = {
   accountBalance: ''
 };
 const formRef = ref<ElFormInstance>();
-const formInfo = reactive<FormInfo<FormData>>({
+const formInfo = reactive<FormInfo<any>>({
   visible: false,
   title: '',
-  disabled: true
+  disabled: true,
+  data: {}
 });
-const formData = reactive({});
 
 /** 查询品牌列表 */
 const getTableData = async () => {
@@ -314,7 +324,10 @@ const handleAdd = () => {
   reset();
   formInfo.visible = true;
   formInfo.title = '新增订单';
-  formData.type = 'SERVER';
+  formInfo.data = {
+    type: 'SERVER',
+    typeLabel: '服务订单'
+  };
 };
 
 // 更改订单状态
@@ -349,6 +362,7 @@ const detailInfo = reactive({
 const handleDetail = async (row?: TableVO) => {
   const res = await orderInfo(row?.id);
   detailInfo.orderData = {
+    typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
@@ -385,16 +399,16 @@ const detailCancel = () => {
 const payInfo = reactive({
   visible: false,
   title: '支付',
-  orderData: <OrderDesc>{}
+  orderData: <OrderDesc>{},
+  data: {
+    orderId: undefined,
+    accMoney: 0,
+    cashMoney: 0,
+    payChannel: '',
+    remarks: ''
+  }
 });
 const PayFormRef = ref<ElFormInstance>();
-const payData = reactive<payForm>({
-  orderId: undefined,
-  accMoney: 0,
-  cashMoney: 0,
-  payChannel: '',
-  remarks: ''
-});
 const payRules = {
   accMoney: [{ required: true, message: '账户支付不能为空', trigger: ['change', 'blur'] }],
   cashMoney: [{ required: true, message: '现金支付不能为空', trigger: ['change', 'blur'] }],
@@ -404,7 +418,8 @@ const handlePay = async (row: TableVO) => {
   PayFormRef.value?.resetFields();
   const res = await orderInfo(row?.id);
   console.log(res.data);
-  Object.assign(payInfo.orderData, {
+  payInfo.orderData = {
+    typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
@@ -413,21 +428,21 @@ const handlePay = async (row: TableVO) => {
     telephone: res.data.customIdObj.telephone, //预留电话
     tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
     accountBalance: res.data.customIdObj.accountBalance //账户余额
-  });
-  Object.assign(payData, {
+  };
+  payInfo.data = {
     orderId: res.data.id,
     accMoney: res.data.accountPrice,
     cashMoney: res.data.cashPrice,
     payChannel: ''
-  });
+  };
   payInfo.visible = true;
 };
 const payConfirm = async () => {
   PayFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (countList([payData.accMoney, payData.cashMoney]) !== (payInfo.orderData?.orderPrice as unknown as string))
+      if (countList([payInfo.data.accMoney, payInfo.data.cashMoney]) !== (payInfo.orderData?.orderPrice as unknown as string))
         await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
-      await orderPay(payData);
+      await orderPay(payInfo.data);
       proxy?.$modal.msgSuccess('操作成功');
       payInfo.visible = false;
       getTableData();

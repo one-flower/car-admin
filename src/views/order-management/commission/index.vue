@@ -86,7 +86,7 @@
 
     <!-- 立即分配 -->
     <el-dialog v-model="payInfo.visible" :title="payInfo.title" width="700px" append-to-body>
-      <order-desc-item :readonly="true" :order-data="payInfo.orderData" :config-pya-data="payInfo.configPayData"></order-desc-item>
+      <order-detail :readonly="true" :order-data="payInfo.orderData" :config-pya-data="payInfo.configPayData"></order-detail>
       <el-descriptions title="提成分配" :column="2" border class="mb10">
         <el-descriptions-item label="提成金额" :span="2"> {{ payInfo.commPrice }} </el-descriptions-item>
       </el-descriptions>
@@ -124,7 +124,7 @@
 import { orderAdd, orderDel, orderUp, orderInfo, orderList, orderUpState, orderPay, orderEditComm } from '@/api/order-management/order';
 import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import { TableQuery, TableVO } from '@/api/order-management/order/types';
-import OrderDescItem from '@/views/order-management/order/order-desc.vue';
+import OrderDetail from '@/components/order-detail/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(
@@ -185,7 +185,8 @@ const payInfo = reactive({
 // 立即分配
 const handlePay = async (row: TableVO, flag: boolean) => {
   const res = await orderInfo(row?.id);
-  Object.assign(payInfo.orderData, {
+  payInfo.orderData = {
+    typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
@@ -194,8 +195,8 @@ const handlePay = async (row: TableVO, flag: boolean) => {
     telephone: res.data.customIdObj.telephone, //预留电话
     tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
     accountBalance: res.data.customIdObj.accountBalance //账户余额
-  });
-  Object.assign(payInfo.configPayData, {
+  };
+  payInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
     workTeamLabel: res.data.constructionTeam, //作业团队
     isFlow: res.data.isFlow, //订单施工
@@ -210,7 +211,7 @@ const handlePay = async (row: TableVO, flag: boolean) => {
     cashPrice: res.data.cashPrice, // 现金支付
     realityPrice: res.data.realityPrice, // 最终支付
     remarks: res.data.remarks
-  });
+  };
   payInfo.orderId = res.data.id;
   payInfo.commPrice = res.data.commPrice;
   payInfo.tableData = res.data.commExtObj.map((item) => {

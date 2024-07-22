@@ -62,19 +62,16 @@
         <el-table-column label="质保结束" align="center" prop="endDate" />
         <el-table-column label="质保状态" align="center" prop="state" />
         <el-table-column label="更新时间" align="center" prop="updateTime" />
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="120" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <!-- <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
-            </el-tooltip> -->
             <el-tooltip content="进店保养" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'MAINTAIN')">
-                <svg-icon icon-class="cancel-order"></svg-icon>
+                <svg-icon icon-class="in-store"></svg-icon>
               </el-button>
             </el-tooltip>
             <el-tooltip content="跨店保养" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'CROSS_STORE')">
-                <svg-icon icon-class="cancel-order"></svg-icon>
+                <svg-icon icon-class="union-store"></svg-icon>
               </el-button>
             </el-tooltip>
           </template>
@@ -91,19 +88,14 @@
     </el-card>
 
     <!-- 添加 -->
-    <order-form-item
-      v-model:visible="formInfo.visible"
-      :title="formInfo.title"
-      :target-data="formInfo.data"
-      @confirm="getTableData"
-    ></order-form-item>
+    <order-add v-model:visible="formInfo.visible" :title="formInfo.title" :basic-data="formInfo.data" @confirm="getTableData"></order-add>
   </div>
 </template>
 
 <script setup name="maintain" lang="ts">
 import { frequencyAdd, frequencyDel, frequencyUp, frequencyInfo, frequencyList } from '@/api/maintain-management/maintain';
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/maintain/types';
-import orderFormItem from '@/views/order-management/order/order-form.vue';
+import OrderAdd from '@/components/order-add/index.vue';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const dictObj = toReactive<any>(proxy?.useDict('clyhBrand__clyhBrand', 'configProject__configProject'));
@@ -177,7 +169,17 @@ const handleSelectionChange = (selection: TableVO[]) => {
 
 /** 新增按钮操作 */
 const handleAdd = (row, type) => {
-  formInfo.data.type = type;
+  formInfo.data = {
+    type: type,
+    projectTypeLabel: row.projectTypeLabel,
+    carManageId: row.carManageId,
+    carManageIdLabel: row.carManageIdLabel,
+    productBrandId: row.productBrandId,
+    productBrandIdLabel: row.productBrandIdLabel,
+    productId: row.productId,
+    productIdLabel: row.productIdLabel,
+    orderPrice: row.orderPrice
+  };
   formInfo.visible = true;
 };
 

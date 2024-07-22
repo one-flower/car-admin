@@ -32,16 +32,11 @@
         <el-table-column label="车架号码" align="center" prop="vin" />
         <el-table-column label="车辆归属" align="center" prop="state" />
         <el-table-column label="车辆状态" align="center" prop="state" />
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="装配情况" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link @click="handleFabricate(row)">
                 <svg-icon class-name="search-icon" icon-class="car-change" />
-              </el-button>
-            </el-tooltip>
-            <el-tooltip content="订单记录" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link @click="handleOrder(row)">
-                <svg-icon class-name="search-icon" icon-class="order-log" />
               </el-button>
             </el-tooltip>
           </template>
@@ -56,25 +51,16 @@
         @pagination="getTableData"
       />
     </div>
-    <template #footer>
-      <div class="dialog-footer" style="text-align: center">
-        <el-button type="primary" @click="handleCancel">关闭</el-button>
-      </div>
-    </template>
   </el-drawer>
 
   <!-- 车辆装配 -->
-  <FabricateInfoItem v-model:visible="fabricateInfo.visible" :title="fabricateInfo.title" :basic-data="fabricateInfo.data"></FabricateInfoItem>
-
-  <!-- 订单记录 -->
-  <OrderInfoItem v-model:visible="orderInfo.visible" :title="orderInfo.title" :basic-data="fabricateInfo.data"></OrderInfoItem>
+  <CarFabricate v-model:visible="fabricateInfo.visible" :title="fabricateInfo.title" :basic-data="fabricateInfo.data"> </CarFabricate>
 </template>
 
 <script setup lang="ts">
 import { warrantyList } from '@/api/maintain-management/warranty';
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
-import FabricateInfoItem from './fabricate-info.vue';
-import OrderInfoItem from './order-info.vue';
+import CarFabricate from '@/components/car-fabricate/index.vue';
 
 const emit = defineEmits(['update:visible', 'update:form']);
 const props = defineProps({
@@ -117,25 +103,25 @@ const getTableData = async () => {
   tableInfo.loading = false;
 };
 
+// 车辆装配
 const fabricateInfo = reactive({
   visible: false,
-  title: '车辆装配',
-  data: {}
+  title: '客户档案',
+  data: <any>{}
 });
-const handleFabricate = (row) => {
-  fabricateInfo.data = row;
+const handleFabricate = async (row: TableVO) => {
+  fabricateInfo.data = {
+    customId: props.basicData.id,
+    customIdObj: {
+      nickname: props.basicData.nickname,
+      telephone: props.basicData.telephone
+    },
+    brandIdLabel: row.brandName,
+    licensePlate: row.licensePlate,
+    vin: row.vin,
+    toTypeLabel: ''
+  };
   fabricateInfo.visible = true;
-};
-
-// 订单状态
-const orderInfo = reactive({
-  visible: false,
-  title: '订单记录',
-  data: {}
-});
-const handleOrder = (row) => {
-  orderInfo.data = row;
-  orderInfo.visible = true;
 };
 
 const init = async () => {

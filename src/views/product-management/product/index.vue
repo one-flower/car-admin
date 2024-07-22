@@ -5,17 +5,22 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
             <el-form-item label="项目类型" prop="projectType">
-              <el-select v-model="queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
-                <el-option v-for="item in dictObj.project" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-select v-model="queryParams.projectType" placeholder="请选择项目类型" clearable filterable>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="品牌名称" prop="productBrandId">
-              <el-select v-model="queryParams.productBrandId" value-key="" placeholder="请选择品牌名称" clearable filterable>
-                <el-option v-for="item in dictObj.brand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-form-item label="产品品牌" prop="productBrandId">
+              <el-select v-model="queryParams.productBrandId" placeholder="请选择品牌名称" clearable filterable>
+                <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称" prop="name">
-              <el-input v-model="queryParams.name" placeholder="请输入产品名称" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.name" placeholder="请输入产品名称" clearable></el-input>
+              <!-- <el-select v-model="queryParams.productBrandId" placeholder="请选择产品名称" clearable filterable>
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select> -->
             </el-form-item>
             <el-form-item label="产品代码" prop="model">
               <el-input v-model="queryParams.model" placeholder="请输入产品代码" clearable @keyup.enter="handleQuery" />
@@ -77,12 +82,12 @@
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="项目类型" prop="projectType">
-          <el-select v-model="form.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
+          <el-select v-model="form.projectType" placeholder="请选择项目类型" clearable filterable>
             <el-option v-for="item in dictObj.project" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="产品品牌" prop="productBrandId">
-          <el-select v-model="form.productBrandId" value-key="" placeholder="请选择产品品牌" clearable filterable>
+          <el-select v-model="form.productBrandId" placeholder="请选择产品品牌" clearable filterable>
             <el-option v-for="item in dictObj.brand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
@@ -148,6 +153,7 @@ import { configProjectList } from '@/api/sys/management';
 import { configProductBrandList } from '@/api/sys/brand';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const dictObj = toReactive<any>(proxy?.useNewDict('configProject__configProject', 'configProductBrand__configProductBrand'));
 
 const tableData = ref<TableVO[]>([]);
 const tableAttr = reactive<TableAttr>({
@@ -161,14 +167,6 @@ const showSearch = ref(true);
 const pageTitle = '产品';
 const FormDataRef = ref<ElFormInstance>();
 const queryFormRef = ref<ElFormInstance>();
-const dictObj = reactive({
-  project: [],
-  brand: [],
-  states: [
-    { label: '开启', value: '1', lanel2: '支持' },
-    { label: '关闭', value: '0', lanel2: '不支持' }
-  ]
-});
 
 const dialog = reactive<DialogOption>({
   visible: false,

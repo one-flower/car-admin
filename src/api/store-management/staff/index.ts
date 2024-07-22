@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { FormData, TableQuery, TableVO, commExtTableVO, commExtFormData, commExtTableQuery } from './types';
+import { FormData, TableQuery, TableVO } from './types';
 import { AxiosPromise } from 'axios';
 
 // 查询列表
@@ -46,10 +46,18 @@ export function delInfo(id: string | number | (string | number)[]) {
 }
 
 // 查询提成
-export function orderCommExtlist(query: commExtTableQuery): AxiosPromise<commExtTableVO[]> {
+// export function orderCommExtlist(query: commExtTableQuery): AxiosPromise<commExtTableVO[]> {
+//   return request({
+//     url: '/clyh/order/commExtlist',
+//     method: 'get',
+//     params: query
+//   });
+// }
+
+export function staffDropdown(data?: any) {
   return request({
-    url: '/clyh/order/commExtlist',
-    method: 'get',
-    params: query
+    url: '/clyh/staff/dropdown',
+    method: 'post',
+    data: data
   });
 }

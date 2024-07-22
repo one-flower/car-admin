@@ -32,4 +32,6 @@ export interface TableQuery extends PageQuery {
   startDate?: string; // 质保开始
   endDate?: string; // 质保结束
   state?: string; // 质保状态
+
+  customId?: string;
 }

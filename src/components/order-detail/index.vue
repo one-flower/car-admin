@@ -1,7 +1,7 @@
 <template>
   <!-- 基础信息 -->
   <el-descriptions :title="orderTitle" :column="2" border class="mb10">
-    <el-descriptions-item label="订单类型"> 服务订单 </el-descriptions-item>
+    <el-descriptions-item label="订单类型"> {{ orderData.typeLabel }}</el-descriptions-item>
     <el-descriptions-item label="项目类型"> {{ orderData.projectTypeLabel }} </el-descriptions-item>
     <el-descriptions-item label="品牌名称"> {{ orderData.productBrandIdLabel }} </el-descriptions-item>
     <el-descriptions-item label="订单价格"> {{ orderData.orderPrice }} </el-descriptions-item>
@@ -11,45 +11,47 @@
     <el-descriptions-item label="客户标签"> {{ orderData.tagIdLabel }} </el-descriptions-item>
     <el-descriptions-item label="账户余额">
       {{ orderData.accountBalance }}
-      <el-button v-if="!readonly" text @click="handleRecharge">充值</el-button>
+      <el-button v-if="!readonly" link type="primary" @click="handleRecharge">充值</el-button>
     </el-descriptions-item>
   </el-descriptions>
   <!-- 配置和支付 -->
-  <el-descriptions :title="cinfigPayTitle" :column="2" border class="mb10">
-    <el-descriptions-item label="负责人" :span="2"> {{ configPyaData.directorIdLabel }} </el-descriptions-item>
-    <el-descriptions-item label="作业团队" :span="2"> {{ configPyaData.workTeamLabel }} </el-descriptions-item>
-    <el-descriptions-item label="订单施工" :span="2"> {{ configPyaData.isFlowLabel }} </el-descriptions-item>
-    <!-- 无提成 稍后支付 -->
-    <template v-if="configPyaData.isCommission">
-      <!-- 无提成  -->
-      <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
-        <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
-        <el-descriptions-item label="订单支付"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
+  <template v-if="configPayShow">
+    <el-descriptions :title="cinfigPayTitle" :column="2" border class="mb10">
+      <el-descriptions-item label="负责人" :span="2"> {{ configPyaData.directorIdLabel }} </el-descriptions-item>
+      <el-descriptions-item label="作业团队" :span="2"> {{ configPyaData.workTeamLabel }} </el-descriptions-item>
+      <el-descriptions-item label="订单施工" :span="2"> {{ configPyaData.isFlowLabel }} </el-descriptions-item>
+      <!-- 无提成 稍后支付 -->
+      <template v-if="configPyaData.isCommission">
+        <!-- 无提成  -->
+        <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
+          <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
+          <el-descriptions-item label="订单支付"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
+        </template>
+        <template v-else>
+          <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
+          <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
+          <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} </el-descriptions-item>
+          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} </el-descriptions-item>
+        </template>
       </template>
       <template v-else>
-        <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
-        <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-        <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} </el-descriptions-item>
-        <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} </el-descriptions-item>
+        <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
+          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
+          <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
+          <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
+        </template>
+        <template v-else>
+          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
+          <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
+          <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
+          <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} </el-descriptions-item>
+          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} </el-descriptions-item>
+        </template>
       </template>
-    </template>
-    <template v-else>
-      <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
-        <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
-        <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
-        <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-      </template>
-      <template v-else>
-        <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
-        <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
-        <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-        <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} </el-descriptions-item>
-        <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} </el-descriptions-item>
-      </template>
-    </template>
-    <el-descriptions-item label="备注" :span="2"> {{ configPyaData.remarks }} </el-descriptions-item>
-  </el-descriptions>
-  <el-descriptions :title="`实际支付${configPyaData.realityPrice}元`" border class="mb10" />
+      <el-descriptions-item label="备注" :span="2"> {{ configPyaData.remarks }} </el-descriptions-item>
+    </el-descriptions>
+    <el-descriptions :title="`实际支付${configPyaData.realityPrice}元`" border class="mb10" />
+  </template>
   <!-- 日志 -->
   <el-steps :active="orderLogList.length" direction="vertical" process-status="success" finish-status="success">
     <el-step v-for="item in orderLogList" :key="item.key" :title="item.orderState">
@@ -92,6 +94,10 @@ const props = defineProps({
         accountBalance: ''
       };
     }
+  },
+  configPayShow: {
+    type: Boolean,
+    default: true
   },
   cinfigPayTitle: { type: String, default: '配置与支付' },
   configPyaData: {

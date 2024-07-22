@@ -112,9 +112,8 @@
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="data.form" :rules="data.rules" label-width="80px" @submit.prevent>
         <template v-if="data.form.id">
-          {{ data.form }}
-          <!-- <el-form-item label="车主昵称" prop="customId">{{ data.form.customIdObj?.nickname }} </el-form-item>
-          <el-form-item label="预留电话" prop="customId"> {{ data.form.customIdObj?.telephone }}</el-form-item> -->
+          <el-form-item label="车主昵称" prop="customId">{{ data.form.customIdObj?.nickname }} </el-form-item>
+          <el-form-item label="预留电话" prop="customId"> {{ data.form.customIdObj?.telephone }}</el-form-item>
         </template>
         <template v-else>
           <el-form-item label="选择车主" prop="customId">
@@ -164,17 +163,17 @@
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="data.form.remarks" type="textarea" maxlength="255" show-word-limit row="auto" placeholder="请输入内容" />
         </el-form-item>
-        <template v-if="!(data.form.id && data.form.brand)">
+        <template v-if="!(data.form.id && data.form.manufacturer != '')">
           <el-form-item label="信息补全" prop="infoCompletion">
-            <el-radio-group v-model="data.form.infoCompletion" :disabled="data.form.id && data.form.infoCompletion === '1'">
+            <el-radio-group v-model="data.form.infoCompletion" :disabled="data.form.id && data.form.manufacturer != ''">
               <el-radio v-for="item in oldDictObj.clyh_info_completion" :key="item.key" :label="item.label" :value="item.value" />
             </el-radio-group>
           </el-form-item>
           <template v-if="data.form.infoCompletion === '1'">
             <el-form-item label="车架号码" prop="vin">
-              <el-input v-model="data.form.vin" row="auto" placeholder="请输入内容" :disabled="data.form.id && data.form.infoCompletion === '1'">
+              <el-input v-model="data.form.vin" row="auto" placeholder="请输入内容" :disabled="data.form.id && data.form.manufacturer != ''">
                 <template #append>
-                  <el-button type="primary" :disabled="data.form.id && data.form.infoCompletion === '1'" @click="handleVinInfo">查询</el-button>
+                  <el-button type="primary" :disabled="data.form.id && data.form.manufacturer != ''" @click="handleVinInfo">查询</el-button>
                 </template>
               </el-input>
             </el-form-item>
@@ -200,8 +199,7 @@
     </el-dialog>
 
     <!-- 车辆装配 -->
-    <CarFabricate v-model:visible="fabricateInfo.visible" :basic-data="fabricateInfo.data"></CarFabricate>
-    <!-- <FabricateItem v-model:visible="fabricateInfo.visible" :basic-data="fabricateInfo.data"></FabricateItem> -->
+    <CarFabricate v-model:visible="fabricateInfo.visible" :title="fabricateInfo.title" :basic-data="fabricateInfo.data"> </CarFabricate>
 
     <!-- 订单记录 -->
     <order-log-item v-model:visible="orderLogInfo.visible" :target-info="orderLogInfo.data"></order-log-item>
@@ -262,7 +260,7 @@ import {
 import { FormData, TableQuery, TableVO } from '@/api/customer-management/car/types';
 import { carProvince, carCity } from '@/utils/static-dict';
 import CarFabricate from '@/components/car-fabricate/index.vue';
-import OrderLogItem from './order-log.vue';
+import OrderLogItem from './order-log/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useNewDict('clyhBrand__clyhBrand', 'dictEnum__carState'));
@@ -448,7 +446,7 @@ const handleDelete = async (row?: TableVO) => {
 const fabricateInfo = reactive({
   visible: false,
   title: '车辆装配',
-  data: {}
+  data: <any>{}
 });
 const handleFabricate = async (row: TableVO) => {
   fabricateInfo.data = row;
