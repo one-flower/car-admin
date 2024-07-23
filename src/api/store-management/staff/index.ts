@@ -54,10 +54,9 @@ export function delInfo(id: string | number | (string | number)[]) {
 //   });
 // }
 
-export function staffDropdown(data?: any) {
+export function staffDropdown() {
   return request({
     url: '/clyh/staff/dropdown',
-    method: 'post',
-    data: data
+    method: 'get'
   });
 }

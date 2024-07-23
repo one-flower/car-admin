@@ -195,7 +195,7 @@ const handleUpdate = async (row?: FormManageVO) => {
   reset();
   const _id = row?.id || ids.value[0];
   const res = await getFormManage(_id);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改表单管理';
 };

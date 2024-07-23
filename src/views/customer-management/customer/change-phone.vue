@@ -63,7 +63,7 @@ const props = defineProps({
 
 const loading = ref(false);
 const FormDataRef = ref<ElFormInstance>();
-const changeForm = reactive<ChangePhoneForm>({});
+let changeForm = reactive<ChangePhoneForm>({});
 const rules = {
   // oldTelephone: [{ required: true, message: '原手机号码不能为空', trigger: 'blur' }],
   newTelephone: [{ required: true, message: '新手机号码不能为空', trigger: 'blur' }],
@@ -86,6 +86,7 @@ const getCode = async () => {
 /** 表单重置 */
 const reset = () => {
   Object.assign(changeForm, {});
+  changeForm = {};
   FormDataRef.value?.resetFields();
 };
 

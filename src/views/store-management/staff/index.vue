@@ -236,6 +236,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
+  dateRange.value = ['', ''];
   data.form = { ...initFormData };
   FormDataRef.value?.resetFields();
 };
@@ -243,7 +244,6 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   data.queryParams.pageNum = 1;
-
   getTableData();
 };
 
@@ -278,7 +278,7 @@ const commDialog = reactive<DialogOption>({
 const handleCommExt = async (row?: TableVO) => {
   const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
-  Object.assign(data.form, res.data);
+  data.form = res.data;
   commDialog.visible = true;
 };
 
@@ -287,7 +287,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
-  Object.assign(data.form, res.data);
+  data.form = res.data;
   formDetail.value = false;
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
@@ -298,7 +298,7 @@ const handleDetail = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await getInfo(postId);
-  Object.assign(data.form, res.data);
+  data.form = res.data;
   formDetail.value = true;
   dialog.visible = true;
   dialog.title = `${pageTitle}详情`;

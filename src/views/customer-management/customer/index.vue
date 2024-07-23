@@ -113,7 +113,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" row="auto" maxlength="255" show-word-limit placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -252,7 +252,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const ids = row?.id || tableAttr.ids[0];
   const res = await customInfo(ids);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
 };
@@ -275,7 +275,6 @@ const rechargeLogDialog = reactive<any>({
   id: ''
 });
 const handleRechargeLog = async (row?: TableVO) => {
-  console.log(row.id);
   rechargeLogDialog.id = row?.id;
   rechargeLogDialog.visible = true;
 };
@@ -298,7 +297,7 @@ const changeDialog = reactive<ChangeDialog>({
 const handleChangePhone = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids[0];
   const res = await customInfo(ids);
-  Object.assign(changeDialog.form, res.data);
+  changeDialog.form = res.data;
   changeDialog.visible = true;
 };
 
@@ -315,7 +314,7 @@ const infoDialog = reactive({
 const handleInfo = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids[0];
   const res = await customInfo(ids);
-  Object.assign(infoDialog.form, res.data);
+  infoDialog.form = res.data;
   infoDialog.visible = true;
 };
 

@@ -284,7 +284,7 @@ const handleUpdate = async (row?: OssConfigVO) => {
   reset();
   const ossConfigId = row?.ossConfigId || ids.value[0];
   const res = await getOssConfig(ossConfigId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改对象存储配置';
 };

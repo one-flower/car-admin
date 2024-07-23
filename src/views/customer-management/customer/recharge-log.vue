@@ -137,7 +137,7 @@ const userDialog = reactive({
 });
 /** 充值 */
 const handleRecharge = async () => {
-  Object.assign(userDialog.form, {});
+  userDialog.form = { ...initFormData };
   userDialog.visible = true;
 };
 
@@ -147,7 +147,7 @@ const handleCancel = () => {
 
 const init = async () => {
   const res = await customInfo(props.targetId);
-  Object.assign(userDialog.form, res.data);
+  userDialog.form = res.data;
   tableInfo.queryParams.customId = props.targetId;
 
   getTableData();

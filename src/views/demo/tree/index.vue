@@ -221,7 +221,7 @@ const handleUpdate = async (row: TreeVO) => {
     form.value.parentId = row.id;
   }
   const res = await getTree(row.id);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改测试树';
 };

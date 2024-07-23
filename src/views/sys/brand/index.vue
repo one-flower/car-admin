@@ -91,7 +91,7 @@
           <imageUpload v-model="form.otherCredentialUrl" :limit="3" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" show-word-limit maxlength="255" row="auto" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template v-if="!formDetails" #footer>
@@ -212,7 +212,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await configProductBrandInfo(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   formDetails.value = false;
   dialog.visible = true;
   dialog.title = '修改品牌';
@@ -242,7 +242,7 @@ const handleDelete = async (row?: TableVO) => {
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableAttr.ids[0];
   const res = await configProductBrandInfo(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   formDetails.value = true;
   dialog.visible = true;
   dialog.title = '品牌详情';

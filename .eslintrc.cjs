@@ -18,13 +18,13 @@ module.exports = {
     project: './tsconfig.*?.json',
     parser: '@typescript-eslint/parser'
   },
-  plugins: ['vue', '@typescript-eslint', 'import', 'promise', 'node', 'prettier'],
+  plugins: ['vue', '@typescript-eslint', 'prettier'],
   rules: {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-this-alias': 'off',
-
+    '@typescript-eslint/no-const-assign': 'off', // ts(2588)
     // vue
     'vue/multi-word-component-names': 'off',
     'vue/valid-define-props': 'off',

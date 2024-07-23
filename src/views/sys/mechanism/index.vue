@@ -91,7 +91,7 @@
           <el-input v-model="form.contactUs" placeholder="请输入联系电话" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入备注" />
+          <el-input v-model="form.remarks" show-word-limit maxlength="255" type="textarea" row="auto" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template v-if="!formDetail" #footer>
@@ -214,7 +214,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await configUpOrgInfo(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   formDetail.value = false;
   dialog.visible = true;
   dialog.title = '修改上游机构';
@@ -244,7 +244,7 @@ const handleDelete = async (row?: TableVO) => {
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableAttr.ids[0];
   const res = await configUpOrgInfo(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   formDetail.value = true;
   dialog.visible = true;
   dialog.title = '上游机构详情';

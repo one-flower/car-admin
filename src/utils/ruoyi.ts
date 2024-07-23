@@ -57,8 +57,8 @@ export const addDateRange = (params: any, dateRange: any[], propName?: string) =
     search.params['beginTime'] = dateRange[0];
     search.params['endTime'] = dateRange[1];
   } else {
-    search.params[propName + 'beginTime'] = dateRange[0];
-    search.params[propName + 'endTime'] = dateRange[1];
+    search.params[propName + 'BeginTime'] = dateRange[0];
+    search.params[propName + 'EndTime'] = dateRange[1];
   }
   return search;
 };

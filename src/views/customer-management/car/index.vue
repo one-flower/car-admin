@@ -406,7 +406,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const ids = row?.id || tableAttr.ids[0];
   const res = await carManageInfo(ids);
-  Object.assign(data.form, res.data);
+  data.form = res.data;
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
 };
@@ -419,7 +419,7 @@ const handleVinInfo = async () => {
   }
   const res = await vinInfo(data.form.vin);
   delete res.data.brandId;
-  Object.assign(data.form, res.data);
+  data.form = res.data;
 };
 /** 提交按钮 */
 const submitForm = () => {
@@ -460,7 +460,7 @@ const orderLogInfo = reactive({
   data: {}
 });
 const handleOrderLog = async (row: TableVO) => {
-  Object.assign(orderLogInfo.data, row);
+  orderLogInfo.data = row;
   orderLogInfo.visible = true;
 };
 
@@ -485,7 +485,7 @@ const userRules = {
   reason: [{ required: true, message: '变更原因不能为空', trigger: ['blur', 'change'] }]
 };
 const UserReset = () => {
-  Object.assign(userInfo.data, {});
+  userInfo.data = {};
   UserFormRef.value?.resetFields();
 };
 const handleUser = async (row: any) => {
@@ -497,7 +497,7 @@ const handleUser = async (row: any) => {
   } catch (error) {
     console.log('handeleUsr error:' + error);
   }
-  Object.assign(userInfo.data, res.data);
+  userInfo.data = res.data;
 
   userInfo.customList = dictObj.customList.filter((item: any) => {
     return item.id !== res.data.customIdObj.id;

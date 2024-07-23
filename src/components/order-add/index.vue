@@ -174,7 +174,6 @@ const dictObj = toReactive<any>(
     'dictEnum__orderType', // 订单类型
     // 'configProject__configProject', // 项目类型
     'configProductBrand__configProductBrand', // 产品品牌
-    'configPost__configPost', // 负责人 作业团队
     'dictEnum__orderIsFlow', //是否施工
     'dictEnum__orderIsCommission', //订单提成
     'dictEnum__commDistri', //提成分配
@@ -296,7 +295,7 @@ const configPayDetail = computed((): ConfigPayDesc => {
   // 负责人 工作团队
   let directorIdLabel = '',
     workTeamLabellist = [];
-  dictObj.configPost__configPost.forEach((item: any) => {
+  dictObj.cunstomList.forEach((item: any) => {
     if (formInfo.data.directorId === item.value) {
       directorIdLabel = item.label;
     } else if (formInfo.data.workTeam.includes(item.value)) {
@@ -322,12 +321,12 @@ const configPayDetail = computed((): ConfigPayDesc => {
 });
 // 负责人 作业团队的disabled
 const postPersonList = computed(() => {
-  return dictObj.configPost__configPost.filter((item) => {
+  return dictObj.cunstomList.filter((item) => {
     return !formInfo.data.workTeam.includes(item.value);
   });
 });
 const postTeamList = computed(() => {
-  return dictObj.configPost__configPost.filter((item) => {
+  return dictObj.cunstomList.filter((item) => {
     return item.value !== formInfo.data.directorId;
   });
 });
@@ -362,10 +361,15 @@ const handleSubmit = () => {
 };
 
 const init = async () => {
-  //   dictObj.cunstomList = await staffDropdown();
-  dictObj.cunstomList = [];
+  const cunstomList = await staffDropdown();
+  dictObj.cunstomList = cunstomList.map((item) => {
+    return {
+      value: item.id,
+      label: `${item.name}(${item.configPostIdLabel})`
+    };
+  });
   dictObj.carList = await carManageDropdown();
-  formInfo.data = Object.assign(initFormData, props.basicData);
+  Object.assign(formInfo.data, initFormData, props.basicData);
   FormDataRef.value?.resetFields();
 };
 

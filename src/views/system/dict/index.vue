@@ -200,7 +200,7 @@ const handleUpdate = async (row?: DictTypeVO) => {
   reset();
   const dictId = row?.dictId || ids.value[0];
   const res = await getType(dictId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改字典类型';
 };

@@ -285,7 +285,7 @@ const handleUpdate = async (row?: TenantVO) => {
   await getTenantPackage();
   const _id = row?.id || ids.value[0];
   const res = await getTenant(_id);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改租户';
 };

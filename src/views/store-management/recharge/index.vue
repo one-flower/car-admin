@@ -81,7 +81,7 @@
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="套餐名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入员工编号" />
+          <el-input v-model="form.name" placeholder="请输入套餐名称" />
         </el-form-item>
         <el-form-item label="充值金额" prop="realityMoney">
           <el-input-number v-model="form.realityMoney as number" :precision="2" :min="0" :max="99999.99" />
@@ -90,7 +90,7 @@
           <el-input-number v-model="form.giveMoney as number" :precision="2" :min="0" :max="99999.99" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" row="auto" maxlength="255" show-word-limit placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -129,7 +129,7 @@ const dictObj = toReactive<any>(proxy?.useDict('clyh_recharge_state'));
 
 const queryFormRef = ref<ElFormInstance>();
 
-const pageTitle = '渠道来源';
+const pageTitle = '充值';
 const FormDataRef = ref<ElFormInstance>();
 
 const dialog = reactive<DialogOption>({
@@ -223,7 +223,7 @@ const handleUpdate = async (row?: TableVO) => {
   const res = await rechargeInfo(postId);
   res.data.giveMoney = parseFloat(res.data.giveMoney as string);
   res.data.realityMoney = parseFloat(res.data.realityMoney as string);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
 };
@@ -256,7 +256,7 @@ const userDialog = reactive({
 const handleRecharge = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids[0];
   const res = await rechargeInfo(ids);
-  Object.assign(userDialog.form, res.data);
+  userDialog.form = res.data;
   userDialog.visible = true;
 };
 

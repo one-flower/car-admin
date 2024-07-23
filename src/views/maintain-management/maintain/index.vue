@@ -195,7 +195,7 @@ const handleDelete = async (row?: TableVO) => {
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableInfo.ids[0];
   const res = await frequencyInfo(postId);
-  Object.assign(formInfo.data, res.data);
+  formInfo.data = res.data;
   formInfo.visible = true;
   formInfo.title = '品牌详情';
 };

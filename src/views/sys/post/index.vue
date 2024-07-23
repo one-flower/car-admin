@@ -68,7 +68,7 @@
           <el-input v-model="form.postCode" placeholder="请输入编码名称" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" show-word-limit maxlength="255" row="auto" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -180,7 +180,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await configPostInfo(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改岗位';
 };

@@ -314,7 +314,7 @@ const handleUpdate = async (row?: PostVO) => {
   reset();
   const postId = row?.postId || ids.value[0];
   const res = await getPost(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改岗位';
 };

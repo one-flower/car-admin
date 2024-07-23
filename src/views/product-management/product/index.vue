@@ -11,16 +11,15 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品品牌" prop="productBrandId">
-              <el-select v-model="queryParams.productBrandId" placeholder="请选择品牌名称" clearable filterable>
+              <el-select v-model="queryParams.productBrandId" @change="changeBrand" placeholder="请选择品牌名称" clearable filterable>
                 <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称" prop="name">
-              <el-input v-model="queryParams.name" placeholder="请输入产品名称" clearable></el-input>
-              <!-- <el-select v-model="queryParams.productBrandId" placeholder="请选择产品名称" clearable filterable>
+              <el-select :disabled="productLoading" v-model="queryParams.name" placeholder="请选择产品名称" clearable filterable>
                 <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select> -->
+              </el-select>
             </el-form-item>
             <el-form-item label="产品代码" prop="model">
               <el-input v-model="queryParams.model" placeholder="请输入产品代码" clearable @keyup.enter="handleQuery" />
@@ -133,7 +132,7 @@
         </template>
 
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" maxlength="255" show-word-limit row="auto" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -147,7 +146,7 @@
 </template>
 <!-- 定价 / 备注/跨店/型号 可编辑 -->
 <script setup name="product" lang="ts">
-import { productList, productAdd, productDel, productInfo, productUp } from '@/api/product-management/product';
+import { productList, productAdd, productDel, productInfo, productUp, productDropdown } from '@/api/product-management/product';
 import { FormData, TableQuery, TableVO } from '@/api/product-management/product/types';
 import { configProjectList } from '@/api/sys/management';
 import { configProductBrandList } from '@/api/sys/brand';
@@ -228,6 +227,14 @@ const getTableData = async () => {
   loading.value = false;
 };
 
+const productLoading = ref(false);
+const changeBrand = async (val: string) => {
+  productLoading.value = true;
+  dictObj.productList = await productDropdown({
+    productBrandId: val
+  });
+  productLoading.value = false;
+};
 /** 取消按钮 */
 const cancel = () => {
   reset();
@@ -272,7 +279,7 @@ const handleUpdate = async (row?: TableVO) => {
   reset();
   const postId = row?.id || tableAttr.ids[0];
   const res = await productInfo(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = `添加${pageTitle}`;
 };
@@ -301,7 +308,7 @@ const handleDelete = async (row?: TableVO) => {
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableAttr.ids[0];
   const res = await productInfo(postId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '品牌详情';
 };

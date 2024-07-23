@@ -367,6 +367,7 @@ const handleDetail = async (row?: TableVO) => {
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
     carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    customId: res.data.customId,
     nickname: res.data.customIdObj.nickname, //客户昵称
     telephone: res.data.customIdObj.telephone, //预留电话
     tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
@@ -417,13 +418,13 @@ const payRules = {
 const handlePay = async (row: TableVO) => {
   PayFormRef.value?.resetFields();
   const res = await orderInfo(row?.id);
-  console.log(res.data);
   payInfo.orderData = {
     typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
     carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    customId: res.data.customId,
     nickname: res.data.customIdObj.nickname, //客户昵称
     telephone: res.data.customIdObj.telephone, //预留电话
     tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签

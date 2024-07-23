@@ -64,8 +64,7 @@
       </template>
     </el-step>
   </el-steps>
-
-  <UserRecharge v-model:visible="rechargeInfo.visible" :target-info="rechargeData" @confirm-call-back="changePrice"></UserRecharge>
+  <UserRecharge v-model:visible="rechargeInfo.visible" :target-info="rechargeInfo.data" @confirm-call-back="changePrice"></UserRecharge>
 </template>
 
 <script setup lang="ts">
@@ -73,6 +72,7 @@ import { PropType } from 'vue';
 import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import UserRecharge from '@/views/customer-management/customer/user-recharge.vue';
 
+const emit = defineEmits(['update:orderData']);
 const props = defineProps({
   readonly: {
     type: Boolean,
@@ -129,13 +129,22 @@ const props = defineProps({
 });
 
 const rechargeInfo = reactive({
-  visible: false
+  visible: false,
+  data: {}
 });
-const rechargeData = reactive({});
+
 const handleRecharge = () => {
-  Object.assign(rechargeData, {});
+  rechargeInfo.data = {
+    id: props.orderData.customId,
+    nickname: props.orderData.nickname,
+    telephone: props.orderData.telephone,
+    tagIdLabel: props.orderData.tagIdLabel,
+    accountBalance: props.orderData.accountBalance
+  };
   rechargeInfo.visible = true;
 };
-const changePrice = () => {};
+const changePrice = (val: string) => {
+  props.orderData.accountBalance = val;
+};
 </script>
 <style scoped lang="scss"></style>

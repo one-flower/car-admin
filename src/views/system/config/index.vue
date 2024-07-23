@@ -216,7 +216,7 @@ const handleUpdate = async (row?: ConfigVO) => {
   reset();
   const configId = row?.configId || ids.value[0];
   const res = await getConfig(configId);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改参数';
 };

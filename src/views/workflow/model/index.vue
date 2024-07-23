@@ -289,7 +289,7 @@ const handleUpdate = () => {
     await getTreeselect();
     const _id = ids.value[0];
     const res = await getInfo(_id);
-    Object.assign(form.value, res.data);
+    form.value = res.data;
     dialog.visible = true;
   });
 };

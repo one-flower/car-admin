@@ -17,20 +17,34 @@
               <el-input v-model="tableInfo.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="产品品牌" prop="productBrandId">
-              <el-select v-model="tableInfo.queryParams.productBrandId" value-key="" placeholder="请选择产品品牌" clearable filterable>
+              <el-select
+                v-model="tableInfo.queryParams.productBrandId"
+                @change="changeBrand"
+                value-key=""
+                placeholder="请选择产品品牌"
+                clearable
+                filterable
+              >
                 <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
-              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-select
+                :disabled="productLoading"
+                v-model="tableInfo.queryParams.productId"
+                value-key=""
+                placeholder="请选择产品名称"
+                clearable
+                filterable
+              >
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="质保开始" prop="upOrg">
+            <el-form-item label="质保开始" prop="dateRangeStar">
               <el-date-picker v-model="dateRangeStar" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
             </el-form-item>
-            <el-form-item label="质保结束" prop="upOrg">
+            <el-form-item label="质保结束" prop="dateRangeEnd">
               <el-date-picker v-model="dateRangeEnd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
             </el-form-item>
             <el-form-item label="质保状态" prop="state">
@@ -60,7 +74,7 @@
           <right-toolbar v-model:showSearch="tableInfo.showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
-      <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
+      <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="品牌名称" align="center" prop="brandName" />
         <el-table-column label="车架号码" align="center" prop="vin" />
@@ -107,10 +121,11 @@
 </template>
 
 <script setup name="Brand" lang="ts">
-import { warrantyAdd, warrantyDel, warrantyUp, warrantyInfo, warrantyList } from '@/api/maintain-management/warranty';
+import { warrantyInfo, warrantyList } from '@/api/maintain-management/warranty';
 
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
 import FrequencyLogItem from './frequency-log.vue';
+import { productDropdown } from '@/api/product-management/product';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
@@ -155,6 +170,14 @@ const getTableData = async () => {
   tableInfo.loading = false;
 };
 
+const productLoading = ref(false);
+const changeBrand = async (val: string) => {
+  productLoading.value = true;
+  dictObj.productList = await productDropdown({
+    productBrandId: val
+  });
+  productLoading.value = false;
+};
 /** 取消按钮 */
 const cancel = () => {
   reset();
@@ -183,7 +206,7 @@ const resetQuery = () => {
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableInfo.ids[0];
   const res = await warrantyInfo(postId);
-  Object.assign(formInfo.data, res.data);
+  formInfo.data = res.data;
   formInfo.visible = true;
   formInfo.title = '品牌详情';
 };

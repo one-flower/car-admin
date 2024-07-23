@@ -45,9 +45,7 @@
 
       <div class="mb10">
         <el-descriptions title="充值结果" :column="2" border>
-          <el-descriptions-item label="账户余额">
-            {{ countList([formData.realityMoney, formData.giveMoney, targetInfo.accountBalance], 2) }} 元</el-descriptions-item
-          >
+          <el-descriptions-item label="账户余额"> {{ nowPrice }} 元</el-descriptions-item>
           <el-descriptions-item label="经办人">{{ useUserStore().nickname }} </el-descriptions-item>
           <el-descriptions-item label="充值时间"> {{ new Date().toLocaleDateString() }} {{ new Date().toLocaleTimeString() }} </el-descriptions-item>
         </el-descriptions>
@@ -108,8 +106,11 @@ const rules = {
   id: [{ required: true, message: '套餐不能为空', trigger: ['change', 'blur'] }]
 };
 const saveLoading = ref(false);
+// 余额
+const nowPrice = computed(() => {
+  return countList([formData.realityMoney, formData.giveMoney, props.targetInfo.accountBalance], 2);
+});
 const handleNext = () => {
-  console.log('sdfa');
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       saveLoading.value = true;
@@ -121,10 +122,10 @@ const handleNext = () => {
   });
 };
 const handleCancel = () => {
+  emit('confirmCallBack', nowPrice.value);
   Object.assign(formData, initFormData);
   FormDataRef.value?.resetFields();
   emit('update:visible', false);
-  emit('confirmCallBack');
 };
 
 type SelectOption = {

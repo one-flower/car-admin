@@ -227,7 +227,7 @@ const handleUpdate = (row: CategoryVO) => {
     }
     const res = await getCategory(row.id);
     loading.value = false;
-    Object.assign(form.value, res.data);
+    form.value = res.data;
   });
 };
 

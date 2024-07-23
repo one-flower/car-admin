@@ -18,10 +18,29 @@
             <el-form-item label="订单编号" prop="orderNo">
               <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入项目编号" clearable @keyup.enter="handleQuery"></el-input>
             </el-form-item>
-            <el-form-item label="产品名称" prop="productBrandId">
-              <el-select v-model="tableInfo.queryParams.productBrandId" value-key="" placeholder="请选择产品品牌" clearable filterable>
+            <el-form-item label="产品品牌" prop="productBrandId">
+              <el-select
+                v-model="tableInfo.queryParams.productBrandId"
+                @change="changeBrand"
+                value-key=""
+                placeholder="请选择产品品牌"
+                clearable
+                filterable
+              >
                 <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="产品名称" prop="productId">
+              <el-select
+                :disabled="productLoading"
+                v-model="tableInfo.queryParams.productId"
+                value-key=""
+                placeholder="请选择产品品牌"
+                clearable
+                filterable
+              >
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="负责人" prop="directorId">
@@ -124,6 +143,7 @@
 import { orderAdd, orderDel, orderUp, orderInfo, orderList, orderUpState, orderPay, orderEditComm } from '@/api/order-management/order';
 import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import { TableQuery, TableVO } from '@/api/order-management/order/types';
+import { productDropdown } from '@/api/product-management/product';
 import OrderDetail from '@/components/order-detail/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -155,7 +175,14 @@ const getTableData = async () => {
   tableInfo.total = res.total;
   tableInfo.loading = false;
 };
-
+const productLoading = ref(false);
+const changeBrand = async (val: string) => {
+  productLoading.value = true;
+  dictObj.productList = await productDropdown({
+    productBrandId: val
+  });
+  productLoading.value = false;
+};
 /** 搜索按钮操作 */
 const handleQuery = () => {
   tableInfo.queryParams.pageNum = 1;
@@ -247,7 +274,7 @@ const submit = async () => {
   payInfo.visible = false;
 };
 const cancel = () => {
-  Object.assign(payInfo.tableData, {});
+  payInfo.tableData = [];
   payInfo.visible = false;
 };
 

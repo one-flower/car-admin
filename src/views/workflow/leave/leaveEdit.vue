@@ -138,7 +138,7 @@ const getInfo = () => {
   buttonLoading.value = false;
   nextTick(async () => {
     const res = await getLeave(routeParams.value.id);
-    Object.assign(form.value, res.data);
+    form.value = res.data;
     leaveTime.value = [];
     leaveTime.value.push(form.value.startDate);
     leaveTime.value.push(form.value.endDate);

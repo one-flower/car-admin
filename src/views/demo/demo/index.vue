@@ -206,7 +206,7 @@ const handleUpdate = async (row?: DemoVO) => {
   reset();
   const _id = row?.id || ids.value[0];
   const res = await getDemo(_id);
-  Object.assign(form.value, res.data);
+  form.value = res.data;
   dialog.visible = true;
   dialog.title = '修改测试单';
 };
