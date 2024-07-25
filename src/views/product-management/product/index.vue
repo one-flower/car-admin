@@ -11,13 +11,13 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品品牌" prop="productBrandId">
-              <el-select v-model="queryParams.productBrandId" @change="changeBrand" placeholder="请选择品牌名称" clearable filterable>
+              <el-select v-model="queryParams.productBrandId" placeholder="请选择品牌名称" clearable filterable @change="changeBrand">
                 <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称" prop="name">
-              <el-select :disabled="productLoading" v-model="queryParams.name" placeholder="请选择产品名称" clearable filterable>
+              <el-select v-model="queryParams.name" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
                 <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
@@ -52,10 +52,22 @@
         <el-table-column label="产品品牌" align="center" prop="productBrandIdLabel" />
         <el-table-column label="产品名称" align="center" prop="name" />
         <el-table-column label="产品型号" align="center" prop="model" />
-        <el-table-column label="产品定价(/元)" align="center" prop="price" />
-        <el-table-column label="质保周期(/月)" align="center" prop="warranty" />
-        <el-table-column label="保养频率(月/次)" align="center" prop="frequency" />
-        <el-table-column label="跨店保养" align="center" prop="isCrossStoreLabel" />
+        <el-table-column label="产品定价" align="center" prop="price" />
+        <el-table-column label="质保周期(/月)" align="center" prop="warranty">
+          <template #default="{ row }">
+            {{ row.warranty === 0 ? '-' : row.warranty }}
+          </template>
+        </el-table-column>
+        <el-table-column label="保养频率(月/次)" align="center" prop="frequency">
+          <template #default="{ row }">
+            {{ row.frequency === 0 ? '-' : row.frequency }}
+          </template>
+        </el-table-column>
+        <el-table-column label="跨店保养" align="center" prop="isCrossStoreLabel">
+          <template #default="{ row }">
+            {{ row.isCrossStoreLabel === '--' ? '-' : row.isCrossStoreLabel }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="修改" placement="top">
@@ -81,51 +93,51 @@
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="项目类型" prop="projectType">
-          <el-select v-model="form.projectType" placeholder="请选择项目类型" clearable filterable>
-            <el-option v-for="item in dictObj.project" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-select v-model="form.projectType" placeholder="请选择项目类型" clearable filterable :disabled="form.id != undefined">
+            <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="产品品牌" prop="productBrandId">
-          <el-select v-model="form.productBrandId" placeholder="请选择产品品牌" clearable filterable>
-            <el-option v-for="item in dictObj.brand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-select v-model="form.productBrandId" placeholder="请选择产品品牌" clearable filterable :disabled="form.id != undefined">
+            <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="产品名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入产品名称" />
+          <el-input v-model="form.name" placeholder="请输入产品名称" :disabled="form.id != undefined" />
         </el-form-item>
         <el-form-item label="产品型号" prop="model">
           <el-input v-model="form.model" placeholder="请输入产品型号" />
         </el-form-item>
         <el-form-item label="产品定价" prop="price">
-          <el-input-number v-model="form.price" :min="0" :max="99999.99" :step="1" :controls="true" placeholder="请输入产品定价" />
+          <el-input-number v-model="form.price" :min="0" :max="99999.99" :precision="2" :step="1" :controls="true" placeholder="请输入产品定价" />
         </el-form-item>
         <el-form-item label="质保服务" prop="isWarranty">
-          <el-radio-group v-model="form.isWarranty">
-            <el-radio v-for="item in dictObj.states" :key="item.value" :label="item.label" :value="item.value" />
+          <el-radio-group v-model="form.isWarranty" :disabled="form.id != undefined">
+            <el-radio v-for="item in dictObjOld.clyh_close_open" :key="item.value" :label="item.label" :value="item.value" />
           </el-radio-group>
         </el-form-item>
-
         <template v-if="form.isWarranty === '1'">
           <el-form-item label="质保周期" prop="warranty">
-            <el-input v-model.number="form.warranty" placeholder="请输入质保周期">
+            <el-input v-model.number="form.warranty" placeholder="请输入质保周期" :disabled="form.id != undefined">
               <template #append>月</template>
             </el-input>
           </el-form-item>
           <el-form-item label="保养服务" prop="isFrequency">
-            <el-radio-group v-model="form.isFrequency">
-              <el-radio v-for="item in dictObj.states" :key="item.value" :label="item.label" :value="item.value" />
+            <el-radio-group v-model="form.isFrequency" :disabled="form.id != undefined">
+              <el-radio v-for="item in dictObjOld.clyh_close_open" :key="item.value" :label="item.label" :value="item.value" />
             </el-radio-group>
           </el-form-item>
 
           <template v-if="form.isFrequency === '1'">
             <el-form-item label="保养频率" prop="frequency">
-              <el-input v-model.number="form.frequency" placeholder="请输入保养频率">
+              <el-input v-model.number="form.frequency" placeholder="请输入保养频率" :disabled="form.id != undefined">
                 <template #append>月/次</template>
               </el-input>
             </el-form-item>
             <el-form-item label="跨店保养" prop="isCrossStore">
               <el-radio-group v-model="form.isCrossStore">
-                <el-radio v-for="item in dictObj.states" :key="item.value" :label="item.lanel2" :value="item.value" />
+                <el-radio v-for="item in dictObj.dictEnum__crossStore" :key="item.value" :label="item.label" :value="item.value" />
               </el-radio-group>
             </el-form-item>
           </template>
@@ -137,8 +149,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -148,11 +160,10 @@
 <script setup name="product" lang="ts">
 import { productList, productAdd, productDel, productInfo, productUp, productDropdown } from '@/api/product-management/product';
 import { FormData, TableQuery, TableVO } from '@/api/product-management/product/types';
-import { configProjectList } from '@/api/sys/management';
-import { configProductBrandList } from '@/api/sys/brand';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const dictObj = toReactive<any>(proxy?.useNewDict('configProject__configProject', 'configProductBrand__configProductBrand'));
+const dictObjOld = toReactive<any>(proxy?.useDict('clyh_close_open'));
+const dictObj = toReactive<any>(proxy?.useNewDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__crossStore'));
 
 const tableData = ref<TableVO[]>([]);
 const tableAttr = reactive<TableAttr>({
@@ -183,7 +194,7 @@ const initFormData: FormData = {
   warranty: 0, //质保周期
   isFrequency: '0', //保养服务
   frequency: 0, //保养频率
-  isCrossStore: '0', //跨店保养
+  isCrossStore: 'N', //跨店保养
   remarks: ''
 };
 
@@ -229,6 +240,7 @@ const getTableData = async () => {
 
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
+  queryParams.value.name = '';
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val
@@ -281,11 +293,15 @@ const handleUpdate = async (row?: TableVO) => {
   const res = await productInfo(postId);
   form.value = res.data;
   dialog.visible = true;
-  dialog.title = `添加${pageTitle}`;
+  dialog.title = `修改${pageTitle}`;
 };
 
 /** 提交按钮 */
 const submitForm = () => {
+  if (form.value.frequency > form.value.warranty) {
+    proxy?.$modal.msgError('保养频率应小于质保周期');
+    return;
+  }
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       form.value.id ? await productUp(form.value) : await productAdd(form.value);
@@ -325,15 +341,6 @@ const handleExport = () => {
 };
 
 const init = async () => {
-  const projectRes = await configProjectList({ pageNum: 1, pageSize: 99999 });
-  const brandRes = await configProductBrandList({ pageNum: 1, pageSize: 99999 });
-  dictObj.project = projectRes.rows.map((item) => {
-    return { label: item.name, value: item.id };
-  });
-  dictObj.brand = brandRes.rows.map((item) => {
-    return { label: item.name, value: item.id };
-  });
-
   getTableData();
 };
 

@@ -9,26 +9,22 @@
                 <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="车辆厂商" prop="manufacturer">
-              <el-input v-model="data.queryParams.manufacturer" placeholder="请输入车辆厂商" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="车辆系列" prop="typename">
-              <el-input v-model="data.queryParams.typename" placeholder="请输入车辆系列" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="车辆型号" prop="module">
-              <el-input v-model="data.queryParams.module" placeholder="请输入车辆型号" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="车牌号码" prop="licensePlate">
+              <el-input v-model="data.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="车架号码" prop="vin">
               <el-input v-model="data.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="车辆号码" prop="licensePlate">
-              <el-input v-model="data.queryParams.licensePlate" placeholder="请输入车辆号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="客户昵称" prop="customNickname">
               <el-input v-model="data.queryParams.customNickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="电话号码" prop="customtelephone">
               <el-input v-model="data.queryParams.customtelephone" placeholder="请输入电话号码" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="车辆状态" prop="carState">
+              <el-select v-model="data.queryParams.carState" placeholder="请选择车辆状态" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__carState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -54,12 +50,12 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="车辆品牌" align="left" prop="brandIdLabel" width="100" />
-        <el-table-column label="车辆号码" align="left" prop="licensePlate" width="100" />
+        <el-table-column label="车辆品牌" align="left" prop="brandIdLabel" width="200" />
+        <el-table-column label="车辆号码" align="left" prop="licensePlate" width="150" />
         <el-table-column label="车架号码" align="left" prop="vin" show-overflow-tooltip />
-        <el-table-column label="车辆厂商" align="left" prop="manufacturer" show-overflow-tooltip />
-        <el-table-column label="车辆系列" align="left" prop="typename" show-overflow-tooltip />
-        <el-table-column label="车辆型号" align="left" prop="module" />
+        <!-- <el-table-column label="车辆厂商" align="left" prop="manufacturer" show-overflow-tooltip /> -->
+        <!-- <el-table-column label="车辆系列" align="left" prop="typename" show-overflow-tooltip /> -->
+        <!-- <el-table-column label="车辆型号" align="left" prop="module" /> -->
         <el-table-column label="车辆状态" align="left" prop="carStateLabel" />
         <el-table-column label="客户昵称" align="left" prop="nickname">
           <template #default="{ row }">{{ row.customIdObj?.nickname }}</template>
@@ -69,30 +65,30 @@
         </el-table-column>
         <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="装配情况" placement="top">
+            <el-tooltip content="车辆装配" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleFabricate(row)">
                 <svg-icon class-name="search-icon" icon-class="car-change" />
               </el-button>
             </el-tooltip>
-            <el-tooltip content="订单记录" placement="top">
+            <el-tooltip content="车辆订单" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleOrderLog(row)">
                 <svg-icon class-name="search-icon" icon-class="order-log"
               /></el-button>
             </el-tooltip>
-            <el-tooltip content="变更车主" placement="top">
+            <el-tooltip content="车主变更" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleUser(row)">
                 <svg-icon class-name="search-icon" icon-class="car-user-change"
               /></el-button>
             </el-tooltip>
-            <el-tooltip :content="row.carState === '0' ? '启用' : '禁用'" placement="top">
+            <el-tooltip content="编辑" placement="top">
+              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip :content="row.carState === '0' ? '车辆启用' : '车辆禁用'" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
                 <svg-icon class-name="search-icon" :icon-class="row.carState === '0' ? 'open' : 'close'" />
               </el-button>
             </el-tooltip>
-            <el-tooltip content="编辑" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
+            <el-tooltip v-if="row.carState === '1'" content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
           </template>
@@ -118,7 +114,7 @@
         <template v-else>
           <el-form-item label="选择车主" prop="customId">
             <el-select v-model="data.form.customId" placeholder="请选择车主" clearable filterable>
-              <el-option v-for="item in dictObj.customList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-option v-for="item in dictObj.customList" :key="item.id" :label="item.nickname" :value="item.id"> </el-option>
             </el-select>
           </el-form-item>
         </template>
@@ -137,10 +133,10 @@
             <el-radio v-for="item in oldDictObj.clyh_license_plate_state" :key="item.key" :label="item.label" :value="item.value" />
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="data.form.licensePlateState === '0'">
-          <template #label>
+        <el-form-item v-if="data.form.licensePlateState === '0'" label="车辆号牌" prop="licensePlateState">
+          <!-- <template #label>
             <div class="carNoLabel">车辆号牌</div>
-          </template>
+          </template> -->
           <div class="cardNo">
             <el-form-item prop="licenseProvince">
               <el-select v-model="data.form.licenseProvince" placeholder="京" clearable filterable class="cardNo--province">
@@ -192,8 +188,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -219,18 +215,18 @@
         <el-descriptions-item label="能源类型"> {{ userInfo.data.fueltype }} </el-descriptions-item>
         <el-descriptions-item label="备注" :span="2"> {{ userInfo.data.remarks }} </el-descriptions-item>
         <el-descriptions-item label="车辆照片" :span="2">
-          <image-preview :height="100" :src="userInfo.data.imgUrls" :preview-src-list="[userInfo.data.imgUrls]"></image-preview>
+          <image-preview :width="100" :height="100" :src="userInfo.data.imgUrls" :preview-src-list="[userInfo.data.imgUrls]"></image-preview>
         </el-descriptions-item>
       </el-descriptions>
       <el-descriptions title="原车主信息" :column="2" border class="mb10">
-        <el-descriptions-item label="车主昵称"> {{ userInfo.data.customIdObj.nickname }} </el-descriptions-item>
-        <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj.telephone }} </el-descriptions-item>
+        <el-descriptions-item label="车主昵称"> {{ userInfo.data.customIdObj?.nickname }} </el-descriptions-item>
+        <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj?.telephone }} </el-descriptions-item>
       </el-descriptions>
       <el-descriptions title="新车主" :column="2" border></el-descriptions>
       <el-form ref="UserFormRef" :model="userInfo.data" :rules="userRules" label-width="80px" @submit.prevent>
         <el-form-item label="选择车主" prop="newCustomId">
           <el-select v-model="userInfo.data.newCustomId" placeholder="请选择车主" clearable filterable>
-            <el-option v-for="item in userInfo.customList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option v-for="item in userInfo.customList" :key="item.id" :label="item.nickname" :value="item.id"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="变更原因" prop="reason">
@@ -247,17 +243,9 @@
   </div>
 </template>
 <script setup name="carManage" lang="ts">
-import {
-  carManageList,
-  carManageAdd,
-  carManageDel,
-  carManageInfo,
-  carManageUp,
-  carManageDropdown,
-  vinInfo,
-  carManageEditCusetom
-} from '@/api/customer-management/car';
+import { carManageList, carManageAdd, carManageDel, carManageInfo, carManageUp, vinInfo, carManageEditCusetom } from '@/api/customer-management/car';
 import { FormData, TableQuery, TableVO } from '@/api/customer-management/car/types';
+import { customDropdown } from '@/api/customer-management/customer';
 import { carProvince, carCity } from '@/utils/static-dict';
 import CarFabricate from '@/components/car-fabricate/index.vue';
 import OrderLogItem from './order-log/index.vue';
@@ -280,7 +268,7 @@ const tableAttr = reactive<TableAttr>({
 
 const queryFormRef = ref<ElFormInstance>();
 
-const pageTitle = '车辆信息';
+const pageTitle = '车辆';
 const FormDataRef = ref<ElFormInstance>();
 
 const dialog = reactive<DialogOption>({
@@ -294,8 +282,8 @@ const initFormData: FormData = {
   toType: '0',
   brandId: '',
   licensePlateState: '0',
-  licenseProvince: '',
-  licenseOrg: '',
+  licenseProvince: '辽',
+  licenseOrg: 'A',
   licenseNum: '',
   licenseBit: '',
   licensePlate: '',
@@ -328,7 +316,8 @@ const data = reactive<PageData<FormData, TableQuery>>({
   rules: {
     customId: [{ required: true, message: '选择车主不能为空', trigger: ['blur', 'change'] }],
     toType: [{ required: true, message: '车辆归属不能为空', trigger: 'change' }],
-    licensePlateState: [{ required: true, message: '车辆品牌不能为空', trigger: ['blur', 'change'] }],
+    brandId: [{ required: true, message: '车辆品牌不能为空', trigger: ['blur', 'change'] }],
+    licensePlateState: [{ required: true }],
     licenseProvince: [{ required: true, message: '不能为空', trigger: 'change' }],
     licenseOrg: [{ required: true, message: ' 不能为空', trigger: 'change' }],
     licenseNum: [
@@ -419,7 +408,7 @@ const handleVinInfo = async () => {
   }
   const res = await vinInfo(data.form.vin);
   delete res.data.brandId;
-  data.form = res.data;
+  Object.assign(data.form, res.data);
 };
 /** 提交按钮 */
 const submitForm = () => {
@@ -450,6 +439,7 @@ const fabricateInfo = reactive({
 });
 const handleFabricate = async (row: TableVO) => {
   fabricateInfo.data = row;
+  delete fabricateInfo.data.id;
   fabricateInfo.visible = true;
 };
 
@@ -469,14 +459,12 @@ const UserFormRef = ref<ElFormInstance>();
 type UserInfo = {
   visible: boolean;
   title: string;
-
   data: any;
   customList: any;
 };
 const userInfo = reactive<UserInfo>({
   visible: false,
   title: '变更车主',
-
   data: {},
   customList: []
 });
@@ -529,7 +517,7 @@ const userCanecl = async () => {
 };
 
 const init = async () => {
-  dictObj.customList = await carManageDropdown();
+  dictObj.customList = await customDropdown();
   getTableData();
 };
 

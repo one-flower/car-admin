@@ -14,13 +14,13 @@
                 <el-option v-for="item in sys_user_sex" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="入职日期" prop="entryTime">
+            <el-form-item label="入职日期" prop="dateRange">
               <el-date-picker v-model="dateRange" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="员工编号" prop="staffCode">
+            <!-- <el-form-item label="员工编号" prop="staffCode">
               <el-input v-model="data.queryParams.staffCode" placeholder="请输入员工编号" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="员工姓名" prop="name">
               <el-input v-model="data.queryParams.name" placeholder="请输入员工姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -61,7 +61,7 @@
             <ImagePreview :width="100" :height="100" :src="row.staffCardUrl" />
           </template>
         </el-table-column>
-        <el-table-column label="员工编号" align="center" prop="staffCode" show-overflow-tooltip />
+        <!-- <el-table-column label="员工编号" align="center" prop="staffCode" show-overflow-tooltip /> -->
         <el-table-column label="员工姓名" align="center" prop="name" />
         <el-table-column label="员工岗位" align="center" prop="configPostIdLabel" />
         <el-table-column label="员工性别" align="center" prop="genderLabel" />
@@ -84,8 +84,8 @@
             </el-tooltip>
             <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleDetail(row)">
-                <svg-icon class-name="search-icon" icon-class="detail"></svg-icon
-              ></el-button>
+                <svg-icon class-name="search-icon" icon-class="detail"></svg-icon>
+              </el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -126,7 +126,7 @@
           <el-input v-model="data.form.telephone" placeholder="请输入联系电话" />
         </el-form-item>
         <el-form-item label="入职日期" prop="entryTime">
-          <el-date-picker v-model="data.form.entryTime" type="date" value-format="YYYY-MM-DD hh:mm:ss" placeholder="选择日期时间"> </el-date-picker>
+          <el-date-picker v-model="data.form.entryTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期时间"> </el-date-picker>
         </el-form-item>
         <el-form-item label="在职状态" prop="state">
           <el-radio-group v-model="data.form.state">
@@ -134,19 +134,19 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="员工简介" prop="snapshot">
-          <el-input v-model="data.form.snapshot" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="data.form.snapshot" type="textarea" row="auto" show-word-limit maxlength="255" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="员工名片" prop="staffCardUrl">
-          <imageUpload v-model="data.form.staffCardUrl" :file-size="50" :limit="1" :disabled="formDetail" />
+          <imageUpload v-model="data.form.staffCardUrl" :limit="1" :disabled="formDetail" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="data.form.remarks" type="textarea" row="auto" placeholder="请输入内容" />
+          <el-input v-model="data.form.remarks" type="textarea" row="auto" show-word-limit maxlength="255" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template v-if="!formDetail" #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -161,7 +161,7 @@ import CommExt from './comm-ext.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const { configPost__configPost } = proxy?.useNewDict('configPost__configPost');
+const { configPost__configPost } = toRefs<any>(proxy?.useNewDict('configPost__configPost'));
 const { sys_user_sex, clyh_staff_entry_state } = toRefs<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry_state'));
 
 const tableData = ref<TableVO[]>([]);
@@ -177,7 +177,7 @@ const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 
 const formDetail = ref(false);
-const pageTitle = '渠道来源';
+const pageTitle = '员工';
 const FormDataRef = ref<ElFormInstance>();
 
 const dialog = reactive<DialogOption>({
@@ -236,7 +236,6 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  dateRange.value = ['', ''];
   data.form = { ...initFormData };
   FormDataRef.value?.resetFields();
 };
@@ -249,6 +248,7 @@ const handleQuery = () => {
 
 /** 重置按钮操作 */
 const resetQuery = () => {
+  dateRange.value = ['', ''];
   queryFormRef.value?.resetFields();
   data.queryParams.pageNum = 1;
 

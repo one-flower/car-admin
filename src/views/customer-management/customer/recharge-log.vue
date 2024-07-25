@@ -50,8 +50,8 @@
           <el-table-column label="套餐名称" align="center" prop="rechargeName" />
           <el-table-column label="充值金额" align="center" prop="realityMoney" />
           <el-table-column label="赠送金额" align="center" prop="giveMoney" />
-          <el-table-column label="经办人" align="center" prop="" />
-          <el-table-column label="充值时间" align="center" prop="" />
+          <el-table-column label="经办人" align="center" prop="createByLabel" />
+          <el-table-column label="充值时间" align="center" prop="createTime" />
         </el-table>
 
         <pagination
@@ -79,7 +79,7 @@ import { customInfo } from '@/api/customer-management/customer';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'cancel']);
 const props = defineProps({
   visible: propTypes.bool.def(false).isRequired,
   targetId: propTypes.string.def('').isRequired
@@ -137,12 +137,12 @@ const userDialog = reactive({
 });
 /** 充值 */
 const handleRecharge = async () => {
-  userDialog.form = { ...initFormData };
   userDialog.visible = true;
 };
 
 const handleCancel = () => {
   emit('update:visible', false);
+  emit('cancel');
 };
 
 const init = async () => {

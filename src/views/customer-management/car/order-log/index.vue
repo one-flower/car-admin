@@ -1,8 +1,8 @@
 <template>
-  <el-drawer :model-value="visible" title="订单记录" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
+  <el-drawer :model-value="visible" title="车辆订单" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
     <div class="p-2">
       <div class="mb10">
-        <el-descriptions title="车辆信息" :column="3" border>
+        <el-descriptions title="车辆信息" :column="2" border>
           <el-descriptions-item label="车辆品牌"> {{ targetInfo.brandIdLabel }} </el-descriptions-item>
           <el-descriptions-item label="车牌号码"> {{ targetInfo.licensePlate }} </el-descriptions-item>
           <el-descriptions-item label="车架号码"> {{ targetInfo.vin }} </el-descriptions-item>
@@ -31,13 +31,13 @@
                 <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入订单编号" clearable @keyup.enter="handleQuery"></el-input>
               </el-form-item>
               <el-form-item label="产品品牌" prop="productBrandId">
-                <el-select v-model="tableInfo.queryParams.productBrandId" @change="changeBrand" placeholder="请选择产品品牌" clearable filterable>
+                <el-select v-model="tableInfo.queryParams.productBrandId" placeholder="请选择产品品牌" clearable filterable @change="changeBrand">
                   <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="产品名称" prop="label">
-                <el-select :disabled="productLoading" v-model="tableInfo.queryParams.label" placeholder="请选择产品名称" clearable filterable>
+                <el-select v-model="tableInfo.queryParams.label" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
                   <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
@@ -90,7 +90,9 @@
           <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
             <template #default="{ row }">
               <el-tooltip content="详情" placement="top">
-                <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
+                <el-button v-hasPermi="['system:post:detail']" link @click="handleDetail(row)">
+                  <svg-icon class-name="search-icon" icon-class="detail"></svg-icon>
+                </el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -167,10 +169,15 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 const getTableData = async () => {
   tableInfo.loading = true;
 
-  const res = await orderList({
-    ...tableInfo.queryParams,
-    carManageId: props.targetInfo.id
-  });
+  const res = await orderList(
+    proxy?.addDateRange(
+      {
+        ...tableInfo.queryParams,
+        carManageId: props.targetInfo.id
+      },
+      dateRange.value
+    )
+  );
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -178,6 +185,7 @@ const getTableData = async () => {
 
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
+  tableInfo.queryParams.label = '';
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val
@@ -214,10 +222,10 @@ const handleDetail = async (row?: TableVO) => {
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
     carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
-    nickname: res.data.customIdObj.nickname, //客户昵称
-    telephone: res.data.customIdObj.telephone, //预留电话
-    tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
-    accountBalance: res.data.customIdObj.accountBalance //账户余额
+    nickname: res.data.customIdObj?.nickname, //客户昵称
+    telephone: res.data.customIdObj?.telephone, //预留电话
+    tagIdLabel: res.data.customIdObj?.tagIdLabel, //客户标签
+    accountBalance: res.data.customIdObj?.accountBalance //账户余额
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
@@ -226,7 +234,7 @@ const handleDetail = async (row?: TableVO) => {
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成
     isCommissionLabel: res.data.isCommissionLabel, //
-    commDistriLabel: res.data.isCommission, // 提成分配
+    commDistriLabel: res.data.commDistriLabel, // 提成分配
     commPrice: res.data.commPrice, // 提成价格
     orderPayType: res.data.payState, // 订单出伏
     orderPayTypeLabel: res.data.payStateLabel, //

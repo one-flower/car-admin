@@ -1,12 +1,5 @@
 <template>
-  <el-drawer
-    :model-value="visible"
-    title="充值记录"
-    direction="rtl"
-    size="800px"
-    close-on-click-modal
-    :before-close="() => emit('update:visible', false)"
-  >
+  <el-drawer :model-value="visible" title="充值记录" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
     <div class="p-2">
       <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
         <div v-show="showSearch" class="mb-[10px]">
@@ -22,10 +15,10 @@
                   end-placeholder="结束日期"
                 />
               </el-form-item>
-              <el-form-item label="客户昵称" prop="projectType">
+              <el-form-item label="客户昵称" prop="customName">
                 <el-input v-model="queryParams.customName" placeholder="请输入客户昵称" />
               </el-form-item>
-              <el-form-item label="预留电话" prop="createTime">
+              <el-form-item label="预留电话" prop="customTelephone">
                 <el-input v-model="queryParams.customTelephone" placeholder="请输入预留电话" />
               </el-form-item>
               <el-form-item>
@@ -39,14 +32,14 @@
 
       <el-card shadow="hover">
         <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips">
-          <el-table-column label="客户昵称" align="center" prop="customName" />
-          <el-table-column label="预留电话" align="center" prop="customTelephone" />
-          <el-table-column label="套餐名称" align="center" prop="rechargeName" />
-          <el-table-column label="充值金额" align="center" prop="realityMoney" />
-          <el-table-column label="赠送金额" align="center" prop="giveMoney" />
-          <el-table-column label="账户余额" align="center" prop="remainingSum" />
-          <el-table-column label="经办人" align="center" prop="" />
-          <el-table-column label="充值时间" align="center" prop="" />
+          <el-table-column label="客户昵称" align="left" prop="customName" />
+          <el-table-column label="预留电话" align="left" prop="customTelephone" />
+          <el-table-column label="套餐名称" align="left" prop="rechargeName" />
+          <el-table-column label="充值金额" align="left" prop="realityMoney" />
+          <el-table-column label="赠送金额" align="left" prop="giveMoney" />
+          <el-table-column label="账户余额" align="left" prop="remainingSum" />
+          <el-table-column label="经办人" align="left" prop="createByLabel" />
+          <el-table-column label="充值时间" align="left" prop="createTime" show-overflow-tooltip />
         </el-table>
 
         <pagination
@@ -105,7 +98,15 @@ const queryParams = reactive<logTableQuery>({
 const getTableData = async () => {
   loading.value = true;
 
-  const res = await rechargeLogList(proxy?.addDateRange(queryParams, dateRange.value, 'createTime'));
+  const res = await rechargeLogList(
+    proxy?.addDateRange(
+      {
+        ...queryParams,
+        rechargeId: props.targetInfo.id
+      },
+      dateRange.value
+    )
+  );
   tableData.value = res.rows;
   tableInfo.totalMoney = res.rows[0]?.totalMoney;
   tableInfo.pageMoney = res.rows.reduce((a: any, b: any) => a.personalCommPrice + b.personalCommPrice, 0);
@@ -126,7 +127,9 @@ const resetQuery = () => {
   queryParams.pageNum = 1;
   handleQuery();
 };
-
+const handleCancel = () => {
+  emit('update:visible', false);
+};
 const init = async () => {
   getTableData();
 };
@@ -135,7 +138,6 @@ watch(
   () => props.visible,
   (val: boolean) => {
     if (!val) return;
-    queryParams.rechargeId = props.targetInfo.id;
     init();
   }
 );

@@ -9,6 +9,7 @@
       :close-on-press-escape="false"
       :before-close="handleCancel"
     >
+      {{ formInfo.data }}
       <el-steps :active="active" direction="horizontal" process-status="process" finish-status="success" class="mb10">
         <el-step title="创建订单" />
         <el-step title="订单配置" />
@@ -112,7 +113,7 @@
           </template>
         </template>
         <template v-else-if="active === 2">
-          <order-detail :orderData="orderDetail" :configPayShow="false"></order-detail>
+          <order-detail :order-data="orderDetail" :config-pay-show="false"></order-detail>
           <template v-if="true">
             <el-form-item label="订单支付" prop="orderPayType">
               <el-radio-group v-model="formInfo.data.orderPayType" class="ml-4">
@@ -144,15 +145,16 @@
           </template>
         </template>
         <template v-else-if="active === 3">
-          <order-detail :orderData="orderDetail" :configPayShow="true" :configPyaData="configPayDetail"></order-detail>
+          <order-detail :order-data="orderDetail" :readonly="true" :config-pay-show="true" :config-pya-data="configPayDetail"></order-detail>
         </template>
       </el-form>
 
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="handleCancel">取 消</el-button>
-          <el-button v-if="active === 3" type="primary" @click="handleSubmit">提交</el-button>
-          <el-button v-else type="primary" @click="handleNext">下一步</el-button>
+          <el-button v-if="active !== 0" type="primary" @click="handleNext(-1)">上一步</el-button>
+          <el-button v-if="active !== 3" type="primary" @click="handleNext(1)">下一步</el-button>
+          <el-button v-else type="primary" @click="handleSubmit">提交</el-button>
         </div>
       </template>
     </el-dialog>
@@ -227,7 +229,7 @@ const formInfo = reactive<FormInfo<any>>({
 });
 
 const rules = {
-  projectTypeLabel: [{ required: true, message: '项目类型不能为空', trigger: 'change' }],
+  // projectTypeLabel: [{ required: true, message: '', trigger: 'change' }],
   carManageId: [{ required: true, message: '车辆不能为空', trigger: 'change' }],
   productBrandId: [{ required: true, message: '产品品牌不能为空', trigger: 'change' }],
   productId: [{ required: true, message: '产品不能为空', trigger: 'change' }],
@@ -242,6 +244,10 @@ const rules = {
 //获取客户信息
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
+  formInfo.data.projectType = undefined;
+  formInfo.data.projectTypeLabel = undefined;
+  formInfo.data.productId = undefined;
+  formInfo.data.orderPrice = undefined;
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val
@@ -333,19 +339,35 @@ const postTeamList = computed(() => {
 
 const handleCancel = () => {
   active.value = 0;
+  formInfo.data = { ...initFormData };
   FormDataRef.value.resetFields();
   emit('update:visible', false);
 };
 
-const handleNext = () => {
+const handleNext = (step: number) => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (active.value === 2 && countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2)) {
-        await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
-        active.value++;
-      } else {
-        active.value++;
+      if (step === 1) {
+        if (active.value === 1) {
+          // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
+          if (carData.value.customIdObj.accountBalance - formInfo.data.orderPrice >= 0) {
+            formInfo.data.accountPrice = formInfo.data.orderPrice;
+            formInfo.data.cashPrice = 0;
+          } else {
+            formInfo.data.accountPrice = carData.value.customIdObj.accountBalance;
+            formInfo.data.cashPrice = formInfo.data.orderPrice - carData.value.customIdObj.accountBalance;
+          }
+        } else if (
+          active.value === 2 &&
+          formInfo.data.orderPayType === 'PROMPTLY_PAY' &&
+          countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2)
+        ) {
+          await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
+          active.value += step;
+        }
       }
+
+      active.value += step;
     }
   });
 };

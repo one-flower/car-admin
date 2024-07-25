@@ -1,11 +1,24 @@
+<!-- eslint-disable vue/no-side-effects-in-computed-properties -->
 <template>
-  <el-image :src="`${realSrc}`" fit="cover" :style="`width:${realWidth};height:${realHeight};`" :preview-src-list="realSrcList" preview-teleported>
-    <template #error>
-      <div class="image-slot">
-        <el-icon><picture-filled /></el-icon>
-      </div>
-    </template>
-  </el-image>
+  <div class="demo-image__preview">
+    <el-image
+      :style="`width:${realWidth};height:${realHeight};`"
+      :src="`${realSrc}`"
+      :zoom-rate="1.2"
+      :max-scale="7"
+      :min-scale="0.2"
+      :preview-src-list="isOne ? [] : realSrcList"
+      :initial-index="4"
+      fit="cover"
+      preview-teleported
+    >
+      <template #error>
+        <div class="image-slot">
+          <el-icon><picture-filled /></el-icon>
+        </div>
+      </template>
+    </el-image>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -31,10 +44,17 @@ const realSrc = computed(() => {
   return real_src;
 });
 
+const isOne = ref(false);
 const realSrcList = computed(() => {
   if (!props.src) {
     return [];
+  } else if (props.src.split(',').length < 2) {
+    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    isOne.value = true;
+    return [];
   }
+  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+  isOne.value = false;
   let real_src_list = props.src.split(',');
   let srcList: string[] = [];
   real_src_list.forEach((item: string) => {
@@ -57,14 +77,14 @@ const realHeight = computed(() => (typeof props.height == 'string' ? props.heigh
   background-color: #ebeef5;
   box-shadow: 0 0 5px 1px #ccc;
 
-  :deep(.el-image__inner) {
-    transition: all 0.3s;
-    cursor: pointer;
+  // :deep(.el-image__inner) {
+  //   transition: all 0.3s;
+  //   cursor: pointer;
 
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
+  //   &:hover {
+  //     transform: scale(1.2);
+  //   }
+  // }
 
   :deep(.image-slot) {
     display: flex;

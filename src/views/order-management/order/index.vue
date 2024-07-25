@@ -102,7 +102,9 @@
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
+              <el-button v-hasPermi="['system:post:detail']" link @click="handleDetail(row)">
+                <svg-icon class-name="search-icon" icon-class="detail"></svg-icon>
+              </el-button>
             </el-tooltip>
             <template v-if="row.state !== 'CANCEL_ORDER'">
               <el-tooltip v-if="row.payState !== 'PAID'" content="支付" placement="top">
@@ -171,8 +173,8 @@
     <el-dialog v-model="detailInfo.visible" :title="detailInfo.title" width="700px" append-to-body>
       <order-detail
         :readonly="true"
-        :orderData="detailInfo.orderData"
-        :configPyaData="detailInfo.configPayData"
+        :order-data="detailInfo.orderData"
+        :config-pya-data="detailInfo.configPayData"
         :order-log-list="detailInfo.orderLogObj"
       ></order-detail>
       <template v-if="!formInfo.disabled" #footer>
@@ -184,7 +186,7 @@
 
     <!-- 支付 -->
     <el-dialog v-model="payInfo.visible" :title="payInfo.title" width="700px" append-to-body>
-      <order-detail :orderData="payInfo.orderData" :config-pay-show="false"></order-detail>
+      <order-detail :order-data="payInfo.orderData" :config-pay-show="false"></order-detail>
       <el-form ref="PayFormRef" :model="payInfo.data" :rules="payRules" label-width="80px" @submit.prevent>
         <el-form-item label="账户支付" prop="accMoney">
           <el-input-number v-model="payInfo.data.accMoney" :min="0" :max="99999.99" :precision="2"> </el-input-number>
@@ -368,10 +370,10 @@ const handleDetail = async (row?: TableVO) => {
     orderPrice: res.data.orderPrice, //订单价格
     carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
     customId: res.data.customId,
-    nickname: res.data.customIdObj.nickname, //客户昵称
-    telephone: res.data.customIdObj.telephone, //预留电话
-    tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
-    accountBalance: res.data.customIdObj.accountBalance //账户余额
+    nickname: res.data.customIdObj?.nickname, //客户昵称
+    telephone: res.data.customIdObj?.telephone, //预留电话
+    tagIdLabel: res.data.customIdObj?.tagIdLabel, //客户标签
+    accountBalance: res.data.customIdObj?.accountBalance //账户余额
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
@@ -380,7 +382,7 @@ const handleDetail = async (row?: TableVO) => {
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成
     isCommissionLabel: res.data.isCommissionLabel, //
-    commDistriLabel: res.data.isCommission, // 提成分配
+    车辆信息: res.data.commDistriLabel, // 提成分配
     commPrice: res.data.commPrice, // 提成价格
     orderPayType: res.data.payState, // 订单出伏
     orderPayTypeLabel: res.data.payStateLabel, //
@@ -425,10 +427,10 @@ const handlePay = async (row: TableVO) => {
     orderPrice: res.data.orderPrice, //订单价格
     carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
     customId: res.data.customId,
-    nickname: res.data.customIdObj.nickname, //客户昵称
-    telephone: res.data.customIdObj.telephone, //预留电话
-    tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
-    accountBalance: res.data.customIdObj.accountBalance //账户余额
+    nickname: res.data.customIdObj?.nickname, //客户昵称
+    telephone: res.data.customIdObj?.telephone, //预留电话
+    tagIdLabel: res.data.customIdObj?.tagIdLabel, //客户标签
+    accountBalance: res.data.customIdObj?.accountBalance //账户余额
   };
   payInfo.data = {
     orderId: res.data.id,

@@ -23,13 +23,13 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="产品品牌" prop="rechargeId">
-                <el-select v-model="tableInfo.queryParams.productBrandId" @change="changeBrand" placeholder="请选择产品品牌" clearable filterable>
+                <el-select v-model="tableInfo.queryParams.productBrandId" placeholder="请选择产品品牌" clearable filterable @change="changeBrand">
                   <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="产品名称" prop="rechargeId">
-                <el-select :disabled="productLoading" v-model="tableInfo.queryParams.productId" placeholder="请选择产品名称" clearable filterable>
+                <el-select v-model="tableInfo.queryParams.productId" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
                   <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
@@ -137,6 +137,7 @@ const getTableData = async () => {
 
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
+  tableInfo.queryParams.productId = '';
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val
@@ -173,10 +174,10 @@ const handleDetail = async (row?: TableVO) => {
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
     carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
-    nickname: res.data.customIdObj.nickname, //客户昵称
-    telephone: res.data.customIdObj.telephone, //预留电话
-    tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
-    accountBalance: res.data.customIdObj.accountBalance //账户余额
+    nickname: props.basicData.customIdObj?.nickname, //客户昵称
+    telephone: props.basicData.customIdObj?.telephone, //预留电话
+    tagIdLabel: props.basicData.customIdObj?.tagIdLabel, //客户标签
+    accountBalance: props.basicData.customIdObj?.accountBalance //账户余额
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
@@ -185,7 +186,7 @@ const handleDetail = async (row?: TableVO) => {
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成
     isCommissionLabel: res.data.isCommissionLabel, //
-    commDistriLabel: res.data.isCommission, // 提成分配
+    commDistriLabel: res.data.commDistriLabel, // 提成分配
     commPrice: res.data.commPrice, // 提成价格
     orderPayType: res.data.payState, // 订单出伏
     orderPayTypeLabel: res.data.payStateLabel, //

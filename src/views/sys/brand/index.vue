@@ -52,9 +52,11 @@
             <el-tooltip content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handleDetail(row)"></el-button>
-            </el-tooltip>
+            <!-- <el-tooltip content="详情" placement="top">
+              <el-button v-hasPermi="['system:post:detail']" link @click="handleDetail(row)">
+                <svg-icon icon-class="detail"></svg-icon>
+              </el-button>
+            </el-tooltip> -->
           </template>
         </el-table-column>
       </el-table>
@@ -85,10 +87,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="品牌Logo" prop="logoUrl">
-          <imageUpload v-model="form.logoUrl" :limit="1" />
+          <imageUpload v-model="form.logoUrl" :limit="1" :disabled="formDetails" />
         </el-form-item>
         <el-form-item label="其他资质" prop="otherCredentialUrl">
-          <imageUpload v-model="form.otherCredentialUrl" :limit="3" />
+          <imageUpload v-model="form.otherCredentialUrl" :limit="3" :disabled="formDetails" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" show-word-limit maxlength="255" row="auto" placeholder="请输入内容" />
@@ -96,8 +98,8 @@
       </el-form>
       <template v-if="!formDetails" #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
         </div>
       </template>
     </el-dialog>

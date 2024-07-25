@@ -4,13 +4,13 @@
     <el-descriptions-item label="订单类型"> {{ orderData.typeLabel }}</el-descriptions-item>
     <el-descriptions-item label="项目类型"> {{ orderData.projectTypeLabel }} </el-descriptions-item>
     <el-descriptions-item label="品牌名称"> {{ orderData.productBrandIdLabel }} </el-descriptions-item>
-    <el-descriptions-item label="订单价格"> {{ orderData.orderPrice }} </el-descriptions-item>
+    <el-descriptions-item label="订单价格"> {{ orderData.orderPrice }} 元</el-descriptions-item>
     <el-descriptions-item label="订单车辆" :span="2"> {{ orderData.carBrandLabel }} </el-descriptions-item>
     <el-descriptions-item label="客户昵称"> {{ orderData.nickname }} </el-descriptions-item>
     <el-descriptions-item label="预留电话"> {{ orderData.telephone }} </el-descriptions-item>
     <el-descriptions-item label="客户标签"> {{ orderData.tagIdLabel }} </el-descriptions-item>
     <el-descriptions-item label="账户余额">
-      {{ orderData.accountBalance }}
+      {{ orderData.accountBalance }} 元
       <el-button v-if="!readonly" link type="primary" @click="handleRecharge">充值</el-button>
     </el-descriptions-item>
   </el-descriptions>
@@ -20,9 +20,9 @@
       <el-descriptions-item label="负责人" :span="2"> {{ configPyaData.directorIdLabel }} </el-descriptions-item>
       <el-descriptions-item label="作业团队" :span="2"> {{ configPyaData.workTeamLabel }} </el-descriptions-item>
       <el-descriptions-item label="订单施工" :span="2"> {{ configPyaData.isFlowLabel }} </el-descriptions-item>
-      <!-- 无提成 稍后支付 -->
-      <template v-if="configPyaData.isCommission">
-        <!-- 无提成  -->
+      <!-- 无提成  -->
+      <template v-if="!configPyaData.isCommission">
+        <!-- 无提成 稍后支付 -->
         <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
           <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
           <el-descriptions-item label="订单支付"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
@@ -30,22 +30,22 @@
         <template v-else>
           <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
           <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} </el-descriptions-item>
-          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} </el-descriptions-item>
+          <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} 元 </el-descriptions-item>
+          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item>
         </template>
       </template>
       <template v-else>
         <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
-          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
+          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} 元 </el-descriptions-item>
           <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
           <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
         </template>
         <template v-else>
-          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
+          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} 元 </el-descriptions-item>
           <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
           <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} </el-descriptions-item>
-          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} </el-descriptions-item>
+          <el-descriptions-item label="账户支付"> {{ `${configPyaData.accountPrice}` }} 元 </el-descriptions-item>
+          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item>
         </template>
       </template>
       <el-descriptions-item label="备注" :span="2"> {{ configPyaData.remarks }} </el-descriptions-item>

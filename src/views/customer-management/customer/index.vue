@@ -4,18 +4,22 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="客户标签" prop="tagId">
-              <el-select v-model="queryParams.tagId" value-key="" placeholder="请选择客户标签" clearable filterable>
-                <el-option v-for="item in dictObj.customerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item label="客户昵称" prop="nickname">
               <el-input v-model="queryParams.nickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="手机号码" prop="telephone">
               <el-input v-model="queryParams.telephone" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="绑定状态" prop="label"> </el-form-item>
+            <el-form-item label="客户标签" prop="tagId">
+              <el-select v-model="queryParams.tagId" value-key="" placeholder="请选择客户标签" clearable filterable>
+                <el-option v-for="item in dictObj.customerTag" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="客户来源" prop="channel">
+              <el-select v-model="queryParams.channel" placeholder="请选择客户来源" clearable filterable>
+                <el-option v-for="item in dictObj.channelSource" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -40,15 +44,14 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="客户编号" align="left" prop="customNo" />
         <el-table-column label="客户标签" align="left" prop="tagIdLabel" />
-        <el-table-column label="手机号码" align="left" prop="telephone" />
         <el-table-column label="客户昵称" align="left" prop="nickname" />
+        <el-table-column label="手机号码" align="left" prop="telephone" />
+        <el-table-column label="客户来源" align="left" prop="channelLabel" />
         <el-table-column label="账户余额" align="left" prop="accountBalance" />
-        <el-table-column label="绑定状态" align="center" prop="" />
         <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="账户充值" placement="top">
+            <el-tooltip content="充值" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleRechargeLog(row)">
                 <svg-icon icon-class="recharge" />
               </el-button>
@@ -58,11 +61,11 @@
                 <svg-icon icon-class="change-phone" />
               </el-button>
             </el-tooltip>
-            <el-tooltip content="解绑" placement="top">
+            <!-- <el-tooltip content="解绑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleUnbid()">
                 <svg-icon icon-class="unbind" />
               </el-button>
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip content="客户档案" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleInfo(row)">
                 <svg-icon icon-class="customer-log" />
@@ -107,8 +110,8 @@
         <el-form-item v-if="form.id === undefined" label="手机号码" prop="telephone">
           <el-input v-model="form.telephone" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
         </el-form-item>
-        <el-form-item label="渠道来源" prop="channel">
-          <el-select v-model="form.channel" placeholder="请选择渠道来源" clearable filterable>
+        <el-form-item label="客户来源" prop="channel">
+          <el-select v-model="form.channel" placeholder="请选择客户来源" clearable filterable>
             <el-option v-for="item in dictObj.channelSource" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
@@ -118,8 +121,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -127,7 +130,7 @@
     <!-- 改变手机号 -->
     <change-phone v-model:visible="changeDialog.visible" :target-info="changeDialog.form"></change-phone>
     <!-- 充值记录 -->
-    <rechargeLog v-model:visible="rechargeLogDialog.visible" :target-id="rechargeLogDialog.id"></rechargeLog>
+    <rechargeLog v-model:visible="rechargeLogDialog.visible" :target-id="rechargeLogDialog.id" @cancel="getTableData"></rechargeLog>
     <!-- 客户档案 -->
     <InfoItem v-model:visible="infoDialog.visible" :basic-data="infoDialog.form"></InfoItem>
   </div>
@@ -158,11 +161,11 @@ const queryFormRef = ref<ElFormInstance>();
 
 const pageTitle = '客户';
 const FormDataRef = ref<ElFormInstance>();
-const dictObj = {
+const dictObj = reactive({
   customerTag: [],
   bindState: [],
   channelSource: []
-};
+});
 
 const dialog = reactive<DialogOption>({
   visible: false,

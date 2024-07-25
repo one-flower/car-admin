@@ -24,6 +24,7 @@ export interface TableQuery extends PageQuery {
   tagId?: string; //客户标签
   nickname?: string; //客户昵称
   telephone?: string; //联系电话
+  channel?: number; //客户来源
 }
 
 export interface PhoneData {

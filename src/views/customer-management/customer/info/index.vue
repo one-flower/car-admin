@@ -6,7 +6,7 @@
         <el-descriptions-item label="客户标签"> {{ basicData.tagIdLabel }} </el-descriptions-item>
         <el-descriptions-item label="客户昵称"> {{ basicData.nickname }} </el-descriptions-item>
         <el-descriptions-item label="手机号码"> {{ basicData.telephone }} </el-descriptions-item>
-        <el-descriptions-item label="客户来源"> {{ basicData.channel }} </el-descriptions-item>
+        <el-descriptions-item label="客户来源"> {{ basicData.channelLabel }} </el-descriptions-item>
         <el-descriptions-item label="账户余额"> {{ basicData.accountBalance }} </el-descriptions-item>
       </el-descriptions>
     </div>
@@ -27,11 +27,11 @@
 
       <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column label="车辆品牌" align="center" prop="brandName" />
+        <el-table-column label="车辆品牌" align="center" prop="brandIdLabel" />
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
         <el-table-column label="车架号码" align="center" prop="vin" />
-        <el-table-column label="车辆归属" align="center" prop="state" />
-        <el-table-column label="车辆状态" align="center" prop="state" />
+        <el-table-column label="车辆归属" align="center" prop="toTypeLabel" />
+        <el-table-column label="车辆状态" align="center" prop="carStateLabel" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="装配情况" placement="top">
@@ -58,8 +58,8 @@
 </template>
 
 <script setup lang="ts">
-import { warrantyList } from '@/api/maintain-management/warranty';
-import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
+import { carManageList } from '@/api/customer-management/car';
+import { FormData, TableQuery, TableVO } from '@/api/customer-management/car/types';
 import CarFabricate from '@/components/car-fabricate/index.vue';
 
 const emit = defineEmits(['update:visible', 'update:form']);
@@ -94,7 +94,7 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const res = await warrantyList({
+  const res = await carManageList({
     ...tableInfo.queryParams,
     customId: props.basicData.id
   });
@@ -112,14 +112,11 @@ const fabricateInfo = reactive({
 const handleFabricate = async (row: TableVO) => {
   fabricateInfo.data = {
     customId: props.basicData.id,
-    customIdObj: {
-      nickname: props.basicData.nickname,
-      telephone: props.basicData.telephone
-    },
-    brandIdLabel: row.brandName,
+    customIdObj: props.basicData,
+    brandIdLabel: row.brandIdLabel,
     licensePlate: row.licensePlate,
     vin: row.vin,
-    toTypeLabel: ''
+    toTypeLabel: row.toTypeLabel
   };
   fabricateInfo.visible = true;
 };

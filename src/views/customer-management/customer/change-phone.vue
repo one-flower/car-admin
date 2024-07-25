@@ -1,10 +1,10 @@
 <template>
-  <el-dialog :model-value="visible" title="更换手机号" width="600px" append-to-body>
+  <el-dialog :model-value="visible" title="更换手机号" width="600px" append-to-body :before-close="cancel">
     <el-form ref="FormDataRef" v-loading="loading" :model="changeForm" :rules="rules" label-width="100px" @submit.prevent>
       <el-form-item label="客户编号"> {{ targetInfo.customNo }} </el-form-item>
-      <el-form-item label="客户标签"> {{ targetInfo.tagId }} </el-form-item>
+      <el-form-item label="客户标签"> {{ targetInfo.tagIdLabel }} </el-form-item>
       <el-form-item label="客户昵称"> {{ targetInfo.nickname }} </el-form-item>
-      <el-form-item label="绑定状态"> {{ '未绑定' }} </el-form-item>
+      <!-- <el-form-item label="绑定状态"> {{ '未绑定' }} </el-form-item> -->
       <el-form-item label="原手机号码"> {{ targetInfo.telephone }} </el-form-item>
       <el-form-item label="新手机号码" prop="newTelephone">
         <el-input v-model="changeForm.newTelephone" placeholder="请输入新手机号码" clearable />
@@ -24,11 +24,6 @@
         </div>
       </el-form-item>
     </el-form>
-    <div style="background-color: #fdf6ec; color: #e6a23c; padding: 10px">
-      <p>更换手机号说明！</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;1. 同时更新客户多终端手机号；</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;2. 更新成功后，公众号无需重新登记，小程序请使用新手机号重新登录；</p>
-    </div>
 
     <template #footer>
       <div class="dialog-footer">
@@ -63,7 +58,14 @@ const props = defineProps({
 
 const loading = ref(false);
 const FormDataRef = ref<ElFormInstance>();
-let changeForm = reactive<ChangePhoneForm>({});
+const initFromData = {
+  newTelephone: undefined,
+  imgCode: undefined,
+  smsCode: undefined
+};
+let changeForm = reactive<ChangePhoneForm>({
+  ...initFromData
+});
 const rules = {
   // oldTelephone: [{ required: true, message: '原手机号码不能为空', trigger: 'blur' }],
   newTelephone: [{ required: true, message: '新手机号码不能为空', trigger: 'blur' }],
@@ -85,8 +87,7 @@ const getCode = async () => {
 
 /** 表单重置 */
 const reset = () => {
-  Object.assign(changeForm, {});
-  changeForm = {};
+  Object.assign(changeForm, { ...initFromData });
   FormDataRef.value?.resetFields();
 };
 
@@ -122,7 +123,7 @@ const smsInfo = reactive({
 const getSms = () => {
   // 后期做到session中
   if (smsInfo.count === 0) {
-    const res = smsCode({ phonenumber: targetInfo.telephone });
+    const res = smsCode({ phonenumber: props.targetInfo.telephone });
     if (res.data === null) return;
     // 验证码倒计时
     smsInfo.count = 60;

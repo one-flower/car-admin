@@ -4,9 +4,6 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="岗位编码" prop="postCode">
-              <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
             <el-form-item label="岗位名称" prop="name">
               <el-input v-model="queryParams.name" placeholder="请输入岗位名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -34,8 +31,7 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="岗位名称" align="center" prop="name" width="150" />
-        <el-table-column label="岗位编码" align="center" prop="postCode" width="150" />
+        <el-table-column label="岗位名称" align="center" prop="name" width="300" />
         <el-table-column label="备注" align="left" header-align="center" prop="remarks" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -73,8 +69,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
         </div>
       </template>
     </el-dialog>

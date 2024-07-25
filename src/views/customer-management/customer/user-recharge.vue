@@ -2,7 +2,7 @@
   <div class="p-2">
     <el-dialog
       :model-value="visible"
-      title="创建订单"
+      title="会员充值"
       width="600px"
       append-to-body
       :close-on-click-modal="false"
@@ -12,18 +12,8 @@
     >
       <el-form ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item ref="FormDataRef" label="选择套餐" prop="id">
-          <el-select
-            v-model="formData.id"
-            filterable
-            remote
-            reserve-keyword
-            placeholder="请输入"
-            remote-show-suffix
-            :remote-method="remoteMethod"
-            :loading="selectOption.loading"
-            @change="change"
-          >
-            <el-option v-for="item in selectOption.options" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="formData.id" filterable placeholder="请输入" @change="change">
+            <el-option v-for="item in dictObj.rechargeList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -65,7 +55,7 @@
 import { propTypes } from '@/utils/propTypes';
 import { userRecharge } from '@/api/store-management/recharge';
 import { FormData } from '@/api/store-management/recharge/types';
-import { rechargeList } from '@/api/store-management/recharge';
+import { rechargeList, rechargeDropdown } from '@/api/store-management/recharge';
 import useUserStore from '@/store/modules/user';
 import { countList } from '@/utils/index';
 
@@ -98,7 +88,6 @@ watch(
   () => props.visible,
   (val) => {
     if (!val) return;
-    remoteMethod();
   }
 );
 
@@ -128,44 +117,15 @@ const handleCancel = () => {
   emit('update:visible', false);
 };
 
-type SelectOption = {
-  loading: boolean;
-  options: any;
-  cache: any;
+const change = (val) => {
+  Object.assign(formData, dictObj.rechargeList.filter((item) => item.id === val)[0] ?? {});
 };
-
-const selectOption = reactive<SelectOption>({
-  loading: false,
-  options: [],
-  cache: []
+const dictObj = reactive({
+  rechargeList: <any>[]
 });
-const remoteMethod = async (query?: string) => {
-  // if (query) {
-  selectOption.loading = true;
-  const res = await rechargeList({
-    pageNum: 1,
-    pageSize: 99999
-  });
-  selectOption.cache = res.rows.map((item) => {
-    return {
-      ...item,
-      label: item.name,
-      value: item.id
-    };
-  });
-  selectOption.options = res.rows.map((item) => {
-    return {
-      ...item,
-      label: item.name,
-      value: item.id
-    };
-  });
-  selectOption.loading = false;
-  // } else {
-  //   selectOption.options = [];
-  // }
+const init = async () => {
+  const res = await rechargeDropdown();
+  dictObj.rechargeList = res.data;
 };
-const change = () => {
-  Object.assign(formData, selectOption.options.filter((item) => item.id === formData.id)[0] ?? {});
-};
+init();
 </script>

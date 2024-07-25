@@ -19,11 +19,11 @@
             <el-form-item label="产品品牌" prop="productBrandId">
               <el-select
                 v-model="tableInfo.queryParams.productBrandId"
-                @change="changeBrand"
                 value-key=""
                 placeholder="请选择产品品牌"
                 clearable
                 filterable
+                @change="changeBrand"
               >
                 <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -31,8 +31,8 @@
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
               <el-select
-                :disabled="productLoading"
                 v-model="tableInfo.queryParams.productId"
+                :disabled="productLoading"
                 value-key=""
                 placeholder="请选择产品名称"
                 clearable
@@ -172,6 +172,7 @@ const getTableData = async () => {
 
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
+  tableInfo.queryParams.productId = '';
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val

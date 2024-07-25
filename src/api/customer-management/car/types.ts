@@ -55,4 +55,6 @@ export interface TableQuery extends PageQuery {
   projectType?: string; //项目类型
   productBrandId?: string; //产品品牌
   productId?: string; //产品
+
+  carState?: 'AVAILABLE' | 'DISABLED'; //车辆状态
 }

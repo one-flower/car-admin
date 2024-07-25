@@ -62,3 +62,10 @@ export function rechargeLogList(query: logTableQuery) {
     params: query
   });
 }
+
+export function rechargeDropdown() {
+  return request({
+    url: '/clyh/recharge/dropdown',
+    method: 'get'
+  });
+}

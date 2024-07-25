@@ -2,7 +2,7 @@
   <div class="p-2">
     <el-dialog
       :model-value="visible"
-      title="套餐充值"
+      title="会员充值"
       width="600px"
       append-to-body
       :close-on-click-modal="false"
@@ -12,18 +12,8 @@
     >
       <el-form ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="选择客户" prop="customId">
-          <el-select
-            v-model="formData.customId"
-            filterable
-            remote
-            reserve-keyword
-            placeholder="请输入"
-            remote-show-suffix
-            :remote-method="remoteMethod"
-            :loading="selectOption.loading"
-            @change="change"
-          >
-            <el-option v-for="item in selectOption.options" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="formData.customId" filterable placeholder="请选择" @change="change">
+            <el-option v-for="item in dictObj.customList" :key="item.id" :label="`${item.nickname}/${item.telephone}`" :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -65,7 +55,7 @@
 import { propTypes } from '@/utils/propTypes';
 import { userRecharge } from '@/api/store-management/recharge';
 import { FormData } from '@/api/store-management/recharge/types';
-import { customList } from '@/api/customer-management/customer';
+import { customDropdown, customList } from '@/api/customer-management/customer';
 import { FormData as customerFormData } from '@/api/customer-management/customer/types';
 import useUserStore from '@/store/modules/user';
 import { countList } from '@/utils/index';
@@ -99,7 +89,6 @@ watch(
   () => props.visible,
   (val) => {
     if (!val) return;
-    remoteMethod();
     formData.id = props.targetInfo.id;
     formData.realityMoney = props.targetInfo.realityMoney ?? '0.00';
     formData.giveMoney = props.targetInfo.giveMoney ?? '0.00';
@@ -149,33 +138,14 @@ const selectOption = reactive<SelectOption>({
   cache: [],
   form: { ...initSelectOptionForm }
 });
-const remoteMethod = async (query?: string) => {
-  // if (query) {
-  selectOption.loading = true;
-  const res = await customList({
-    pageNum: 1,
-    pageSize: 10
-  });
-  selectOption.cache = res.rows.map((item) => {
-    return {
-      ...item,
-      label: item.nickname,
-      value: item.id
-    };
-  });
-  selectOption.options = res.rows.map((item) => {
-    return {
-      ...item,
-      label: item.nickname,
-      value: item.id
-    };
-  });
-  selectOption.loading = false;
-  // } else {
-  //   selectOption.options = [];
-  // }
+const change = (val) => {
+  selectOption.form = dictObj.customList.filter((item) => item.id === val)[0] ?? {};
 };
-const change = () => {
-  selectOption.form = selectOption.options.filter((item) => item.id === formData.customId)[0] ?? {};
+const dictObj = reactive({
+  customList: <any>[]
+});
+const init = async () => {
+  dictObj.customList = await customDropdown();
 };
+init();
 </script>

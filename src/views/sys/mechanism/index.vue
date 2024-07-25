@@ -7,8 +7,8 @@
             <el-form-item label="机构名称" prop="name">
               <el-input v-model="queryParams.name" placeholder="请输入机构名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="统一社会代码" prop="postCode">
-              <el-input v-model="queryParams.postCode" placeholder="请输入统一社会代码" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="机构代码" prop="orgCode">
+              <el-input v-model="queryParams.orgCode" placeholder="请输入机构代码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="联系人" prop="contacts">
               <el-input v-model="queryParams.contacts" placeholder="请输入联系人" clearable @keyup.enter="handleQuery" />
@@ -54,11 +54,11 @@
             <el-tooltip content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="详情" placement="top">
+            <!-- <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleDetail(row)">
                 <svg-icon icon-class="detail"></svg-icon>
               </el-button>
-            </el-tooltip>
+            </el-tooltip> -->
           </template>
         </el-table-column>
       </el-table>
@@ -79,7 +79,7 @@
           <el-input v-model="form.name" placeholder="请输入机构名称" />
         </el-form-item>
         <el-form-item label="机构代码" prop="orgCode">
-          <el-input v-model="form.orgCode" placeholder="请输入机构代码" />
+          <el-input v-model="form.orgCode" placeholder="请输入机构代码(统一社会代码)" />
         </el-form-item>
         <el-form-item label="机构地址" prop="orgAddr">
           <el-input v-model="form.orgAddr" placeholder="请输入机构地址" />
@@ -96,8 +96,8 @@
       </el-form>
       <template v-if="!formDetail" #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -206,7 +206,7 @@ const handleAdd = () => {
   reset();
   formDetail.value = false;
   dialog.visible = true;
-  dialog.title = '添加上游机构';
+  dialog.title = '添加机构';
 };
 
 /** 修改按钮操作 */
@@ -217,7 +217,7 @@ const handleUpdate = async (row?: TableVO) => {
   form.value = res.data;
   formDetail.value = false;
   dialog.visible = true;
-  dialog.title = '修改上游机构';
+  dialog.title = '修改机构';
 };
 
 /** 提交按钮 */

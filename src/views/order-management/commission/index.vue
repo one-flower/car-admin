@@ -21,11 +21,11 @@
             <el-form-item label="产品品牌" prop="productBrandId">
               <el-select
                 v-model="tableInfo.queryParams.productBrandId"
-                @change="changeBrand"
                 value-key=""
                 placeholder="请选择产品品牌"
                 clearable
                 filterable
+                @change="changeBrand"
               >
                 <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -33,8 +33,8 @@
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
               <el-select
-                :disabled="productLoading"
                 v-model="tableInfo.queryParams.productId"
+                :disabled="productLoading"
                 value-key=""
                 placeholder="请选择产品品牌"
                 clearable
@@ -83,7 +83,9 @@
         <el-table-column label="操作" width="150" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" icon="InfoFilled" @click="handlePay(row, false)"></el-button>
+              <el-button v-hasPermi="['system:post:detail']" link @click="handlePay(row, false)">
+                <svg-icon class-name="search-icon" icon-class="detail"></svg-icon>
+              </el-button>
             </el-tooltip>
             <el-tooltip v-if="row.commState !== 'Y'" content="立即分配" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handlePay(row, true)">
@@ -218,10 +220,10 @@ const handlePay = async (row: TableVO, flag: boolean) => {
     productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
     carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
-    nickname: res.data.customIdObj.nickname, //客户昵称
-    telephone: res.data.customIdObj.telephone, //预留电话
-    tagIdLabel: res.data.customIdObj.tagIdLabel, //客户标签
-    accountBalance: res.data.customIdObj.accountBalance //账户余额
+    nickname: res.data.customIdObj?.nickname, //客户昵称
+    telephone: res.data.customIdObj?.telephone, //预留电话
+    tagIdLabel: res.data.customIdObj?.tagIdLabel, //客户标签
+    accountBalance: res.data.customIdObj?.accountBalance //账户余额
   };
   payInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
@@ -230,7 +232,7 @@ const handlePay = async (row: TableVO, flag: boolean) => {
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成
     isCommissionLabel: res.data.isCommissionLabel, //
-    commDistriLabel: res.data.isCommission, // 提成分配
+    commDistriLabel: res.data.commDistriLabel, // 提成分配
     commPrice: res.data.commPrice, // 提成价格
     orderPayType: res.data.payState, // 订单出伏
     orderPayTypeLabel: res.data.payStateLabel, //
