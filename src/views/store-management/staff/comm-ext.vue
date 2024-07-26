@@ -58,14 +58,7 @@
         </div>
       </transition>
 
-      <el-alert
-        :title="`个人提成累计：${tableInfo[0]?.totalMoney ?? 0} 元；当前页面展示个人提成累计：${tableInfo.pageMoney ?? 0}  元`"
-        :show-icon="true"
-        type="info"
-        effect="dark"
-        :closable="false"
-      >
-      </el-alert>
+      <el-alert :title="`个人提成累计：${tableInfo?.totalMoney ?? 0} 元`" :show-icon="true" type="info" effect="dark" :closable="false"> </el-alert>
       <el-card shadow="hover">
         <!-- <template #header>
         <el-row :gutter="10" class="mb8">
@@ -81,22 +74,16 @@
         </el-row>
       </template> -->
         <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips">
-          <el-table-column label="员工名片" align="center" prop="staffCardUrl" width="150px">
-            <template #default="{ row }">
-              <ImagePreview :width="100" :height="100" :src="row.staffCardUrl" />
-            </template>
-          </el-table-column>
-          <el-table-column label="订单类型" align="center" prop="projectType" />
-          <el-table-column label="订单编号" align="center" prop="orderNo" />
-          <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
-          <el-table-column label="产品品牌" align="center" prop="productBrandLabel" />
-          <el-table-column label="订单产品" align="center" prop="productIdLabel" />
-          <el-table-column label="订单创建时间" align="center" prop="createTime" />
-          <el-table-column label="订单提成(/元)" align="center" prop="commPrice" />
-          <el-table-column label="作业团队(/人)" align="center" prop="constructionTeam" />
-          <el-table-column label="个人提成(/元)" align="center" prop="personalCommPrice" />
-          <el-table-column label="提成方式" align="center" prop="commDistri" />
-          <el-table-column label="分配状态" align="center" prop="commState" />
+          <el-table-column label="订单类型" align="center" prop="projectType" show-overflow-tooltip />
+          <el-table-column label="订单编号" align="center" prop="orderNo" show-overflow-tooltip />
+          <el-table-column label="项目类型" align="center" prop="projectTypeLabel" show-overflow-tooltip />
+          <el-table-column label="产品品牌" align="center" prop="productBrandLabel" show-overflow-tooltip />
+          <el-table-column label="订单产品" align="center" prop="productIdLabel" show-overflow-tooltip />
+          <el-table-column label="订单时间" align="center" prop="createTime" show-overflow-tooltip />
+          <el-table-column label="提成总额" align="center" prop="commPrice" show-overflow-tooltip />
+          <el-table-column label="个人提成" align="center" prop="personalCommPrice" show-overflow-tooltip />
+          <el-table-column label="提成方式" align="center" prop="commDistriLabel" show-overflow-tooltip />
+          <el-table-column label="分配状态" align="center" prop="commStateLabel" show-overflow-tooltip />
         </el-table>
 
         <pagination
@@ -188,11 +175,13 @@ const data = reactive<PageData<commExtFormData, commExtTableQuery>>({
 /** 查询列表 */
 const getTableData = async () => {
   loading.value = true;
-  data.queryParams.id = props.pesronInfo.id;
-  const res = await orderCommExtlist(data.queryParams);
+  const res = await orderCommExtlist({
+    ...data.queryParams,
+    staffId: props.pesronInfo.id
+  });
   tableData.value = res.rows;
   tableInfo.totalMoney = res.rows[0]?.totalMoney;
-  tableInfo.pageMoney = res.rows.reduce((a: any, b: any) => a.personalCommPrice + b.personalCommPrice, 0);
+  // tableInfo.pageMoney = res.rows.reduce((a: any, b: any) => a.personalCommPrice + b.personalCommPrice, 1);
   tableAttr.total = res.total;
   loading.value = false;
 };
