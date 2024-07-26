@@ -7,7 +7,7 @@
         <el-descriptions-item label="客户昵称"> {{ basicData.nickname }} </el-descriptions-item>
         <el-descriptions-item label="手机号码"> {{ basicData.telephone }} </el-descriptions-item>
         <el-descriptions-item label="客户来源"> {{ basicData.channelLabel }} </el-descriptions-item>
-        <el-descriptions-item label="账户余额"> {{ basicData.accountBalance }} </el-descriptions-item>
+        <el-descriptions-item label="账户余额"> {{ basicData.totalMoney }} </el-descriptions-item>
       </el-descriptions>
     </div>
     <!-- <el-descriptions  title="个人信息" :column="2" border>

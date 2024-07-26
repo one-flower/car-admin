@@ -1,16 +1,22 @@
 <template>
   <el-drawer :model-value="visible" title="车辆装配" direction="rtl" size="800px" close-on-click-modal :before-close="handleCancel">
     <div class="p-2">
-      <div class="mb10">
-        <el-descriptions title="车辆信息" :column="3" border>
-          <el-descriptions-item label="车辆品牌"> {{ basicData.brandIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
-          <el-descriptions-item label="车架号码"> {{ basicData.vin }} </el-descriptions-item>
-          <el-descriptions-item label="车辆归属"> {{ basicData.toTypeLabel }} </el-descriptions-item>
-          <el-descriptions-item label="车主昵称"> {{ basicData.customIdObj?.nickname }} </el-descriptions-item>
-          <el-descriptions-item label="预留电话"> {{ basicData.customIdObj?.telephone }} </el-descriptions-item>
-        </el-descriptions>
-      </div>
+      <el-descriptions title="车辆信息" :column="3" border class="mb10">
+        <el-descriptions-item label="车辆归属"> {{ basicData.toTypeLabel }} </el-descriptions-item>
+        <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
+        <el-descriptions-item label="车辆品牌"> {{ basicData.brandIdLabel }} </el-descriptions-item>
+        <el-descriptions-item label="车辆厂商"> {{ basicData.manufacturer }} </el-descriptions-item>
+        <el-descriptions-item label="车辆系列"> {{ basicData.typename }} </el-descriptions-item>
+        <el-descriptions-item label="车辆型号"> {{ basicData.model }} </el-descriptions-item>
+        <el-descriptions-item label="车辆级别"> {{ basicData.sizetype }} </el-descriptions-item>
+        <el-descriptions-item label="车身结构"> {{ basicData.bodytype }} </el-descriptions-item>
+        <el-descriptions-item label="驱动方式"> {{ basicData.drivemode }} </el-descriptions-item>
+        <el-descriptions-item label="能源类型"> {{ basicData.fueltype }} </el-descriptions-item>
+        <el-descriptions-item label="备注" :span="2"> {{ basicData.remarks }} </el-descriptions-item>
+        <el-descriptions-item label="车辆照片" :span="2">
+          <image-preview :width="100" :height="100" :src="basicData.imgUrls" :preview-src-list="[basicData.imgUrls]"></image-preview>
+        </el-descriptions-item>
+      </el-descriptions>
 
       <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
         <div v-show="tableInfo.showSearch" class="mb-[10px]">
@@ -177,7 +183,7 @@ const handleDetail = async (row?: TableVO) => {
     nickname: props.basicData.customIdObj?.nickname, //客户昵称
     telephone: props.basicData.customIdObj?.telephone, //预留电话
     tagIdLabel: props.basicData.customIdObj?.tagIdLabel, //客户标签
-    accountBalance: props.basicData.customIdObj?.accountBalance //账户余额
+    totalMoney: props.basicData.customIdObj?.totalMoney //账户余额
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人

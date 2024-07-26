@@ -225,7 +225,7 @@ const handleDetail = async (row?: TableVO) => {
     nickname: res.data.customIdObj?.nickname, //客户昵称
     telephone: res.data.customIdObj?.telephone, //预留电话
     tagIdLabel: res.data.customIdObj?.tagIdLabel, //客户标签
-    accountBalance: res.data.customIdObj?.accountBalance //账户余额
+    totalMoney: res.data.customIdObj?.totalMoney //账户余额
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人

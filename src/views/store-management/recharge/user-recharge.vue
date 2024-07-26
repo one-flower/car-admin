@@ -29,13 +29,13 @@
           <el-descriptions-item label="客户昵称"> {{ selectOption.form.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话"> {{ selectOption.form.telephone }} </el-descriptions-item>
           <el-descriptions-item label="客户标签"> {{ selectOption.form.tagIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户余额"> {{ selectOption.form.accountBalance ?? '0.00' }} 元</el-descriptions-item>
+          <el-descriptions-item label="账户余额"> {{ selectOption.form.totalMoney ?? '0.00' }} 元</el-descriptions-item>
         </el-descriptions>
       </div>
       <div class="mb10">
         <el-descriptions title="充值结果" :column="2" border>
           <el-descriptions-item label="账户余额">
-            {{ countList([formData.realityMoney, formData.giveMoney, selectOption.form.accountBalance], 2) }} 元</el-descriptions-item
+            {{ countList([formData.realityMoney, formData.giveMoney, selectOption.form.totalMoney], 2) }} 元</el-descriptions-item
           >
           <el-descriptions-item label="经办人">{{ useUserStore().nickname }} </el-descriptions-item>
           <el-descriptions-item label="充值时间"> {{ new Date().toLocaleDateString() }} {{ new Date().toLocaleTimeString() }} </el-descriptions-item>

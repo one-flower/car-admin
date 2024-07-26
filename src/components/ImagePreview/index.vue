@@ -1,23 +1,47 @@
 <!-- eslint-disable vue/no-side-effects-in-computed-properties -->
 <template>
   <div class="demo-image__preview">
-    <el-image
-      :style="`width:${realWidth};height:${realHeight};`"
-      :src="`${realSrc}`"
-      :zoom-rate="1.2"
-      :max-scale="7"
-      :min-scale="0.2"
-      :preview-src-list="isOne ? [] : realSrcList"
-      :initial-index="4"
-      fit="cover"
-      preview-teleported
-    >
-      <template #error>
-        <div class="image-slot">
-          <el-icon><picture-filled /></el-icon>
-        </div>
-      </template>
-    </el-image>
+    <template v-if="isOne">
+      <el-image
+        :style="`width:${realWidth};height:${realHeight};`"
+        :src="`${realSrc}`"
+        :zoom-rate="1.2"
+        :max-scale="7"
+        :min-scale="0.2"
+        :preview-src-list="[realSrc]"
+        :initial-index="4"
+        fit="cover"
+        preview-teleported
+      >
+        <template #error>
+          <div class="image-slot">
+            <el-icon><picture-filled /></el-icon>
+          </div>
+        </template>
+      </el-image>
+    </template>
+    <template v-else>
+      <el-image
+        v-for="(item, index) in realSrcList"
+        :key="item"
+        :style="`width:${realWidth};height:${realHeight};`"
+        class="mr10"
+        :src="`${item}`"
+        :zoom-rate="1.2"
+        :max-scale="7"
+        :min-scale="0.2"
+        :preview-src-list="realSrcList"
+        :initial-index="index"
+        fit="cover"
+        preview-teleported
+      >
+        <template #error>
+          <div class="image-slot">
+            <el-icon><picture-filled /></el-icon>
+          </div>
+        </template>
+      </el-image>
+    </template>
   </div>
 </template>
 
@@ -46,9 +70,7 @@ const realSrc = computed(() => {
 
 const isOne = ref(false);
 const realSrcList = computed(() => {
-  if (!props.src) {
-    return [];
-  } else if (props.src.split(',').length < 2) {
+  if (!props.src || props.src.split(',').length < 2) {
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
     isOne.value = true;
     return [];

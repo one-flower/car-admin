@@ -20,7 +20,7 @@ export interface FormData {
   nickname: string;
   telephone: string;
   channel: string;
-  accountBalance: string;
+  totalMoney: string;
 }
 
 export interface TableQuery extends PageQuery {

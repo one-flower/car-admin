@@ -42,10 +42,24 @@
               </el-select>
             </el-form-item>
             <el-form-item label="质保开始" prop="dateRangeStar">
-              <el-date-picker v-model="dateRangeStar" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+              <el-date-picker
+                v-model="dateRangeStar"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
             </el-form-item>
             <el-form-item label="质保结束" prop="dateRangeEnd">
-              <el-date-picker v-model="dateRangeEnd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+              <el-date-picker
+                v-model="dateRangeEnd"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
             </el-form-item>
             <el-form-item label="质保状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>

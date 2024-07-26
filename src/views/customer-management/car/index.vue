@@ -15,16 +15,16 @@
             <el-form-item label="车架号码" prop="vin">
               <el-input v-model="data.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
+            <el-form-item label="车辆状态" prop="carState">
+              <el-select v-model="data.queryParams.carState" placeholder="请选择车辆状态" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__carState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="客户昵称" prop="customNickname">
               <el-input v-model="data.queryParams.customNickname" placeholder="请输入客户昵称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="电话号码" prop="customtelephone">
               <el-input v-model="data.queryParams.customtelephone" placeholder="请输入电话号码" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="车辆状态" prop="carState">
-              <el-select v-model="data.queryParams.carState" placeholder="请选择车辆状态" clearable filterable>
-                <el-option v-for="item in dictObj.dictEnum__carState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -202,22 +202,16 @@
 
     <!-- 变更车主,后续分页 -->
     <el-dialog v-model="userInfo.visible" :title="userInfo.title" width="600px" append-to-body>
-      <el-descriptions title="车辆信息" :column="2" border class="mb10">
-        <el-descriptions-item label="车辆归属"> {{ userInfo.data.toTypeLabel }} </el-descriptions-item>
-        <el-descriptions-item label="车牌号码"> {{ userInfo.data.licensePlate }} </el-descriptions-item>
-        <el-descriptions-item label="车辆品牌"> {{ userInfo.data.brandIdLabel }} </el-descriptions-item>
-        <el-descriptions-item label="车辆厂商"> {{ userInfo.data.manufacturer }} </el-descriptions-item>
-        <el-descriptions-item label="车辆系列"> {{ userInfo.data.typename }} </el-descriptions-item>
-        <el-descriptions-item label="车辆型号"> {{ userInfo.data.model }} </el-descriptions-item>
-        <el-descriptions-item label="车辆级别"> {{ userInfo.data.sizetype }} </el-descriptions-item>
-        <el-descriptions-item label="车身结构"> {{ userInfo.data.bodytype }} </el-descriptions-item>
-        <el-descriptions-item label="驱动方式"> {{ userInfo.data.drivemode }} </el-descriptions-item>
-        <el-descriptions-item label="能源类型"> {{ userInfo.data.fueltype }} </el-descriptions-item>
-        <el-descriptions-item label="备注" :span="2"> {{ userInfo.data.remarks }} </el-descriptions-item>
-        <el-descriptions-item label="车辆照片" :span="2">
-          <image-preview :width="100" :height="100" :src="userInfo.data.imgUrls" :preview-src-list="[userInfo.data.imgUrls]"></image-preview>
-        </el-descriptions-item>
-      </el-descriptions>
+      <div class="mb10">
+        <el-descriptions title="车辆信息" :column="2" border>
+          <el-descriptions-item label="车辆品牌"> {{ userInfo.data.brandIdLabel }} </el-descriptions-item>
+          <el-descriptions-item label="车牌号码"> {{ userInfo.data.licensePlate }} </el-descriptions-item>
+          <el-descriptions-item label="车架号码"> {{ userInfo.data.vin }} </el-descriptions-item>
+          <el-descriptions-item label="车辆归属"> {{ userInfo.data.toTypeLabel }} </el-descriptions-item>
+          <el-descriptions-item label="车主昵称"> {{ userInfo.data.customIdObj?.nickname }} </el-descriptions-item>
+          <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj?.telephone }} </el-descriptions-item>
+        </el-descriptions>
+      </div>
       <el-descriptions title="原车主信息" :column="2" border class="mb10">
         <el-descriptions-item label="车主昵称"> {{ userInfo.data.customIdObj?.nickname }} </el-descriptions-item>
         <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj?.telephone }} </el-descriptions-item>
@@ -438,7 +432,7 @@ const fabricateInfo = reactive({
   data: <any>{}
 });
 const handleFabricate = async (row: TableVO) => {
-  fabricateInfo.data = row;
+  fabricateInfo.data = { ...row };
   delete fabricateInfo.data.id;
   fabricateInfo.visible = true;
 };

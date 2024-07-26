@@ -10,7 +10,7 @@
     <el-descriptions-item label="预留电话"> {{ orderData.telephone }} </el-descriptions-item>
     <el-descriptions-item label="客户标签"> {{ orderData.tagIdLabel }} </el-descriptions-item>
     <el-descriptions-item label="账户余额">
-      {{ orderData.accountBalance }} 元
+      {{ orderData.totalMoney }} 元
       <el-button v-if="!readonly" link type="primary" @click="handleRecharge">充值</el-button>
     </el-descriptions-item>
   </el-descriptions>
@@ -91,7 +91,7 @@ const props = defineProps({
         nickname: '',
         telephone: '',
         tagIdLabel: '',
-        accountBalance: ''
+        totalMoney: ''
       };
     }
   },
@@ -139,12 +139,12 @@ const handleRecharge = () => {
     nickname: props.orderData.nickname,
     telephone: props.orderData.telephone,
     tagIdLabel: props.orderData.tagIdLabel,
-    accountBalance: props.orderData.accountBalance
+    totalMoney: props.orderData.totalMoney
   };
   rechargeInfo.visible = true;
 };
 const changePrice = (val: string) => {
-  props.orderData.accountBalance = val;
+  props.orderData.totalMoney = val;
 };
 </script>
 <style scoped lang="scss"></style>

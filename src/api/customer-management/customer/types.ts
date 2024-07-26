@@ -17,7 +17,7 @@ export interface FormData {
   telephone: string; //联系电话
   channel: string; //渠道来源
   remarks: string;
-  accountBalance?: string; //账户余额
+  totalMoney?: string; //账户余额
 }
 
 export interface TableQuery extends PageQuery {

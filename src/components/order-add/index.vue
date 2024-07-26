@@ -9,7 +9,6 @@
       :close-on-press-escape="false"
       :before-close="handleCancel"
     >
-      {{ formInfo.data }}
       <el-steps :active="active" direction="horizontal" process-status="process" finish-status="success" class="mb10">
         <el-step title="创建订单" />
         <el-step title="订单配置" />
@@ -46,7 +45,7 @@
               :disabled="!formInfo.data.productBrandId || productLoading"
               @change="productChange"
             >
-              <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="订单价格" prop="orderPrice">
@@ -103,7 +102,7 @@
           </el-form-item>
           <template v-if="formInfo.data.isCommission === '1'">
             <el-form-item label="提成金额" prop="commPrice">
-              <el-input-number v-model="formInfo.data.commPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+              <el-input-number v-model="formInfo.data.commPrice" placeholder="" :min="1" :max="99999.99" :precision="2"> </el-input-number>
             </el-form-item>
             <el-form-item label="提成分配" prop="commDistri">
               <el-radio-group v-model="formInfo.data.commDistri" class="ml-4">
@@ -278,7 +277,7 @@ const carData = computed(() => {
         nickname: '',
         telephone: '',
         tagIdLabel: '',
-        accountBalance: ''
+        totalMoney: ''
       }
     }
   );
@@ -294,7 +293,7 @@ const orderDetail = computed((): OrderDesc => {
     nickname: carData.value.customIdObj.nickname,
     telephone: carData.value.customIdObj.telephone,
     tagIdLabel: carData.value.customIdObj.tagIdLabel,
-    accountBalance: carData.value.customIdObj.accountBalance
+    totalMoney: carData.value.customIdObj.totalMoney
   };
 });
 const configPayDetail = computed((): ConfigPayDesc => {
@@ -350,12 +349,12 @@ const handleNext = (step: number) => {
       if (step === 1) {
         if (active.value === 1) {
           // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
-          if (carData.value.customIdObj.accountBalance - formInfo.data.orderPrice >= 0) {
+          if (carData.value.customIdObj.totalMoney - formInfo.data.orderPrice >= 0) {
             formInfo.data.accountPrice = formInfo.data.orderPrice;
             formInfo.data.cashPrice = 0;
           } else {
-            formInfo.data.accountPrice = carData.value.customIdObj.accountBalance;
-            formInfo.data.cashPrice = formInfo.data.orderPrice - carData.value.customIdObj.accountBalance;
+            formInfo.data.accountPrice = carData.value.customIdObj.totalMoney;
+            formInfo.data.cashPrice = formInfo.data.orderPrice - carData.value.customIdObj.totalMoney;
           }
         } else if (
           active.value === 2 &&
@@ -391,7 +390,14 @@ const init = async () => {
     };
   });
   dictObj.carList = await carManageDropdown();
-  Object.assign(formInfo.data, initFormData, props.basicData);
+
+  nextTick(async () => {
+    Object.assign(formInfo.data, { ...props.basicData });
+    dictObj.productList = await productDropdown({
+      productBrandId: props.basicData.productBrandId
+    });
+  });
+
   FormDataRef.value?.resetFields();
 };
 

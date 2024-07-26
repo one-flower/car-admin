@@ -29,7 +29,7 @@
           <el-descriptions-item label="客户昵称"> {{ targetInfo.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话"> {{ targetInfo.telephone }} </el-descriptions-item>
           <el-descriptions-item label="客户标签"> {{ targetInfo.tagIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户余额"> {{ targetInfo.accountBalance }} 元</el-descriptions-item>
+          <el-descriptions-item label="账户余额"> {{ targetInfo.totalMoney }} 元</el-descriptions-item>
         </el-descriptions>
       </div>
 
@@ -97,7 +97,7 @@ const rules = {
 const saveLoading = ref(false);
 // 余额
 const nowPrice = computed(() => {
-  return countList([formData.realityMoney, formData.giveMoney, props.targetInfo.accountBalance], 2);
+  return countList([formData.realityMoney, formData.giveMoney, props.targetInfo.totalMoney], 2);
 });
 const handleNext = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {

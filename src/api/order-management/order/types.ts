@@ -1,5 +1,5 @@
 interface CustomIdObj {
-  accountBalance: string;
+  totalMoney: string;
   channel: string;
   customNo: string;
   giveBalance: string;
@@ -116,7 +116,7 @@ export interface OrderDesc {
   nickname: string; //客户昵称
   telephone: string; //预留电话
   tagIdLabel: string; //客户标签
-  accountBalance: string; //账户余额
+  totalMoney: string; //账户余额
 }
 
 export interface ConfigPayDesc {

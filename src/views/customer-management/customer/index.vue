@@ -48,7 +48,7 @@
         <el-table-column label="客户昵称" align="left" prop="nickname" />
         <el-table-column label="手机号码" align="left" prop="telephone" />
         <el-table-column label="客户来源" align="left" prop="channelLabel" />
-        <el-table-column label="账户余额" align="left" prop="accountBalance" />
+        <el-table-column label="账户余额" align="left" prop="totalMoney" />
         <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="充值" placement="top">
