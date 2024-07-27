@@ -72,7 +72,6 @@ import { PropType } from 'vue';
 import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import UserRecharge from '@/views/customer-management/customer/user-recharge.vue';
 
-const emit = defineEmits(['update:orderData']);
 const props = defineProps({
   readonly: {
     type: Boolean,

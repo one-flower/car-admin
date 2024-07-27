@@ -40,11 +40,10 @@
           <el-descriptions-item label="充值时间"> {{ new Date().toLocaleDateString() }} {{ new Date().toLocaleTimeString() }} </el-descriptions-item>
         </el-descriptions>
       </div>
-
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="handleCancel">取 消</el-button>
-          <el-button type="primary" @click="handleNext">确认</el-button>
+          <el-button type="primary" @click="submitForm">确认</el-button>
         </div>
       </template>
     </el-dialog>
@@ -99,7 +98,7 @@ const saveLoading = ref(false);
 const nowPrice = computed(() => {
   return countList([formData.realityMoney, formData.giveMoney, props.targetInfo.totalMoney], 2);
 });
-const handleNext = () => {
+const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       saveLoading.value = true;

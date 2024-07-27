@@ -212,10 +212,6 @@
           <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj?.telephone }} </el-descriptions-item>
         </el-descriptions>
       </div>
-      <el-descriptions title="原车主信息" :column="2" border class="mb10">
-        <el-descriptions-item label="车主昵称"> {{ userInfo.data.customIdObj?.nickname }} </el-descriptions-item>
-        <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj?.telephone }} </el-descriptions-item>
-      </el-descriptions>
       <el-descriptions title="新车主" :column="2" border></el-descriptions>
       <el-form ref="UserFormRef" :model="userInfo.data" :rules="userRules" label-width="80px" @submit.prevent>
         <el-form-item label="选择车主" prop="newCustomId">

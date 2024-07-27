@@ -100,7 +100,7 @@
         <el-table-column label="质保结束" align="center" prop="endDate" />
         <el-table-column label="质保状态" align="center" prop="state" />
         <el-table-column label="更新时间" align="center" prop="updateTime" />
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="保养记录" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleLog(row)">

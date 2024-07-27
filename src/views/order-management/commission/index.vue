@@ -80,7 +80,7 @@
         <el-table-column label="订单提成(/元)" align="left" prop="commPrice" />
         <el-table-column label="负责人" align="center" prop="directorLabel" />
         <el-table-column label="分配状态" align="center" prop="commStateLabel" />
-        <el-table-column label="操作" width="150" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link @click="handlePay(row, false)">
@@ -118,15 +118,7 @@
         <el-table-column label="个人提成" align="center" prop="price" />
         <el-table-column label="提成比例(%)" width="150" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-input-number
-              v-model="row.ratio"
-              :disabled="!payInfo.isEdit"
-              :min="0"
-              :max="100"
-              :precision="2"
-              style="width: 100%"
-              @change="preChange(row)"
-            >
+            <el-input-number v-model="row.ratio" :disabled="!payInfo.isEdit" :min="0" :max="100" style="width: 100%" @change="preChange(row)">
             </el-input-number>
           </template>
         </el-table-column>
@@ -243,11 +235,17 @@ const handlePay = async (row: TableVO, flag: boolean) => {
   };
   payInfo.orderId = res.data.id;
   payInfo.commPrice = res.data.commPrice;
+
   payInfo.tableData = res.data.commExtObj.map((item) => {
+    const ratio =
+      item.isDirector === 'Y'
+        ? 100 - Math.floor(100 / res.data.commExtObj.length) * (res.data.commExtObj.length - 1)
+        : Math.floor(100 / res.data.commExtObj.length);
+
     return {
       ...item,
-      price: item.ratio ? (item.ratio * res.data.commPrice) / 100 : 0,
-      ratio: item.ratio ?? 0
+      price: (ratio * 100 * res.data.commPrice) / 10000,
+      ratio: item.ratio ?? ratio
     };
   });
 

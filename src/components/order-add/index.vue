@@ -26,12 +26,19 @@
             <el-input v-model="formInfo.data.projectTypeLabel" placeholder="项目类型" disabled></el-input>
           </el-form-item>
           <el-form-item label="选择车辆" prop="carManageId">
-            <el-select v-model="formInfo.data.carManageId" placeholder="请选择车辆" clearable filterable>
+            <el-select v-model="formInfo.data.carManageId" placeholder="请选择车辆" clearable filterable :disabled="formInfo.data.type !== 'SERVER'">
               <el-option v-for="item in dictObj.carList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="产品品牌" prop="productBrandId">
-            <el-select v-model="formInfo.data.productBrandId" placeholder="请选择产品品牌" clearable filterable @change="changeBrand">
+            <el-select
+              v-model="formInfo.data.productBrandId"
+              placeholder="请选择产品品牌"
+              clearable
+              filterable
+              @change="changeBrand"
+              :disabled="formInfo.data.type !== 'SERVER'"
+            >
               <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -42,7 +49,7 @@
               placeholder="请选择产品"
               clearable
               filterable
-              :disabled="!formInfo.data.productBrandId || productLoading"
+              :disabled="!formInfo.data.productBrandId || productLoading || formInfo.data.type !== 'SERVER'"
               @change="productChange"
             >
               <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
@@ -73,7 +80,7 @@
         </template>
         <template v-else-if="active === 1">
           <el-descriptions title="" :column="2" border class="mb10">
-            <el-descriptions-item label="订单类型"> 服务订单 </el-descriptions-item>
+            <el-descriptions-item label="订单类型"> {{ formInfo.data.typeLabel }} </el-descriptions-item>
             <el-descriptions-item label="项目类型"> {{ formInfo.data.projectTypeLabel }} </el-descriptions-item>
             <el-descriptions-item label="品牌名称"> {{ formInfo.data.productLabel }} </el-descriptions-item>
             <el-descriptions-item label="订单价格"> {{ formInfo.data.orderPrice }} </el-descriptions-item>
@@ -244,9 +251,9 @@ const rules = {
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
   formInfo.data.projectType = undefined;
-  formInfo.data.projectTypeLabel = undefined;
+  formInfo.data.projectTypeLabel = '';
   formInfo.data.productId = undefined;
-  formInfo.data.orderPrice = undefined;
+  formInfo.data.orderPrice = 0;
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val
@@ -260,10 +267,13 @@ const dictToLabel = (data: any, value: string | number) => {
 // 选择产品，触发级联
 const productChange = (val) => {
   const data = dictToLabel(dictObj.productList, val);
-  formInfo.data.orderPrice = parseFloat(data.productPrice);
+
   formInfo.data.projectType = data.projectType;
   formInfo.data.projectTypeLabel = data.projectTypeLabel + '-' + data.modeLabel;
   formInfo.data.productLabel = data.label;
+  if (formInfo.data.type === 'SERVER') {
+    formInfo.data.orderPrice = parseFloat(data.productPrice);
+  }
 };
 
 // 赋予选项对应的label
@@ -290,6 +300,7 @@ const orderDetail = computed((): OrderDesc => {
     productBrandIdLabel: formInfo.data.productLabel,
     carBrandLabel: carData.value.label,
     orderPrice: formInfo.data.orderPrice,
+    customId: carData.value.customId,
     nickname: carData.value.customIdObj.nickname,
     telephone: carData.value.customIdObj.telephone,
     tagIdLabel: carData.value.customIdObj.tagIdLabel,
@@ -344,28 +355,28 @@ const handleCancel = () => {
 };
 
 const handleNext = (step: number) => {
+  if (step === -1) {
+    active.value += step;
+    return;
+  }
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (step === 1) {
-        if (active.value === 1) {
-          // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
-          if (carData.value.customIdObj.totalMoney - formInfo.data.orderPrice >= 0) {
-            formInfo.data.accountPrice = formInfo.data.orderPrice;
-            formInfo.data.cashPrice = 0;
-          } else {
-            formInfo.data.accountPrice = carData.value.customIdObj.totalMoney;
-            formInfo.data.cashPrice = formInfo.data.orderPrice - carData.value.customIdObj.totalMoney;
-          }
-        } else if (
-          active.value === 2 &&
-          formInfo.data.orderPayType === 'PROMPTLY_PAY' &&
-          countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2)
-        ) {
-          await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
-          active.value += step;
+      if (active.value === 1) {
+        // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
+        if (orderDetail.value.totalMoney - formInfo.data.orderPrice >= 0) {
+          formInfo.data.accountPrice = formInfo.data.orderPrice;
+          formInfo.data.cashPrice = 0;
+        } else {
+          formInfo.data.accountPrice = orderDetail.value.totalMoney;
+          formInfo.data.cashPrice = formInfo.data.orderPrice - orderDetail.value.totalMoney;
         }
+      } else if (
+        active.value === 2 &&
+        formInfo.data.orderPayType === 'PROMPTLY_PAY' &&
+        countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2)
+      ) {
+        await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
       }
-
       active.value += step;
     }
   });
@@ -390,20 +401,24 @@ const init = async () => {
     };
   });
   dictObj.carList = await carManageDropdown();
-
-  nextTick(async () => {
-    Object.assign(formInfo.data, { ...props.basicData });
-    dictObj.productList = await productDropdown({
-      productBrandId: props.basicData.productBrandId
+  formInfo.data.typeLabel = dictObj.dictEnum__orderType.find((x: any) => x.value === props.basicData.type).label ?? '';
+  if (props.basicData.type !== 'SERVER') {
+    nextTick(async () => {
+      Object.assign(formInfo.data, { ...props.basicData });
+      dictObj.productList = await productDropdown({
+        productBrandId: props.basicData.productBrandId
+      });
+      productChange(formInfo.data.productId);
     });
-  });
+  }
 
   FormDataRef.value?.resetFields();
 };
 
 watch(
   () => props.visible,
-  () => {
+  (v) => {
+    if (!v) return;
     init();
   }
 );

@@ -33,7 +33,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="渠道来源" align="center" prop="label" width="300" />
         <el-table-column label="备注" align="left" header-align="center" prop="remarks" show-overflow-tooltip></el-table-column>
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="修改" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>

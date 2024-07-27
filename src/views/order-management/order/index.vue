@@ -99,7 +99,7 @@
         <el-table-column label="实际支付(/元)" align="left" prop="realityPrice" />
         <el-table-column label="支付状态" align="left" prop="payStateLabel" />
         <el-table-column label="更新时间" align="left" prop="updateTime" show-overflow-tooltip width="120" />
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="120" align="left" header-align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link @click="handleDetail(row)">
@@ -229,6 +229,27 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 下一步 -->
+    <el-dialog v-model="orderStateInfo.visiable" :title="orderStateInfo.title" :before-close="stateCancel" width="500px">
+      <el-form ref="formRef" :model="orderStateInfo.data" label-width="80">
+        <el-form-item label="变更状态">
+          <el-select v-model="orderStateInfo.data.state" clearable filterable :disabled="true">
+            <el-option v-for="item in dictObj.dictEnum__orderState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="orderStateInfo.data.remarks" rows="auto" show-word-limit maxlength="255" type="textarea" placeholder="请输入" />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="stateCancel">取 消</el-button>
+          <el-button type="primary" @click="stateSubmit">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -333,15 +354,32 @@ const handleAdd = () => {
 };
 
 // 更改订单状态
-const handleUpState = async (id: string, state: OrderState) => {
-  const res = dictObj.dictEnum__orderState.find((x: any) => x.value === state);
-  await proxy?.$modal.confirm(`状态是否变更为${res.label}？`);
-  await orderUpState({
-    id: id,
-    state: state
-  });
+const initOrderStateForm = {
+  id: undefined,
+  state: undefined,
+  remarks: ''
+};
+const orderStateInfo = reactive({
+  visiable: false,
+  title: '变更状态',
+  data: {
+    ...initOrderStateForm
+  }
+});
+const handleUpState = (id: string, state: OrderState) => {
+  orderStateInfo.visiable = true;
+  orderStateInfo.data.id = id;
+  orderStateInfo.data.state = state;
+};
+const stateSubmit = async () => {
+  await orderUpState(orderStateInfo.data);
   await getTableData();
+  orderStateInfo.visiable = false;
   proxy?.$modal.msgSuccess('更改成功');
+};
+const stateCancel = () => {
+  orderStateInfo.visiable = false;
+  Object.assign(orderStateInfo.data, { ...initOrderStateForm });
 };
 
 /** 删除按钮操作 */

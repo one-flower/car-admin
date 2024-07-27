@@ -68,7 +68,7 @@
             {{ row.isCrossStoreLabel === '--' ? '-' : row.isCrossStoreLabel }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="修改" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>

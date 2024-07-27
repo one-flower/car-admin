@@ -41,6 +41,7 @@ export interface TableVO extends BaseEntity {
   constructionTeam: string; //作业团队label
   state: OrderState;
   orderLogList: any;
+  commExtObj: any; // 员工详情
 }
 export type OrderState = 'WAIT_CONSTRUCTED' | 'DURING_CONSTRUCTION' | 'CONSTRUCTED_COMPLETE' | 'WAIT_DELIVERED' | 'ORDER_COMPLETED' | 'CANCEL_ORDER';
 

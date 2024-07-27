@@ -41,10 +41,10 @@
             <ImagePreview :width="100" :height="100" :src="row.logoUrl" />
           </template>
         </el-table-column>
-        <el-table-column label="品牌名称" align="center" prop="name" width="150" />
-        <el-table-column label="上游机构" align="center" prop="upOrgLabel" width="150" />
+        <el-table-column label="品牌名称" align="center" prop="name" width="200" show-overflow-tooltip />
+        <el-table-column label="上游机构" align="center" prop="upOrgLabel" width="200" show-overflow-tooltip />
         <el-table-column label="备注" align="left" header-align="center" prop="remarks" show-overflow-tooltip></el-table-column>
-        <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="修改" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>

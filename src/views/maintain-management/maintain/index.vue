@@ -62,7 +62,7 @@
         <el-table-column label="质保结束" align="center" prop="endDate" />
         <el-table-column label="质保状态" align="center" prop="state" />
         <el-table-column label="更新时间" align="center" prop="updateTime" />
-        <el-table-column label="操作" width="120" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="120" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="{ row }">
             <el-tooltip content="进店保养" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'MAINTAIN')">
@@ -178,7 +178,7 @@ const handleAdd = (row, type) => {
     productBrandIdLabel: row.productBrandIdLabel,
     productId: row.productId,
     productIdLabel: row.productIdLabel,
-    orderPrice: row.orderPrice
+    orderPrice: row.orderPrice ?? 0
   };
   formInfo.visible = true;
 };
