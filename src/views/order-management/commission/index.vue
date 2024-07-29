@@ -80,7 +80,7 @@
         <el-table-column label="订单提成(/元)" align="left" prop="commPrice" />
         <el-table-column label="负责人" align="center" prop="directorLabel" />
         <el-table-column label="分配状态" align="center" prop="commStateLabel" />
-        <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link @click="handlePay(row, false)">
@@ -156,7 +156,7 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   multiple: true,
   loading: false,
   showSearch: true,
-  queryParams: { pageNum: 1, pageSize: 20, commDistri: 'CUSTOM', isCommission: 'Y', orderState: 'ORDER_COMPLETED' },
+  queryParams: { pageNum: 1, pageSize: 20, commDistri: 'CUSTOM', isCommission: '1' },
   data: [],
   total: 0
 });

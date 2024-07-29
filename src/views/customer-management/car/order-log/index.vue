@@ -5,7 +5,7 @@
         <el-descriptions title="车辆信息" :column="2" border>
           <el-descriptions-item label="车辆品牌"> {{ targetInfo.brandIdLabel }} </el-descriptions-item>
           <el-descriptions-item label="车牌号码"> {{ targetInfo.licensePlate }} </el-descriptions-item>
-          <el-descriptions-item label="车架号码"> {{ targetInfo.vin }} </el-descriptions-item>
+          <!-- <el-descriptions-item label="车架号码"> {{ targetInfo.vin }} </el-descriptions-item> -->
           <el-descriptions-item label="车辆归属"> {{ targetInfo.toTypeLabel }} </el-descriptions-item>
           <el-descriptions-item label="车主昵称"> {{ targetInfo.customIdObj?.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话"> {{ targetInfo.customIdObj?.telephone }} </el-descriptions-item>

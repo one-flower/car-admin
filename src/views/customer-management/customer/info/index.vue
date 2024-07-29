@@ -29,7 +29,7 @@
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="车辆品牌" align="center" prop="brandIdLabel" />
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
-        <el-table-column label="车架号码" align="center" prop="vin" />
+        <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
         <el-table-column label="车辆归属" align="center" prop="toTypeLabel" />
         <el-table-column label="车辆状态" align="center" prop="carStateLabel" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">

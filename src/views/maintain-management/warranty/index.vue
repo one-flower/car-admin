@@ -10,9 +10,9 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="车架号码" prop="vin">
+            <!-- <el-form-item label="车架号码" prop="vin">
               <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="车牌号码" prop="licensePlate">
               <el-input v-model="tableInfo.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -91,7 +91,7 @@
       <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="品牌名称" align="center" prop="brandName" />
-        <el-table-column label="车架号码" align="center" prop="vin" />
+        <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
         <el-table-column label="项目类型" align="center" prop="projectType" />
         <el-table-column label="产品品牌" align="center" prop="productBrandName" />

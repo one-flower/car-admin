@@ -87,7 +87,7 @@
         <el-table-column label="订单类型" align="left" prop="typeLabel" />
         <el-table-column label="订单编号" align="left" prop="orderNo" show-overflow-tooltip />
         <el-table-column label="车辆品牌" align="left" prop="carBrandLabel" />
-        <el-table-column label="车架号码" align="left" prop="vin" show-overflow-tooltip />
+        <!-- <el-table-column label="车架号码" align="left" prop="vin" show-overflow-tooltip /> -->
         <el-table-column label="车牌号码" align="left" prop="licensePlate" show-overflow-tooltip />
         <el-table-column label="项目类型" align="left" prop="projectTypeLabel" />
         <el-table-column label="产品品牌" align="left" prop="productBrandLabel" />
@@ -109,7 +109,7 @@
             <template v-if="row.state !== 'CANCEL_ORDER'">
               <el-tooltip v-if="row.payState !== 'PAID'" content="支付" placement="top">
                 <el-button v-hasPermi="['system:post:remove']" link @click="handlePay(row)">
-                  <svg-icon icon-class="payment"></svg-icon>
+                  <svg-icon icon-class="pay-now"></svg-icon>
                 </el-button>
               </el-tooltip>
             </template>
@@ -143,7 +143,7 @@
             </template>
             <template v-else-if="row.state === 'CANCEL_ORDER'">
               <el-tooltip content="删除订单" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link type="warning" icon="Delete" @click="handleDelete(row)"></el-button>
+                <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
               </el-tooltip>
             </template>
             <template v-if="['WAIT_CONSTRUCTED', 'DURING_CONSTRUCTION'].includes(row.state) || (row.state === 'WAIT_DELIVERED' && row.isFlow === 0)">

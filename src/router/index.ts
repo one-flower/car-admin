@@ -353,13 +353,13 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         path: 'warranty',
         component: () => import('@/views/maintain-management/warranty/index.vue'),
         name: 'warranty',
-        meta: { title: '质保产品', activeMenu: '/customerManagement/warranty', icon: '' }
+        meta: { title: '质保车辆', activeMenu: '/customerManagement/warranty', icon: '' }
       },
       {
         path: 'maintain',
         component: () => import('@/views/maintain-management/maintain/index.vue'),
         name: 'maintain',
-        meta: { title: '保养产品', activeMenu: '/customerManagement/maintain', icon: '' }
+        meta: { title: '保养车辆', activeMenu: '/customerManagement/maintain', icon: '' }
       }
     ]
   }
