@@ -130,7 +130,7 @@ const dictObj = toReactive<any>(proxy?.useDict('sys_user_sex', 'clyh_staff_entry
 
 const queryFormRef = ref<ElFormInstance>();
 
-const pageTitle = '渠道来源';
+const pageTitle = '客户来源';
 const FormDataRef = ref<ElFormInstance>();
 
 const dialog = reactive<DialogOption>({

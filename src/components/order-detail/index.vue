@@ -19,35 +19,22 @@
     <el-descriptions :title="cinfigPayTitle" :column="2" border class="mb10">
       <el-descriptions-item label="负责人" :span="2"> {{ configPyaData.directorIdLabel }} </el-descriptions-item>
       <el-descriptions-item label="作业团队" :span="2"> {{ configPyaData.workTeamLabel }} </el-descriptions-item>
-      <el-descriptions-item label="订单施工" :span="2"> {{ configPyaData.isFlowLabel }} </el-descriptions-item>
-      <!-- 无提成  -->
-      <template v-if="!configPyaData.isCommission">
-        <!-- 无提成 稍后支付 -->
-        <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
-          <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
-          <el-descriptions-item label="订单支付"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-        </template>
-        <template v-else>
-          <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
-          <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户支付"> {{ configPyaData.accountPrice }} 元 </el-descriptions-item>
-          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item>
-        </template>
+      <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
+      <el-descriptions-item label="订单施工"> {{ configPyaData.isFlowLabel }} </el-descriptions-item>
+      <template v-if="configPyaData.isCommission === '1'">
+        <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
+        <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
       </template>
-      <template v-else>
-        <template v-if="configPyaData.orderPayType === 'LATER_ON_PAY'">
-          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} 元 </el-descriptions-item>
-          <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
-          <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-        </template>
-        <template v-else>
-          <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} 元 </el-descriptions-item>
-          <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
-          <el-descriptions-item label="订单支付" :span="2"> {{ configPyaData.orderPayTypeLabel }} </el-descriptions-item>
-          <el-descriptions-item label="账户支付"> {{ `${configPyaData.accountPrice}` }} 元 </el-descriptions-item>
-          <el-descriptions-item label="现金支付" :span="2"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item>
-        </template>
+      <el-descriptions-item label="订单支付" :span="configPyaData.orderPayType === 'PROMPTLY_PAY' ? 1 : 2">
+        {{ configPyaData.orderPayTypeLabel }}
+      </el-descriptions-item>
+      <template v-if="configPyaData.orderPayType === 'PROMPTLY_PAY'">
+        <el-descriptions-item label="订单金额"> {{ configPyaData.realityPrice }} </el-descriptions-item>
+        <el-descriptions-item label="账户支付"> {{ `${configPyaData.accountPrice}` }} 元 </el-descriptions-item>
+        <el-descriptions-item label="现金支付"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item>
+        <!-- <el-descriptions-item label="现金支付"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item> -->
       </template>
+
       <el-descriptions-item label="备注" :span="2"> {{ configPyaData.remarks }} </el-descriptions-item>
     </el-descriptions>
     <el-descriptions :title="`实际支付${configPyaData.realityPrice}元`" border class="mb10" />
@@ -72,6 +59,7 @@ import { PropType } from 'vue';
 import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import UserRecharge from '@/views/customer-management/customer/user-recharge.vue';
 
+const emit = defineEmits(['changeMoney']);
 const props = defineProps({
   readonly: {
     type: Boolean,
@@ -143,7 +131,8 @@ const handleRecharge = () => {
   rechargeInfo.visible = true;
 };
 const changePrice = (val: string) => {
-  props.orderData.totalMoney = val;
+  // props.orderData.totalMoney = val;
+  emit('changeMoney');
 };
 </script>
 <style scoped lang="scss"></style>

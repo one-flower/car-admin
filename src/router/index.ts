@@ -218,7 +218,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         path: 'channelSource',
         component: () => import('@/views/sys/channel-source/index.vue'),
         name: 'channelSource',
-        meta: { title: '渠道来源', activeMenu: '/sys/channelSource', icon: '' }
+        meta: { title: '客户来源', activeMenu: '/sys/channelSource', icon: '' }
       },
       {
         path: 'management',

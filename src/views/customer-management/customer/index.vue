@@ -186,7 +186,7 @@ const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     tagId: '',
     nickname: '',
     telephone: ''
@@ -195,7 +195,7 @@ const data = reactive<PageData<FormData, TableQuery>>({
     tagId: [{ required: true, message: '客户标签不能为空', trigger: ['blur', 'change'] }],
     nickname: [{ required: true, message: '客户昵称不能为空', trigger: 'blur' }],
     telephone: [{ required: true, message: '手机号码不能为空', trigger: 'blur' }],
-    channel: [{ required: true, message: '渠道来源不能为空', trigger: ['blur', 'change'] }]
+    channel: [{ required: true, message: '客户来源不能为空', trigger: ['blur', 'change'] }]
   }
 });
 

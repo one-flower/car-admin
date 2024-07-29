@@ -109,7 +109,7 @@ const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     label: ''
   },
   rules: {

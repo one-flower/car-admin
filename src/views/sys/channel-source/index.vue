@@ -4,8 +4,8 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="渠道来源" prop="label">
-              <el-input v-model="queryParams.label" placeholder="请输入渠道来源" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="客户来源" prop="label">
+              <el-input v-model="queryParams.label" placeholder="请输入客户来源" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -31,7 +31,7 @@
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="渠道来源" align="center" prop="label" width="300" />
+        <el-table-column label="客户来源" align="center" prop="label" width="300" />
         <el-table-column label="备注" align="left" header-align="center" prop="remarks" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -57,8 +57,8 @@
     <!-- 添加或修改对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
       <el-form ref="FormDataRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
-        <el-form-item label="渠道来源" prop="label">
-          <el-input v-model="form.label" placeholder="请输入渠道来源" />
+        <el-form-item label="客户来源" prop="label">
+          <el-input v-model="form.label" placeholder="请输入客户来源" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" show-word-limit maxlength="255" row="auto" placeholder="请输入内容" />
@@ -91,7 +91,7 @@ const tableAttr = reactive<TableAttr>({
 
 const queryFormRef = ref<ElFormInstance>();
 
-const pageTitle = '渠道来源';
+const pageTitle = '客户来源';
 const FormDataRef = ref<ElFormInstance>();
 
 const dialog = reactive<DialogOption>({
@@ -109,11 +109,11 @@ const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     label: ''
   },
   rules: {
-    label: [{ required: true, message: '渠道来源不能为空', trigger: 'blur' }]
+    label: [{ required: true, message: '客户来源不能为空', trigger: 'blur' }]
   }
 });
 

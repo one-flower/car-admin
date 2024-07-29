@@ -5,16 +5,22 @@
         <el-descriptions-item label="车辆归属"> {{ basicData.toTypeLabel }} </el-descriptions-item>
         <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
         <el-descriptions-item label="车辆品牌"> {{ basicData.brandIdLabel }} </el-descriptions-item>
-        <el-descriptions-item label="车辆厂商"> {{ basicData.manufacturer }} </el-descriptions-item>
+        <!-- <el-descriptions-item label="车辆厂商"> {{ basicData.manufacturer }} </el-descriptions-item>
         <el-descriptions-item label="车辆系列"> {{ basicData.typename }} </el-descriptions-item>
-        <el-descriptions-item label="车辆型号"> {{ basicData.model }} </el-descriptions-item>
+        <el-descriptions-item label="车辆型号"> {{ basicData.module }} </el-descriptions-item>
         <el-descriptions-item label="车辆级别"> {{ basicData.sizetype }} </el-descriptions-item>
         <el-descriptions-item label="车身结构"> {{ basicData.bodytype }} </el-descriptions-item>
         <el-descriptions-item label="驱动方式"> {{ basicData.drivemode }} </el-descriptions-item>
-        <el-descriptions-item label="能源类型"> {{ basicData.fueltype }} </el-descriptions-item>
-        <el-descriptions-item label="备注" :span="2"> {{ basicData.remarks }} </el-descriptions-item>
-        <el-descriptions-item label="车辆照片" :span="2">
-          <image-preview :width="100" :height="100" :src="basicData.imgUrls" :preview-src-list="[basicData.imgUrls]"></image-preview>
+        <el-descriptions-item label="能源类型"> {{ basicData.fueltype }} </el-descriptions-item> -->
+        <el-descriptions-item label="备注" :span="3"> {{ basicData.remarks }} </el-descriptions-item>
+        <el-descriptions-item label="车辆照片" :span="3">
+          <image-preview
+            v-if="basicData.imgUrls"
+            :width="100"
+            :height="100"
+            :src="basicData.imgUrls"
+            :preview-src-list="[basicData.imgUrls]"
+          ></image-preview>
         </el-descriptions-item>
       </el-descriptions>
 
@@ -36,7 +42,7 @@
               </el-form-item>
               <el-form-item label="产品名称" prop="rechargeId">
                 <el-select v-model="tableInfo.queryParams.productId" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
-                  <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                  <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item>
@@ -187,7 +193,7 @@ const handleDetail = async (row?: TableVO) => {
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
-    workTeamLabel: res.data.constructionTeam, //作业团队
+    workTeamLabel: res.data.constructionTeamLabel, //作业团队
     isFlow: res.data.isFlow, //订单施工
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成

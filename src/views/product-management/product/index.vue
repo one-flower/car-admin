@@ -17,12 +17,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称" prop="name">
-              <el-select v-model="queryParams.name" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
+              <el-input v-model="queryParams.name" placeholder="请输入产品名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="产品代码" prop="model">
-              <el-input v-model="queryParams.model" placeholder="请输入产品代码" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="产品型号" prop="model">
+              <el-input v-model="queryParams.model" placeholder="请输入产品型号" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -144,7 +142,7 @@
         </template>
 
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" maxlength="255" show-word-limit row="auto" placeholder="请输入内容" />
+          <el-input v-model="form.remarks" type="textarea" maxlength="1000" show-word-limit row="auto" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -202,7 +200,7 @@ const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     projectType: undefined,
     productBrandId: undefined,
     name: undefined,

@@ -38,7 +38,7 @@
               </el-form-item>
               <el-form-item label="产品名称" prop="label">
                 <el-select v-model="tableInfo.queryParams.label" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
-                  <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                  <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="支付状态" prop="payState">
@@ -160,7 +160,7 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   multiple: true,
   loading: false,
   showSearch: true,
-  queryParams: { pageNum: 1, pageSize: 10 },
+  queryParams: { pageNum: 1, pageSize: 20 },
   data: [],
   total: 0
 });
@@ -229,7 +229,7 @@ const handleDetail = async (row?: TableVO) => {
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
-    workTeamLabel: res.data.constructionTeam, //作业团队
+    workTeamLabel: res.data.constructionTeamLabel, //作业团队
     isFlow: res.data.isFlow, //订单施工
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成

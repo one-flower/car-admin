@@ -36,8 +36,8 @@
               placeholder="请选择产品品牌"
               clearable
               filterable
-              @change="changeBrand"
               :disabled="formInfo.data.type !== 'SERVER'"
+              @change="changeBrand"
             >
               <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
@@ -52,7 +52,8 @@
               :disabled="!formInfo.data.productBrandId || productLoading || formInfo.data.type !== 'SERVER'"
               @change="productChange"
             >
-              <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
+              <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.brandName + '-' + item.productName" :value="item.value">
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="订单价格" prop="orderPrice">
@@ -97,19 +98,19 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="订单施工" prop="isFlow">
-            <el-radio-group v-model="formInfo.data.isFlow" class="ml-4">
-              <el-radio v-for="item in dictObj.dictEnum__orderIsFlow" :key="item.id" :value="item.value" :label="item.label" />
-            </el-radio-group>
-          </el-form-item>
           <el-form-item label="订单提成" prop="isCommission">
             <el-radio-group v-model="formInfo.data.isCommission" class="ml-4">
               <el-radio v-for="item in dictObj.dictEnum__orderIsCommission" :key="item.id" :value="item.value" :label="item.label" />
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="订单施工" prop="isFlow">
+            <el-radio-group v-model="formInfo.data.isFlow" class="ml-4">
+              <el-radio v-for="item in dictObj.dictEnum__orderIsFlow" :key="item.id" :value="item.value" :label="item.label" />
+            </el-radio-group>
+          </el-form-item>
           <template v-if="formInfo.data.isCommission === '1'">
             <el-form-item label="提成金额" prop="commPrice">
-              <el-input-number v-model="formInfo.data.commPrice" placeholder="" :min="1" :max="99999.99" :precision="2"> </el-input-number>
+              <el-input-number v-model="formInfo.data.commPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
             </el-form-item>
             <el-form-item label="提成分配" prop="commDistri">
               <el-radio-group v-model="formInfo.data.commDistri" class="ml-4">
@@ -119,7 +120,7 @@
           </template>
         </template>
         <template v-else-if="active === 2">
-          <order-detail :order-data="orderDetail" :config-pay-show="false"></order-detail>
+          <order-detail :order-data="orderDetail" :config-pay-show="false" @change-money="getCarDict"></order-detail>
           <template v-if="true">
             <el-form-item label="订单支付" prop="orderPayType">
               <el-radio-group v-model="formInfo.data.orderPayType" class="ml-4">
@@ -128,7 +129,12 @@
             </el-form-item>
             <template v-if="formInfo.data.orderPayType === 'PROMPTLY_PAY'">
               <el-form-item label="账户支付" prop="accountPrice">
-                <el-input-number v-model="formInfo.data.accountPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+                <div class="formItemBox">
+                  <el-input-number v-model="formInfo.data.accountPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+                  <div class="formItemBox__right">
+                    <el-button type="primary" @click="setPay">一件分配金额</el-button>
+                  </div>
+                </div>
               </el-form-item>
               <el-form-item label="现金支付" prop="cashPrice">
                 <div class="formItemBox">
@@ -136,7 +142,7 @@
                     <el-input-number v-model="formInfo.data.cashPrice" placeholder=" " :min="0" :max="99999.99" :precision="2"> </el-input-number>
                   </el-form-item>
                   <el-form-item v-if="formInfo.data.cashPrice !== 0" prop="payChannel">
-                    <el-select v-model="formInfo.data.payChannel" placeholder="请选择支付渠道" clearable filterable class="formItemBox__right">
+                    <el-select v-model="formInfo.data.payChannel" placeholder="请选择支付方式" clearable filterable class="formItemBox__right">
                       <el-option v-for="item in dictObj.dictEnum__payChannel" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                   </el-form-item>
@@ -243,8 +249,12 @@ const rules = {
   directorId: [{ required: true, message: '负责人不能为空', trigger: 'change' }],
   isFlow: [{ required: true, message: '订单施工不能为空', trigger: 'change' }],
   isCommission: [{ required: true, message: '订单提成不能为空', trigger: 'change' }],
-  commPrice: [{ required: true, message: '订单金额不能为空', trigger: 'blur' }],
-  commDistri: [{ required: true, message: '提成分配不能为空', trigger: 'change' }]
+  commPrice: [
+    { required: true, message: '提成金额不能为空', trigger: 'blur' },
+    { type: 'number', message: '提成金额最小为1', min: 1 }
+  ],
+  commDistri: [{ required: true, message: '提成分配不能为空', trigger: 'change' }],
+  payChannel: [{ required: true, message: '支付方式不能为空', trigger: 'change' }]
 };
 
 //获取客户信息
@@ -270,14 +280,15 @@ const productChange = (val) => {
 
   formInfo.data.projectType = data.projectType;
   formInfo.data.projectTypeLabel = data.projectTypeLabel + '-' + data.modeLabel;
-  formInfo.data.productLabel = data.label;
+  formInfo.data.productLabel = data.brandName + '-' + data.productName;
   if (formInfo.data.type === 'SERVER') {
     formInfo.data.orderPrice = parseFloat(data.productPrice);
   }
 };
 
-// 赋予选项对应的label
-
+const getCarDict = async () => {
+  dictObj.carList = await carManageDropdown();
+};
 // 车辆相关信息
 const carData = computed(() => {
   return (
@@ -353,7 +364,16 @@ const handleCancel = () => {
   FormDataRef.value.resetFields();
   emit('update:visible', false);
 };
-
+const setPay = () => {
+  // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
+  if (orderDetail.value.totalMoney - formInfo.data.orderPrice >= 0) {
+    formInfo.data.accountPrice = formInfo.data.orderPrice;
+    formInfo.data.cashPrice = 0;
+  } else {
+    formInfo.data.accountPrice = orderDetail.value.totalMoney;
+    formInfo.data.cashPrice = formInfo.data.orderPrice - orderDetail.value.totalMoney;
+  }
+};
 const handleNext = (step: number) => {
   if (step === -1) {
     active.value += step;
@@ -361,16 +381,7 @@ const handleNext = (step: number) => {
   }
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (active.value === 1) {
-        // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
-        if (orderDetail.value.totalMoney - formInfo.data.orderPrice >= 0) {
-          formInfo.data.accountPrice = formInfo.data.orderPrice;
-          formInfo.data.cashPrice = 0;
-        } else {
-          formInfo.data.accountPrice = orderDetail.value.totalMoney;
-          formInfo.data.cashPrice = formInfo.data.orderPrice - orderDetail.value.totalMoney;
-        }
-      } else if (
+      if (
         active.value === 2 &&
         formInfo.data.orderPayType === 'PROMPTLY_PAY' &&
         countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2)

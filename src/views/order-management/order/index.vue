@@ -285,7 +285,7 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   multiple: true,
   loading: false,
   showSearch: true,
-  queryParams: { pageNum: 1, pageSize: 10 },
+  queryParams: { pageNum: 1, pageSize: 20 },
   data: [],
   total: 0
 });
@@ -415,7 +415,7 @@ const handleDetail = async (row?: TableVO) => {
   };
   detailInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
-    workTeamLabel: res.data.constructionTeam, //作业团队
+    workTeamLabel: res.data.constructionTeamLabel, //作业团队
     isFlow: res.data.isFlow, //订单施工
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成

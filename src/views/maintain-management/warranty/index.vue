@@ -38,7 +38,7 @@
                 clearable
                 filterable
               >
-                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="质保开始" prop="dateRangeStar">
@@ -151,7 +151,7 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   multiple: true,
   loading: false,
   showSearch: true,
-  queryParams: { pageNum: 1, pageSize: 10 },
+  queryParams: { pageNum: 1, pageSize: 20 },
   data: [],
   total: 0
 });

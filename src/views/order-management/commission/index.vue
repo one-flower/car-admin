@@ -40,7 +40,7 @@
                 clearable
                 filterable
               >
-                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="负责人" prop="directorId">
@@ -156,7 +156,7 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   multiple: true,
   loading: false,
   showSearch: true,
-  queryParams: { pageNum: 1, pageSize: 10, commDistri: 'CUSTOM' },
+  queryParams: { pageNum: 1, pageSize: 20, commDistri: 'CUSTOM', isCommission: 'Y', orderState: 'ORDER_COMPLETED' },
   data: [],
   total: 0
 });
@@ -219,7 +219,7 @@ const handlePay = async (row: TableVO, flag: boolean) => {
   };
   payInfo.configPayData = {
     directorIdLabel: res.data.directorLabel, //负责人
-    workTeamLabel: res.data.constructionTeam, //作业团队
+    workTeamLabel: res.data.constructionTeamLabel, //作业团队
     isFlow: res.data.isFlow, //订单施工
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成

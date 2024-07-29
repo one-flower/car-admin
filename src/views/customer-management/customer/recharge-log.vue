@@ -92,7 +92,7 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   multiple: true,
   loading: false,
   showSearch: true,
-  queryParams: { pageNum: 1, pageSize: 10 },
+  queryParams: { pageNum: 1, pageSize: 20 },
   data: [],
   total: 0
 });

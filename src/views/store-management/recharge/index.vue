@@ -26,16 +26,16 @@
           <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableAttr.multiple" @click="handleDelete()">
               删除
             </el-button>
-          </el-col>
+          </el-col> -->
           <right-toolbar v-model:showSearch="showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="套餐名称" align="center" prop="name" />
         <el-table-column label="充值金额" align="center" prop="realityMoney" />
         <el-table-column label="赠送金额" align="center" prop="giveMoney" />
@@ -150,11 +150,14 @@ const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10
+    pageSize: 20
   },
   rules: {
     name: [{ required: true, message: '套餐名称不能为空', trigger: 'blur' }],
-    realityMoney: [{ required: true, message: '充值金额不能为空', trigger: ['change', 'blur'] }],
+    realityMoney: [
+      { required: true, message: '充值金额不能为空', trigger: ['change', 'blur'] },
+      { type: 'number', message: '充值金额最小为1', min: 1 }
+    ],
     giveMoney: [{ required: true, message: '赠送金额不能为空', trigger: ['change', 'blur'] }]
   }
 });

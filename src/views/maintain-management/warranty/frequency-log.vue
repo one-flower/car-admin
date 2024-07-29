@@ -116,7 +116,7 @@ const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive({
   showSearch: true,
   loading: false,
-  queryParams: { pageNum: 1, pageSize: 10 },
+  queryParams: { pageNum: 1, pageSize: 20 },
   total: 0,
   data: []
 });

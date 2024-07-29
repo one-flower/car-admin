@@ -12,9 +12,9 @@
             <el-form-item label="车牌号码" prop="licensePlate">
               <el-input v-model="data.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车架号码" prop="vin">
+            <!-- <el-form-item label="车架号码" prop="vin">
               <el-input v-model="data.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="车辆状态" prop="carState">
               <el-select v-model="data.queryParams.carState" placeholder="请选择车辆状态" clearable filterable>
                 <el-option v-for="item in dictObj.dictEnum__carState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -52,7 +52,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="车辆品牌" align="left" prop="brandIdLabel" width="200" />
         <el-table-column label="车辆号码" align="left" prop="licensePlate" width="150" />
-        <el-table-column label="车架号码" align="left" prop="vin" show-overflow-tooltip />
+        <!-- <el-table-column label="车架号码" align="left" prop="vin" show-overflow-tooltip /> -->
         <!-- <el-table-column label="车辆厂商" align="left" prop="manufacturer" show-overflow-tooltip /> -->
         <!-- <el-table-column label="车辆系列" align="left" prop="typename" show-overflow-tooltip /> -->
         <!-- <el-table-column label="车辆型号" align="left" prop="module" /> -->
@@ -123,7 +123,7 @@
             <el-radio v-for="item in oldDictObj.clyh_to_type" :key="item.key" :label="item.label" :value="item.value" />
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="车辆品牌" prop="brandId">
+        <el-form-item v-if="data.form.infoCompletion === '0'" label="车辆品牌" prop="brandId">
           <el-select v-model="data.form.brandId" placeholder="请选择车辆品牌" clearable filterable>
             <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
@@ -133,10 +133,7 @@
             <el-radio v-for="item in oldDictObj.clyh_license_plate_state" :key="item.key" :label="item.label" :value="item.value" />
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="data.form.licensePlateState === '0'" label="车辆号牌" prop="licensePlateState">
-          <!-- <template #label>
-            <div class="carNoLabel">车辆号牌</div>
-          </template> -->
+        <el-form-item label="车辆号牌" prop="licensePlateState">
           <div class="cardNo">
             <el-form-item prop="licenseProvince">
               <el-select v-model="data.form.licenseProvince" placeholder="京" clearable filterable class="cardNo--province">
@@ -159,32 +156,40 @@
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="data.form.remarks" type="textarea" maxlength="255" show-word-limit row="auto" placeholder="请输入内容" />
         </el-form-item>
-        <template v-if="!(data.form.id && data.form.manufacturer != '')">
+        <!-- <template v-if="data.form.id">
           <el-form-item label="信息补全" prop="infoCompletion">
-            <el-radio-group v-model="data.form.infoCompletion" :disabled="data.form.id && data.form.manufacturer != ''">
+            <el-radio-group v-model="data.form.infoCompletion" :disabled="haveComp">
+              <el-radio v-for="item in oldDictObj.clyh_info_completion" :key="item.key" :label="item.label" :value="item.value" />
+            </el-radio-group>
+          </el-form-item>
+          <template v-if="data.form.infoCompletion === '1'">
+            <el-form-item v-if="!haveVin" label="车架号码" prop="vin">
+              <el-input v-model="data.form.vin" row="auto" placeholder="请输入内容" :disabled="haveVin">
+                <template #append>
+                  <el-button type="primary" :disabled="haveVin" @click="handleVinInfo">查询</el-button>
+                </template>
+              </el-input>
+            </el-form-item>
+            <CarInfoItem v-if="data.form.manufacturer" :basic-data="data.form"></CarInfoItem>
+          </template>
+        </template> -->
+        <!-- <template v-else>
+          <el-form-item label="信息补全" prop="infoCompletion">
+            <el-radio-group v-model="data.form.infoCompletion">
               <el-radio v-for="item in oldDictObj.clyh_info_completion" :key="item.key" :label="item.label" :value="item.value" />
             </el-radio-group>
           </el-form-item>
           <template v-if="data.form.infoCompletion === '1'">
             <el-form-item label="车架号码" prop="vin">
-              <el-input v-model="data.form.vin" row="auto" placeholder="请输入内容" :disabled="data.form.id && data.form.manufacturer != ''">
+              <el-input v-model="data.form.vin" row="auto" placeholder="请输入内容">
                 <template #append>
-                  <el-button type="primary" :disabled="data.form.id && data.form.manufacturer != ''" @click="handleVinInfo">查询</el-button>
+                  <el-button type="primary" @click="handleVinInfo">查询</el-button>
                 </template>
               </el-input>
             </el-form-item>
+            <CarInfoItem v-if="data.form.manufacturer" :basic-data="data.form"></CarInfoItem>
           </template>
-        </template>
-        <el-descriptions v-if="data.form.manufacturer" title="车辆信息" :column="2" border>
-          <el-descriptions-item label="车辆品牌"> {{ data.form.brandIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="车辆厂商"> {{ data.form.manufacturer }} </el-descriptions-item>
-          <el-descriptions-item label="车辆系列"> {{ data.form.typename }} </el-descriptions-item>
-          <el-descriptions-item label="车辆型号"> {{ data.form.module }} </el-descriptions-item>
-          <el-descriptions-item label="车辆级别"> {{ data.form.sizetype }} </el-descriptions-item>
-          <el-descriptions-item label="车身结构"> {{ data.form.bodytype }} </el-descriptions-item>
-          <el-descriptions-item label="驱动方式"> {{ data.form.drivemode }} </el-descriptions-item>
-          <el-descriptions-item label="能源类型"> {{ data.form.fueltype }} </el-descriptions-item>
-        </el-descriptions>
+        </template> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -203,20 +208,20 @@
     <!-- 变更车主,后续分页 -->
     <el-dialog v-model="userInfo.visible" :title="userInfo.title" width="600px" append-to-body>
       <div class="mb10">
-        <el-descriptions title="车辆信息" :column="2" border>
+        <el-descriptions title="原车主信息" :column="2" border>
           <el-descriptions-item label="车辆品牌"> {{ userInfo.data.brandIdLabel }} </el-descriptions-item>
           <el-descriptions-item label="车牌号码"> {{ userInfo.data.licensePlate }} </el-descriptions-item>
-          <el-descriptions-item label="车架号码"> {{ userInfo.data.vin }} </el-descriptions-item>
+          <!-- <el-descriptions-item label="车架号码"> {{ userInfo.data.vin }} </el-descriptions-item> -->
           <el-descriptions-item label="车辆归属"> {{ userInfo.data.toTypeLabel }} </el-descriptions-item>
           <el-descriptions-item label="车主昵称"> {{ userInfo.data.customIdObj?.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj?.telephone }} </el-descriptions-item>
         </el-descriptions>
       </div>
-      <el-descriptions title="新车主" :column="2" border></el-descriptions>
+      <el-descriptions title="选择新车主" :column="2" border></el-descriptions>
       <el-form ref="UserFormRef" :model="userInfo.data" :rules="userRules" label-width="80px" @submit.prevent>
         <el-form-item label="选择车主" prop="newCustomId">
           <el-select v-model="userInfo.data.newCustomId" placeholder="请选择车主" clearable filterable>
-            <el-option v-for="item in userInfo.customList" :key="item.id" :label="item.nickname" :value="item.id"> </el-option>
+            <el-option v-for="item in userInfo.customList" :key="item.id" :label="`${item.nickname}/${item.telephone}`" :value="item.id"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="变更原因" prop="reason">
@@ -239,6 +244,7 @@ import { customDropdown } from '@/api/customer-management/customer';
 import { carProvince, carCity } from '@/utils/static-dict';
 import CarFabricate from '@/components/car-fabricate/index.vue';
 import OrderLogItem from './order-log/index.vue';
+import CarInfoItem from './car-info.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useNewDict('clyhBrand__clyhBrand', 'dictEnum__carState'));
@@ -295,7 +301,7 @@ const data = reactive<PageData<FormData, TableQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     brandId: '',
     manufacturer: '',
     typename: '',
@@ -335,6 +341,8 @@ const getTableData = async () => {
 const cancel = () => {
   reset();
   dialog.visible = false;
+  haveComp.value = false;
+  haveVin.value = false;
 };
 
 /** 表单重置 */
@@ -381,10 +389,24 @@ const handleState = async (row?: TableVO) => {
 };
 
 /** 修改按钮操作 */
+/**
+ * 新增
+ *   信息不全0
+ *   信息不全1
+ *   信息不全1  查询vin
+ * 编辑
+ *  信息不全0
+ *  信息不全1
+ *  信息不全1  查询vin
+ */
+const haveVin = ref(false);
+const haveComp = ref(false);
 const handleUpdate = async (row?: TableVO) => {
   reset();
   const ids = row?.id || tableAttr.ids[0];
   const res = await carManageInfo(ids);
+  if (res.data.infoCompletion === '1') haveComp.value = true;
+  if (res.data.vin !== '') haveVin.value = true;
   data.form = res.data;
   dialog.visible = true;
   dialog.title = `修改${pageTitle}`;
@@ -397,7 +419,6 @@ const handleVinInfo = async () => {
     return;
   }
   const res = await vinInfo(data.form.vin);
-  delete res.data.brandId;
   Object.assign(data.form, res.data);
 };
 /** 提交按钮 */

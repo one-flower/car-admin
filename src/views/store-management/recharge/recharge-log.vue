@@ -91,7 +91,7 @@ const queryFormRef = ref<ElFormInstance>();
 const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryParams = reactive<logTableQuery>({
   pageNum: 1,
-  pageSize: 10
+  pageSize: 20
 });
 
 /** 查询列表 */
