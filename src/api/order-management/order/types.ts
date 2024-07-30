@@ -10,6 +10,7 @@ interface CustomIdObj {
   tagIdLabel: string;
   telephone: string;
 }
+
 export interface TableVO extends BaseEntity {
   isCommissionLabel: any;
   id: string;
@@ -43,7 +44,14 @@ export interface TableVO extends BaseEntity {
   orderLogList: any;
   commExtObj: any; // 员工详情
 }
-export type OrderState = 'WAIT_CONSTRUCTED' | 'DURING_CONSTRUCTION' | 'CONSTRUCTED_COMPLETE' | 'WAIT_DELIVERED' | 'ORDER_COMPLETED' | 'CANCEL_ORDER';
+
+export type OrderState =
+  'WAIT_CONSTRUCTED'
+  | 'DURING_CONSTRUCTION'
+  | 'CONSTRUCTED_COMPLETE'
+  | 'WAIT_DELIVERED'
+  | 'ORDER_COMPLETED'
+  | 'CANCEL_ORDER';
 
 export interface FormData {
   id: string | undefined;
@@ -76,7 +84,7 @@ export interface TableQuery extends PageQuery {
   commState?: string; // 订单状态
   isCommission?: string; // 订单提成
   payState?: string; // 支付状态
-
+  orderState?: string; // 订单状态
   commDistri?: 'AVERAGE' | 'CUSTOM'; // 提成分配
   productBrandId?: string; //产品品牌
   directorId?: string; // 负责人

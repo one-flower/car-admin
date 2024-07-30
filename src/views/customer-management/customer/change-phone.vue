@@ -123,7 +123,7 @@ const smsInfo = reactive({
 const getSms = () => {
   // 后期做到session中
   if (smsInfo.count === 0) {
-    const res = smsCode({ phonenumber: props.targetInfo.telephone });
+    const res = smsCode({ phonenumber: changeForm.newTelephone });
     if (res.data === null) return;
     // 验证码倒计时
     smsInfo.count = 60;
