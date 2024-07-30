@@ -15,7 +15,7 @@
         <el-step title="订单支付" />
         <el-step title="完成" />
       </el-steps>
-      <el-form ref="FormDataRef" :model="formInfo.data" :rules="rules" label-width="80px" @submit.prevent>
+      <el-form ref="FormDataRef" v-loading="loading" :model="formInfo.data" :rules="rules" label-width="80px" @submit.prevent>
         <template v-if="active === 0">
           <el-form-item label="订单类型" prop="type">
             <el-select v-model="formInfo.data.type" placeholder="订单类型" disabled>
@@ -98,14 +98,14 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="订单提成" prop="isCommission">
-            <el-radio-group v-model="formInfo.data.isCommission" class="ml-4">
-              <el-radio v-for="item in dictObj.dictEnum__orderIsCommission" :key="item.id" :value="item.value" :label="item.label" />
-            </el-radio-group>
-          </el-form-item>
           <el-form-item label="订单施工" prop="isFlow">
             <el-radio-group v-model="formInfo.data.isFlow" class="ml-4">
               <el-radio v-for="item in dictObj.dictEnum__orderIsFlow" :key="item.id" :value="item.value" :label="item.label" />
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="订单提成" prop="isCommission">
+            <el-radio-group v-model="formInfo.data.isCommission" class="ml-4">
+              <el-radio v-for="item in dictObj.dictEnum__orderIsCommission" :key="item.id" :value="item.value" :label="item.label" />
             </el-radio-group>
           </el-form-item>
           <template v-if="formInfo.data.isCommission === '1'">
@@ -113,7 +113,7 @@
               <el-input-number v-model="formInfo.data.commPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
             </el-form-item>
             <el-form-item label="提成分配" prop="commDistri">
-              <el-radio-group v-model="formInfo.data.commDistri" class="ml-4">
+              <el-radio-group v-model="formInfo.data.commDistri" class="ml-4" :disabled="postNum < 2">
                 <el-radio v-for="item in dictObj.dictEnum__commDistri" :key="item.id" :value="item.value" :label="item.label" />
               </el-radio-group>
             </el-form-item>
@@ -132,7 +132,7 @@
                 <div class="formItemBox">
                   <el-input-number v-model="formInfo.data.accountPrice" placeholder="" :min="0" :max="99999.99" :precision="2"> </el-input-number>
                   <div class="formItemBox__right">
-                    <el-button type="primary" @click="setPay">一件分配金额</el-button>
+                    <el-button type="primary" @click="setPay">快速分配</el-button>
                   </div>
                 </div>
               </el-form-item>
@@ -207,7 +207,7 @@ const props = defineProps({
     required: true
   }
 });
-
+const loading = ref(false);
 const initFormData: OrderForm = {
   id: undefined,
   type: 'SERVER',
@@ -222,10 +222,10 @@ const initFormData: OrderForm = {
   isFlow: '0',
   isCommission: '0',
   commDistri: 'AVERAGE',
-  orderPayType: 'PROMPTLY_PAY',
+  orderPayType: 'LATER_ON_PAY',
   accountPrice: 0,
   cashPrice: 0,
-  payChannel: '',
+  payChannel: 'CASH',
   commPrice: 0,
   typeLabel: '',
   projectTypeLabel: '',
@@ -275,7 +275,7 @@ const dictToLabel = (data: any, value: string | number) => {
   return data?.find((x: any) => x.value === value) ?? {};
 };
 // 选择产品，触发级联
-const productChange = (val) => {
+const productChange = (val: string) => {
   const data = dictToLabel(dictObj.productList, val);
 
   formInfo.data.projectType = data.projectType;
@@ -285,7 +285,7 @@ const productChange = (val) => {
     formInfo.data.orderPrice = parseFloat(data.productPrice);
   }
 };
-
+// 获取car字典
 const getCarDict = async () => {
   dictObj.carList = await carManageDropdown();
 };
@@ -318,6 +318,7 @@ const orderDetail = computed((): OrderDesc => {
     totalMoney: carData.value.customIdObj.totalMoney
   };
 });
+// 支付详情
 const configPayDetail = computed((): ConfigPayDesc => {
   // 负责人 工作团队
   let directorIdLabel = '',
@@ -357,6 +358,13 @@ const postTeamList = computed(() => {
     return item.value !== formInfo.data.directorId;
   });
 });
+const postNum = computed(() => {
+  const count = formInfo.data.workTeam.length + (formInfo.data.directorId !== undefined ? 1 : 0);
+  console.log(count);
+  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+  if (count < 2) formInfo.data.commDistri = 'AVERAGE';
+  return count;
+});
 
 const handleCancel = () => {
   active.value = 0;
@@ -395,7 +403,11 @@ const handleNext = (step: number) => {
 const handleSubmit = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      await orderAdd(formInfo.data);
+      let data = formInfo.data;
+      if (formInfo.data.type !== 'SERVER') {
+        data.otherId = props.basicData.otherId;
+      }
+      await orderAdd(data);
       proxy?.$modal.msgSuccess('操作成功');
       handleCancel();
       emit('confirm');
@@ -404,6 +416,7 @@ const handleSubmit = () => {
 };
 
 const init = async () => {
+  loading.value = true;
   const cunstomList = await staffDropdown();
   dictObj.cunstomList = cunstomList.map((item) => {
     return {
@@ -411,7 +424,7 @@ const init = async () => {
       label: `${item.name}(${item.configPostIdLabel})`
     };
   });
-  dictObj.carList = await carManageDropdown();
+  getCarDict();
   formInfo.data.typeLabel = dictObj.dictEnum__orderType.find((x: any) => x.value === props.basicData.type).label ?? '';
   if (props.basicData.type !== 'SERVER') {
     nextTick(async () => {
@@ -424,6 +437,7 @@ const init = async () => {
   }
 
   FormDataRef.value?.resetFields();
+  loading.value = false;
 };
 
 watch(

@@ -93,13 +93,13 @@
         <el-table-column label="品牌名称" align="center" prop="brandName" />
         <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
-        <el-table-column label="项目类型" align="center" prop="projectType" />
+        <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
         <el-table-column label="产品品牌" align="center" prop="productBrandName" />
         <el-table-column label="产品名称" align="center" prop="productName" />
-        <el-table-column label="质保开始" align="center" prop="startDate" />
-        <el-table-column label="质保结束" align="center" prop="endDate" />
-        <el-table-column label="质保状态" align="center" prop="state" />
-        <el-table-column label="更新时间" align="center" prop="updateTime" />
+        <el-table-column label="质保开始" align="center" prop="startDate" show-overflow-tooltip />
+        <el-table-column label="质保结束" align="center" prop="endDate" show-overflow-tooltip />
+        <el-table-column label="质保状态" align="center" prop="stateLabel" />
+        <el-table-column label="更新时间" align="center" prop="realityDate" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="保养记录" placement="top">

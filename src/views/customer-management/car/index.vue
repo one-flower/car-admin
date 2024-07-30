@@ -49,7 +49,7 @@
         </el-row>
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="selection" width="55" align="center" :selectable="selectable" />
         <el-table-column label="车辆品牌" align="left" prop="brandIdLabel" width="200" />
         <el-table-column label="车辆号码" align="left" prop="licensePlate" width="150" />
         <!-- <el-table-column label="车架号码" align="left" prop="vin" show-overflow-tooltip /> -->
@@ -371,7 +371,14 @@ const handleSelectionChange = (selection: TableVO[]) => {
   tableAttr.ids = selection.map((item) => item.id);
   tableAttr.multiple = !selection.length;
 };
-
+//
+const selectable = (row: any, index: number) => {
+  if (row.carState === '0') {
+    return false;
+  } else {
+    return true;
+  }
+};
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
@@ -381,11 +388,12 @@ const handleAdd = () => {
 
 /** 启用禁用 */
 const handleState = async (row?: TableVO) => {
-  const title = row.carState === '0' ? '启用' : '禁用';
+  const label = row.carState === '0' ? '启用' : '禁用';
   const state = row.carState === '0' ? '1' : '0';
-  await proxy?.$modal.confirm(`是否${title}？`);
+  await proxy?.$modal.confirm(`是否${label}？`);
   await carManageUp({ ...row, carState: state });
   row.carState = state;
+  row.carStateLabel = label;
 };
 
 /** 修改按钮操作 */

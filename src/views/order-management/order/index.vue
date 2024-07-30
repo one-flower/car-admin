@@ -420,7 +420,7 @@ const handleDetail = async (row?: TableVO) => {
     isFlowLabel: res.data.isFlowLabel, //订单施工
     isCommission: res.data.isCommission, // 订单提成
     isCommissionLabel: res.data.isCommissionLabel, //
-    车辆信息: res.data.commDistriLabel, // 提成分配
+    commDistriLabel: res.data.commDistriLabel, // 提成分配
     commPrice: res.data.commPrice, // 提成价格
     orderPayType: res.data.payState, // 订单出伏
     orderPayTypeLabel: res.data.payStateLabel, //

@@ -128,7 +128,7 @@
     </el-dialog>
 
     <!-- 改变手机号 -->
-    <change-phone v-model:visible="changeDialog.visible" :target-info="changeDialog.form"></change-phone>
+    <change-phone v-model:visible="changeDialog.visible" :target-info="changeDialog.form" @confirm="getTableData"></change-phone>
     <!-- 充值记录 -->
     <rechargeLog v-model:visible="rechargeLogDialog.visible" :target-id="rechargeLogDialog.id" @cancel="getTableData"></rechargeLog>
     <!-- 客户档案 -->
@@ -225,7 +225,6 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
-
   getTableData();
 };
 

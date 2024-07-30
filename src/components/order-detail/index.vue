@@ -22,14 +22,14 @@
       <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
       <el-descriptions-item label="订单施工"> {{ configPyaData.isFlowLabel }} </el-descriptions-item>
       <template v-if="configPyaData.isCommission === '1'">
-        <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} </el-descriptions-item>
+        <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} 元 </el-descriptions-item>
         <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
       </template>
       <el-descriptions-item label="订单支付" :span="configPyaData.orderPayType === 'PROMPTLY_PAY' ? 1 : 2">
         {{ configPyaData.orderPayTypeLabel }}
       </el-descriptions-item>
       <template v-if="configPyaData.orderPayType === 'PROMPTLY_PAY'">
-        <el-descriptions-item label="订单金额"> {{ configPyaData.realityPrice }} </el-descriptions-item>
+        <el-descriptions-item label="订单金额"> {{ configPyaData.realityPrice }} 元 </el-descriptions-item>
         <el-descriptions-item label="账户支付"> {{ `${configPyaData.accountPrice}` }} 元 </el-descriptions-item>
         <el-descriptions-item label="现金支付"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item>
         <!-- <el-descriptions-item label="现金支付"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item> -->

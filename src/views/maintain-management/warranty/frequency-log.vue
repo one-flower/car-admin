@@ -3,11 +3,11 @@
     <div class="p-2">
       <div class="mb10">
         <el-descriptions title="产品质保" :column="3" border>
-          <el-descriptions-item label="车架号牌"> {{ basicData.vin }} </el-descriptions-item>
+          <!-- <el-descriptions-item label="车架号码"> {{ basicData.vin }} </el-descriptions-item> -->
           <el-descriptions-item label="车辆品牌"> {{ basicData.brandName }} </el-descriptions-item>
           <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
           <el-descriptions-item label="项目类型"> {{ basicData.productName }} </el-descriptions-item>
-          <el-descriptions-item label="产品名称"> {{ basicData.productBrandName }} </el-descriptions-item>
+          <el-descriptions-item label="产品名称" :span="2"> {{ basicData.productBrandName }} </el-descriptions-item>
           <el-descriptions-item label="保养频率"> {{ basicData.currentNum }} </el-descriptions-item>
         </el-descriptions>
       </div>
@@ -124,7 +124,14 @@ const tableInfo = reactive({
 /** 查询列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const params1 = proxy?.addDateRange(tableInfo.queryParams, dateRangePlan.value, 'planDate');
+  const params1 = proxy?.addDateRange(
+    {
+      ...tableInfo.queryParams,
+      carManageId: props.basicData.id
+    },
+    dateRangePlan.value,
+    'planDate'
+  );
   const params2 = proxy?.addDateRange(params1, dateRange.value, 'realityDate');
   const res = await frequencyList(params2);
   tableInfo.data = res.rows;
@@ -151,7 +158,8 @@ const closeDom = () => {
 
 watch(
   () => props.visible,
-  () => {
+  (v) => {
+    if (v === false) return;
     getTableData();
   }
 );

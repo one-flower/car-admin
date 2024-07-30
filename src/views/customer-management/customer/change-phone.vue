@@ -18,17 +18,17 @@
       <el-form-item label="短信验证码" prop="smsCode">
         <el-input v-model="changeForm.smsCode" auto-complete="off" placeholder="短信验证码" style="width: 63%"> </el-input>
         <div class="login-code">
-          <el-button type="primary" size="default" style="margin-left: 10px" @click="getSms">{{
-            smsInfo.showSend ? '获取验证码' : smsInfo.count
-          }}</el-button>
+          <el-button type="primary" size="default" style="margin-left: 10px" :disabled="!smsInfo.showSend" @click="getSms">
+            {{ smsInfo.showSend ? '获取验证码' : `${smsInfo.count}秒后重试` }}
+          </el-button>
         </div>
       </el-form-item>
     </el-form>
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -40,7 +40,7 @@ import { PhoneForm, PhoneData, ChangePhoneForm } from '@/api/customer-management
 import { PropType } from 'vue';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const emit = defineEmits(['update:visible', 'update:form']);
+const emit = defineEmits(['update:visible', 'confirm']);
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -94,9 +94,14 @@ const reset = () => {
 const submitForm = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      await customEditTelephone(changeForm);
+      await customEditTelephone({
+        oldTelephone: props.targetInfo.telephone,
+        ...changeForm,
+        id: props.targetInfo.id
+      });
       proxy?.$modal.msgSuccess('操作成功');
-      emit('update:visible', false);
+      reset();
+      emit('confirm');
     }
   });
 };
@@ -111,7 +116,6 @@ watch(
   (val) => {
     if (!val) return;
     getCode();
-    changeForm.oldoldTelephone = val.telephone;
   }
 );
 
@@ -120,17 +124,35 @@ const smsInfo = reactive({
   count: 0,
   showSend: true
 });
-const getSms = () => {
+const endTime = 30;
+const getSmsCodeLocal = () => {
+  const oldSmsTime: number = Number(localStorage.getItem('smscode')) ?? 0;
+  if (oldSmsTime === 0) {
+    return 0;
+  } else {
+    const time = Math.floor((new Date().getTime() - oldSmsTime) / 1000);
+    if (time >= 30) {
+      return 0;
+    } else {
+      return endTime - time;
+    }
+  }
+};
+
+const getSms = async () => {
+  smsInfo.count = getSmsCodeLocal();
   // 后期做到session中
   if (smsInfo.count === 0) {
-    const res = smsCode({ phonenumber: changeForm.newTelephone });
-    if (res.data === null) return;
+    const res = await smsCode({ phonenumber: changeForm.newTelephone });
+    localStorage.setItem('smscode', new Date().getTime().toString());
+    proxy?.$modal.msgSuccess('发送成功');
+
     // 验证码倒计时
-    smsInfo.count = 60;
+    smsInfo.count = endTime;
     smsInfo.showSend = false;
     let timer = setInterval(() => {
-      if (smsInfo.count > 0 && smsInfo.count <= 60) {
-        smsInfo.count--;
+      if (smsInfo.count > 0 && smsInfo.count <= endTime) {
+        smsInfo.count = getSmsCodeLocal();
       } else {
         smsInfo.showSend = true;
         clearInterval(timer);
