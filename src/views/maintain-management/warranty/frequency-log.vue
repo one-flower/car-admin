@@ -127,7 +127,7 @@ const getTableData = async () => {
   const params1 = proxy?.addDateRange(
     {
       ...tableInfo.queryParams,
-      carManageId: props.basicData.id
+      warrantyId: props.basicData.id
     },
     dateRangePlan.value,
     'planDate'
