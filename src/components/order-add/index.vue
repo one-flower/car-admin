@@ -377,8 +377,8 @@ const handleCancel = () => {
 };
 const setPay = () => {
   // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
-  if (orderDetail.value.totalMoney - formInfo.data.orderPrice >= 0) {
-    formInfo.data.accountPrice = formInfo.data.orderPrice;
+  if (orderDetail.value.totalMoney - Number(formInfo.data.orderPrice) >= 0) {
+    formInfo.data.accountPrice = Number(formInfo.data.orderPrice);
     formInfo.data.cashPrice = 0;
   } else {
     formInfo.data.accountPrice = orderDetail.value.totalMoney;
@@ -395,7 +395,7 @@ const handleNext = (step: number) => {
       if (
         active.value === 2 &&
         formInfo.data.orderPayType === 'PROMPTLY_PAY' &&
-        countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2)
+        countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice
       ) {
         await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
       }
