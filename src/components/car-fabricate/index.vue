@@ -64,9 +64,7 @@
           <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
           <el-table-column label="产品品牌" align="center" prop="productBrandIdLabel" />
           <el-table-column label="产品名称" align="center" prop="productIdLabel" />
-          <el-table-column label="质保服务" align="center" prop="warrantyDate" />
-          <el-table-column label="保养服务" align="center" prop="frequencyDate" />
-          <el-table-column label="装配时间" align="center" prop="" />
+          <el-table-column label="装配时间" align="center" prop="createTime" />
           <el-table-column label="订单编号" align="center" prop="orderNum" width="210">
             <template #default="{ row }">
               <el-button text type="primary" @click="handleDetail(row)"> {{ row.id }}</el-button>
