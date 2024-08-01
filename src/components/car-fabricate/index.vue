@@ -139,8 +139,7 @@ const getTableData = async () => {
   tableInfo.loading = true;
   const res = await fabricateList({
     ...tableInfo.queryParams,
-    id: props.basicData.id,
-    customId: props.basicData.customId
+    carManageId: props.basicData.id
   });
   tableInfo.data = res.rows;
   tableInfo.total = res.total;

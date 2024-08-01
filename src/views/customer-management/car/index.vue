@@ -458,7 +458,6 @@ const fabricateInfo = reactive({
 });
 const handleFabricate = async (row: TableVO) => {
   fabricateInfo.data = { ...row };
-  delete fabricateInfo.data.id;
   fabricateInfo.visible = true;
 };
 
