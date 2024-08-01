@@ -6,7 +6,7 @@
           <el-descriptions-item label="车辆品牌"> {{ targetInfo.brandIdLabel }} </el-descriptions-item>
           <el-descriptions-item label="车牌号码"> {{ targetInfo.licensePlate }} </el-descriptions-item>
           <!-- <el-descriptions-item label="车架号码"> {{ targetInfo.vin }} </el-descriptions-item> -->
-          <el-descriptions-item label="车辆归属"> {{ targetInfo.toTypeLabel }} </el-descriptions-item>
+          <!-- <el-descriptions-item label="车辆归属"> {{ targetInfo.toTypeLabel }} </el-descriptions-item> -->
           <el-descriptions-item label="车主昵称"> {{ targetInfo.customIdObj?.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话"> {{ targetInfo.customIdObj?.telephone }} </el-descriptions-item>
         </el-descriptions>
@@ -36,8 +36,8 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="产品名称" prop="label">
-                <el-select v-model="tableInfo.queryParams.label" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
+              <el-form-item label="产品名称" prop="productId">
+                <el-select v-model="tableInfo.queryParams.productId" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
                   <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
@@ -185,7 +185,7 @@ const getTableData = async () => {
 
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
-  tableInfo.queryParams.label = '';
+  tableInfo.queryParams.productId = '';
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val
@@ -219,9 +219,9 @@ const handleDetail = async (row?: TableVO) => {
   detailInfo.orderData = {
     typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
-    productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
+    productBrandIdLabel: res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
-    carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    carBrandLabel: res.data.carBrandLabel + '/' + res.data.licensePlate, //订单车辆
     nickname: res.data.customIdObj?.nickname, //客户昵称
     telephone: res.data.customIdObj?.telephone, //预留电话
     tagIdLabel: res.data.customIdObj?.tagIdLabel, //客户标签

@@ -1,28 +1,22 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
-                :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
             <el-form-item label="订单类型" prop="type">
-              <el-select v-model="tableInfo.queryParams.type" value-key="" placeholder="请选择项目类型" clearable
-                         filterable>
-                <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" :label="item.label"
-                           :value="item.value"></el-option>
+              <el-select v-model="tableInfo.queryParams.type" value-key="" placeholder="请选择项目类型" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="项目类型" prop="projectType">
-              <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable
-                         filterable>
-                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label"
-                           :value="item.value">
+              <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="订单编号" prop="orderNo">
-              <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入项目编号" clearable
-                        @keyup.enter="handleQuery"></el-input>
+              <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入项目编号" clearable @keyup.enter="handleQuery"></el-input>
             </el-form-item>
             <el-form-item label="产品品牌" prop="productBrandId">
               <el-select
@@ -33,8 +27,7 @@
                 filterable
                 @change="changeBrand"
               >
-                <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value"
-                           :label="item.label" :value="item.value">
+                <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -47,20 +40,16 @@
                 clearable
                 filterable
               >
-                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName"
-                           :value="item.value"></el-option>
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="负责人" prop="directorId">
-              <el-select v-model="tableInfo.queryParams.directorId" value-key="" placeholder="请选择产品名称" clearable
-                         filterable>
-                <el-option v-for="item in dictObj.configPost__configPost" :key="item.value" :label="item.label"
-                           :value="item.value"></el-option>
+              <el-select v-model="tableInfo.queryParams.directorId" value-key="" placeholder="请选择产品名称" clearable filterable>
+                <el-option v-for="item in dictObj.configPost__configPost" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="分配状态" prop="commState">
-              <el-select v-model="tableInfo.queryParams.commState" value-key="" placeholder="请选择项目类型" clearable
-                         filterable>
+              <el-select v-model="tableInfo.queryParams.commState" value-key="" placeholder="请选择项目类型" clearable filterable>
                 <el-option label="已分配" value="Y" />
                 <el-option label="未分配" value="N" />
                 <!-- <el-option v-for="item in dictObj.dictEnum__commDistri" :key="item.value" :label="item.label" :value="item.value"> </el-option> -->
@@ -91,8 +80,7 @@
         <el-table-column label="订单提成(/元)" align="left" prop="commPrice" />
         <el-table-column label="负责人" align="center" prop="directorLabel" />
         <el-table-column label="分配状态" align="center" prop="commStateLabel" />
-        <el-table-column label="操作" width="100" header-align="center" align="left"
-                         class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link @click="handlePay(row, false)">
@@ -119,29 +107,32 @@
 
     <!-- 立即分配 -->
     <el-dialog v-model="payInfo.visible" :title="payInfo.title" width="700px" append-to-body>
-      <order-detail :readonly="true" :order-data="payInfo.orderData"
-                    :config-pya-data="payInfo.configPayData"></order-detail>
+      <order-detail :readonly="true" :order-data="payInfo.orderData" :config-pya-data="payInfo.configPayData"></order-detail>
       <el-descriptions title="提成分配" :column="2" border class="mb10">
         <el-descriptions-item label="提成金额" :span="2"> {{ payInfo.commPrice }}</el-descriptions-item>
       </el-descriptions>
-      <el-table v-loading="payInfo.tableLoading" :data="payInfo.tableData" tooltip-effect="dark myTooltips"
-                style="width: 600px">
+      <el-table v-loading="payInfo.tableLoading" :data="payInfo.tableData" tooltip-effect="dark myTooltips" style="width: 600px">
         <el-table-column label="角色" align="center" prop="isDirectorLabel" />
         <el-table-column label="员工岗位" align="center" prop="postIdLabel" />
-        <el-table-column label="员工姓名" align="center" prop="" />
-        <el-table-column label="个人提成" align="center" prop="price" />
-        <el-table-column label="提成比例(%)" width="150" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="员工姓名" align="center" prop="staffIdLabel" />
+        <el-table-column label="个人提成" align="center" prop="commPrice" />
+        <el-table-column
+          v-if="payInfo.commDistri !== 'AVERAGE'"
+          label="提成比例(%)"
+          width="150"
+          align="center"
+          class-name="small-padding fixed-width"
+        >
           <template #default="{ row }">
-            <el-input-number v-model="row.ratio" :disabled="!payInfo.isEdit" :min="0" :max="100" style="width: 100%"
-                             @change="preChange(row)">
+            <el-input-number v-model="row.ratio" :disabled="!payInfo.isEdit" :min="0" :max="100" style="width: 100%" @change="preChange(row)">
             </el-input-number>
           </template>
         </el-table-column>
       </el-table>
       <template #footer>
-        <div class="dialog-footer">
-          <el-button v-if="payInfo.isEdit" type="primary" @click="submit">确 定</el-button>
+        <div v-if="payInfo.isEdit" class="dialog-footer">
           <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submit">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -149,16 +140,7 @@
 </template>
 
 <script setup name="Brand" lang="ts">
-import {
-  orderAdd,
-  orderDel,
-  orderUp,
-  orderInfo,
-  orderList,
-  orderUpState,
-  orderPay,
-  orderEditComm
-} from '@/api/order-management/order';
+import { orderAdd, orderDel, orderUp, orderInfo, orderList, orderUpState, orderPay, orderEditComm } from '@/api/order-management/order';
 import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import { TableQuery, TableVO } from '@/api/order-management/order/types';
 import { productDropdown } from '@/api/product-management/product';
@@ -224,7 +206,8 @@ const payInfo = reactive({
   orderId: undefined,
   commPrice: 0,
   tableData: [],
-  tableLoading: false
+  tableLoading: false,
+  commDistri: 'AVERAGE'
 });
 
 // 立即分配
@@ -233,9 +216,9 @@ const handlePay = async (row: TableVO, flag: boolean) => {
   payInfo.orderData = {
     typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
-    productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
+    productBrandIdLabel: res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
-    carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    carBrandLabel: res.data.carBrandLabel + '/' + res.data.licensePlate, //订单车辆
     nickname: res.data.customIdObj?.nickname, //客户昵称
     telephone: res.data.customIdObj?.telephone, //预留电话
     tagIdLabel: res.data.customIdObj?.tagIdLabel, //客户标签
@@ -260,25 +243,30 @@ const handlePay = async (row: TableVO, flag: boolean) => {
   payInfo.orderId = res.data.id;
   payInfo.commPrice = res.data.commPrice;
 
-  payInfo.tableData = res.data.commExtObj.map((item) => {
-    const ratio =
-      item.isDirector === 'Y'
-        ? 100 - Math.floor(100 / res.data.commExtObj.length) * (res.data.commExtObj.length - 1)
-        : Math.floor(100 / res.data.commExtObj.length);
+  if (row.commState !== 'Y') {
+    payInfo.tableData = res.data.commExtObj.map((item) => {
+      const ratio =
+        item.isDirector === 'Y'
+          ? 100 - Math.floor(100 / res.data.commExtObj.length) * (res.data.commExtObj.length - 1)
+          : Math.floor(100 / res.data.commExtObj.length);
 
-    return {
-      ...item,
-      price: (ratio * 100 * res.data.commPrice) / 10000,
-      ratio: item.ratio ?? ratio
-    };
-  });
+      return {
+        ...item,
+        commPrice: (ratio * 100 * res.data.commPrice) / 10000,
+        ratio: item.ratio ?? ratio
+      };
+    });
+  } else {
+    payInfo.tableData = res.data.commExtObj;
+  }
 
+  payInfo.commDistri = row.commDistri;
   payInfo.isEdit = flag;
   payInfo.visible = true;
 };
 
 const preChange = (data: any) => {
-  data.price = (payInfo.commPrice * 100 * data.ratio) / 100 / 100;
+  data.commPrice = (payInfo.commPrice * 100 * data.ratio) / 100 / 100;
 };
 const submit = async () => {
   let ratioSum = 0;
@@ -295,6 +283,7 @@ const submit = async () => {
     commExts: payInfo.tableData
   });
   proxy?.$modal.msgSuccess('操作成功');
+  getTableData();
   payInfo.visible = false;
 };
 const cancel = () => {

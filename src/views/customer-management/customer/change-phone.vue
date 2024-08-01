@@ -100,7 +100,7 @@ const submitForm = () => {
         id: props.targetInfo.id
       });
       proxy?.$modal.msgSuccess('操作成功');
-      reset();
+      cancel();
       emit('confirm');
     }
   });

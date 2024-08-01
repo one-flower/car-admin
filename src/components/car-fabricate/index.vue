@@ -180,9 +180,9 @@ const handleDetail = async (row?: TableVO) => {
   detailInfo.orderData = {
     typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
-    productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
+    productBrandIdLabel: res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
-    carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    carBrandLabel: res.data.carBrandLabel + '/' + res.data.licensePlate, //订单车辆
     nickname: props.basicData.customIdObj?.nickname, //客户昵称
     telephone: props.basicData.customIdObj?.telephone, //预留电话
     tagIdLabel: props.basicData.customIdObj?.tagIdLabel, //客户标签

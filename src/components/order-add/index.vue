@@ -18,12 +18,14 @@
       <el-form ref="FormDataRef" v-loading="loading" :model="formInfo.data" :rules="rules" label-width="80px" @submit.prevent>
         <template v-if="active === 0">
           <el-form-item label="订单类型" prop="type">
-            <el-select v-model="formInfo.data.type" placeholder="订单类型" disabled>
-              <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" disabled :label="item.label" :value="item.value">
-              </el-option> </el-select
-          ></el-form-item>
+            {{ dictToLabel(dictObj.dictEnum__orderType, formInfo.data.type).label ?? '-' }}
+            <!-- <el-select v-model="formInfo.data.type" placeholder="订单类型" disabled>
+              <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" disabled :label="item.label" :value="item.value"> </el-option>
+            </el-select> -->
+          </el-form-item>
           <el-form-item label="项目类型" prop="projectTypeLabel">
-            <el-input v-model="formInfo.data.projectTypeLabel" placeholder="项目类型" disabled></el-input>
+            {{ formInfo.data.projectTypeLabel !== '' ? formInfo.data.projectTypeLabel : '-' }}
+            <!-- <el-input v-model="formInfo.data.projectTypeLabel" placeholder="项目类型" disabled></el-input> -->
           </el-form-item>
           <el-form-item label="选择车辆" prop="carManageId">
             <el-select v-model="formInfo.data.carManageId" placeholder="请选择车辆" clearable filterable :disabled="formInfo.data.type !== 'SERVER'">
@@ -52,8 +54,7 @@
               :disabled="!formInfo.data.productBrandId || productLoading || formInfo.data.type !== 'SERVER'"
               @change="productChange"
             >
-              <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.brandName + '-' + item.productName" :value="item.value">
-              </el-option>
+              <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="订单价格" prop="orderPrice">
@@ -139,7 +140,7 @@
               <el-form-item label="现金支付" prop="cashPrice">
                 <div class="formItemBox">
                   <el-form-item prop="cashPrice">
-                    <el-input-number v-model="formInfo.data.cashPrice" placeholder=" " :min="0" :max="99999.99" :precision="2"> </el-input-number>
+                    <el-input-number v-model="formInfo.data.cashPrice" :min="0" :max="99999.99" :precision="2"> </el-input-number>
                   </el-form-item>
                   <el-form-item v-if="formInfo.data.cashPrice !== 0" prop="payChannel">
                     <el-select v-model="formInfo.data.payChannel" placeholder="请选择支付方式" clearable filterable class="formItemBox__right">
@@ -149,7 +150,7 @@
                 </div>
               </el-form-item>
               <el-form-item label="支付合计" prop="customId">
-                <div :class="{ 'warn': countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice.toFixed(2) }">
+                <div :class="{ 'warn': countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice }">
                   {{ countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) }} 元
                 </div>
               </el-form-item>
@@ -269,6 +270,7 @@ const changeBrand = async (val: string) => {
     productBrandId: val
   });
   productLoading.value = false;
+  FormDataRef.value.clearValidate();
 };
 // 字典遍历当前label 通用
 const dictToLabel = (data: any, value: string | number) => {
@@ -279,11 +281,12 @@ const productChange = (val: string) => {
   const data = dictToLabel(dictObj.productList, val);
 
   formInfo.data.projectType = data.projectType;
-  formInfo.data.projectTypeLabel = data.projectTypeLabel + '-' + data.modeLabel;
+  formInfo.data.projectTypeLabel = data.projectTypeLabel ? data.projectTypeLabel + '-' + data.modeLabel : '-';
   formInfo.data.productLabel = data.brandName + '-' + data.productName;
   if (formInfo.data.type === 'SERVER') {
-    formInfo.data.orderPrice = parseFloat(data.productPrice);
+    formInfo.data.orderPrice = data.productPrice;
   }
+  FormDataRef.value.clearValidate();
 };
 // 获取car字典
 const getCarDict = async () => {
@@ -379,7 +382,7 @@ const setPay = () => {
     formInfo.data.cashPrice = 0;
   } else {
     formInfo.data.accountPrice = orderDetail.value.totalMoney;
-    formInfo.data.cashPrice = formInfo.data.orderPrice - orderDetail.value.totalMoney;
+    formInfo.data.cashPrice = Number(formInfo.data.orderPrice) - orderDetail.value.totalMoney;
   }
 };
 const handleNext = (step: number) => {

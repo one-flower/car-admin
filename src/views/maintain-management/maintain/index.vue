@@ -52,16 +52,19 @@
       </template>
       <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column label="品牌名称" align="center" prop="brandName" />
+        <el-table-column label="车辆品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
         <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
         <el-table-column label="产品品牌" align="center" prop="productBrandName" />
         <el-table-column label="产品名称" align="center" prop="productName" />
-        <el-table-column label="质保开始" align="center" prop="startDate" />
-        <el-table-column label="质保结束" align="center" prop="endDate" />
-        <el-table-column label="质保状态" align="center" prop="stateLabel" />
-        <el-table-column label="更新时间" align="center" prop="realityDate" show-overflow-tooltip />
+        <el-table-column label="保养记录" align="center" prop="currentNum">
+          <template #default="{ row }">
+            {{ row.currentNum ? `第 ${row.currentNum} 次` : '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="计划保养日期" align="center" prop="planDate" show-overflow-tooltip />
+        <el-table-column label="保养状态" align="center" prop="stateLabel" />
         <el-table-column label="操作" width="120" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="{ row }">
             <el-tooltip content="进店保养" placement="top">
@@ -69,7 +72,7 @@
                 <svg-icon icon-class="in-store"></svg-icon>
               </el-button>
             </el-tooltip>
-            <el-tooltip v-if="row.xx === '1'" content="跨店保养" placement="top">
+            <el-tooltip v-if="row.isCrossStore === 'Y'" content="跨店保养" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'CROSS_STORE')">
                 <svg-icon icon-class="union-store"></svg-icon>
               </el-button>

@@ -18,16 +18,28 @@
             <el-form-item label="订单编号" prop="orderNo">
               <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车架号码" prop="vin">
+            <!-- <el-form-item label="车架号码" prop="vin">
               <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="车牌号码" prop="licensePlate">
               <el-input v-model="tableInfo.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="产品名称" prop="label">
-              <el-select v-model="tableInfo.queryParams.label" value-key="" placeholder="请选择产品品牌" clearable filterable>
+            <el-form-item label="产品品牌" prop="productBrandId">
+              <el-select
+                v-model="tableInfo.queryParams.productBrandId"
+                value-key=""
+                placeholder="请选择产品品牌"
+                clearable
+                filterable
+                @change="changeBrand"
+              >
                 <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="产品名称" prop="productId">
+              <el-select v-model="tableInfo.queryParams.productId" placeholder="请选择产品名称" clearable filterable :disabled="productLoading">
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="订单时间" prop="createTime">
@@ -45,7 +57,7 @@
                 <el-option v-for="item in dictObj.dictEnum__orderState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="订单提成" prop="isCommission">
+            <!-- <el-form-item label="订单提成" prop="isCommission">
               <el-select v-model="tableInfo.queryParams.isCommission" value-key="" placeholder="请选择订单提成" clearable filterable>
                 <el-option v-for="item in dictObj.dictEnum__orderIsCommission" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
@@ -54,7 +66,7 @@
               <el-select v-model="tableInfo.queryParams.payState" value-key="" placeholder="请选择质保状态" clearable filterable>
                 <el-option v-for="item in dictObj.dictEnum__warrantyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="支付状态" prop="state">
               <el-select v-model="tableInfo.queryParams.payState" value-key="" placeholder="请选择支付状态" clearable filterable>
                 <el-option v-for="item in dictObj.dictEnum__orderPayType" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -92,7 +104,7 @@
         <el-table-column label="项目类型" align="left" prop="projectTypeLabel" />
         <el-table-column label="产品品牌" align="left" prop="productBrandLabel" />
         <el-table-column label="订单产品" align="left" prop="productIdLabel" />
-        <el-table-column label="订单施工" align="left" prop="isFlowLabel" />
+        <!-- <el-table-column label="订单施工" align="left" prop="isFlowLabel" /> -->
         <el-table-column label="订单状态" align="left" prop="stateLabel" />
         <el-table-column label="订单提成" align="left" prop="commPrice" />
         <el-table-column label="订单价格(/元)" align="left" prop="orderPrice" />
@@ -177,11 +189,6 @@
         :config-pya-data="detailInfo.configPayData"
         :order-log-list="detailInfo.orderLogObj"
       ></order-detail>
-      <template v-if="!formInfo.disabled" #footer>
-        <div class="dialog-footer">
-          <el-button @click="detailCancel">取 消</el-button>
-        </div>
-      </template>
     </el-dialog>
 
     <!-- 支付 -->
@@ -189,7 +196,12 @@
       <order-detail :order-data="payInfo.orderData" :config-pay-show="false"></order-detail>
       <el-form ref="PayFormRef" :model="payInfo.data" :rules="payRules" label-width="80px" @submit.prevent>
         <el-form-item label="账户支付" prop="accMoney">
-          <el-input-number v-model="payInfo.data.accMoney" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+          <div class="formItemBox">
+            <el-input-number v-model="payInfo.data.accMoney" :min="0" :max="99999.99" :precision="2"> </el-input-number>
+            <div class="formItemBox__right">
+              <el-button type="primary" @click="setPay">快速分配</el-button>
+            </div>
+          </div>
         </el-form-item>
         <el-form-item label="现金支付" prop="cashMoney">
           <div class="formItemBox">
@@ -260,6 +272,7 @@ import OrderAdd from '@/components/order-add/index.vue';
 import { OrderForm, OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import { countList } from '@/utils/index';
 import OrderDetail from '@/components/order-detail/index.vue';
+import { productDropdown } from '@/api/product-management/product';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(
@@ -306,6 +319,16 @@ const formInfo = reactive<FormInfo<any>>({
   disabled: true,
   data: {}
 });
+
+const productLoading = ref(false);
+const changeBrand = async (val: string) => {
+  tableInfo.queryParams.productId = '';
+  productLoading.value = true;
+  dictObj.productList = await productDropdown({
+    productBrandId: val
+  });
+  productLoading.value = false;
+};
 
 /** 查询品牌列表 */
 const getTableData = async () => {
@@ -374,7 +397,7 @@ const handleUpState = (id: string, state: OrderState) => {
 const stateSubmit = async () => {
   await orderUpState(orderStateInfo.data);
   await getTableData();
-  orderStateInfo.visiable = false;
+  stateCancel();
   proxy?.$modal.msgSuccess('更改成功');
 };
 const stateCancel = () => {
@@ -404,9 +427,9 @@ const handleDetail = async (row?: TableVO) => {
   detailInfo.orderData = {
     typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
-    productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
+    productBrandIdLabel: res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
-    carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    carBrandLabel: res.data.carBrandLabel + '/' + res.data.licensePlate, //订单车辆
     customId: res.data.customId,
     nickname: res.data.customIdObj?.nickname, //客户昵称
     telephone: res.data.customIdObj?.telephone, //预留电话
@@ -432,6 +455,7 @@ const handleDetail = async (row?: TableVO) => {
   detailInfo.orderLogObj = res.data.orderLogObj;
   detailInfo.visible = true;
 };
+
 const detailCancel = () => {
   detailInfo.visible = false;
 };
@@ -445,7 +469,7 @@ const payInfo = reactive({
     orderId: undefined,
     accMoney: 0,
     cashMoney: 0,
-    payChannel: '',
+    payChannel: 'CASH',
     remarks: ''
   }
 });
@@ -453,7 +477,7 @@ const PayFormRef = ref<ElFormInstance>();
 const payRules = {
   accMoney: [{ required: true, message: '账户支付不能为空', trigger: ['change', 'blur'] }],
   cashMoney: [{ required: true, message: '现金支付不能为空', trigger: ['change', 'blur'] }],
-  payChannel: [{ required: true, message: '支付渠道不能为空', trigger: ['change', 'blur'] }]
+  payChannel: [{ required: true, message: '支付方式不能为空', trigger: 'change' }]
 };
 const handlePay = async (row: TableVO) => {
   PayFormRef.value?.resetFields();
@@ -461,9 +485,9 @@ const handlePay = async (row: TableVO) => {
   payInfo.orderData = {
     typeLabel: res.data.typeLabel,
     projectTypeLabel: res.data.projectTypeLabel, //项目类型
-    productBrandIdLabel: res.data.projectTypeLabel + '-' + res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
+    productBrandIdLabel: res.data.productBrandLabel + '-' + res.data.productIdLabel, //品牌名称
     orderPrice: res.data.orderPrice, //订单价格
-    carBrandLabel: res.data.carBrandLabel + '/' + res.data.vin + '/' + res.data.licensePlate, //订单车辆
+    carBrandLabel: res.data.carBrandLabel + '/' + res.data.licensePlate, //订单车辆
     customId: res.data.customId,
     nickname: res.data.customIdObj?.nickname, //客户昵称
     telephone: res.data.customIdObj?.telephone, //预留电话
@@ -472,11 +496,21 @@ const handlePay = async (row: TableVO) => {
   };
   payInfo.data = {
     orderId: res.data.id,
-    accMoney: res.data.accountPrice,
-    cashMoney: res.data.cashPrice,
-    payChannel: ''
+    accMoney: Number(res.data.accountPrice),
+    cashMoney: Number(res.data.cashPrice),
+    payChannel: 'CASH'
   };
   payInfo.visible = true;
+};
+const setPay = () => {
+  // 账户余额 - 订单价格 > 0  订单价格 ：账户余额
+  if (payInfo.orderData.totalMoney - payInfo.orderData.orderPrice >= 0) {
+    payInfo.data.accMoney = payInfo.orderData.orderPrice;
+    payInfo.data.cashMoney = 0;
+  } else {
+    payInfo.data.accMoney = payInfo.orderData.totalMoney;
+    payInfo.data.cashMoney = Number(payInfo.orderData.orderPrice) - payInfo.orderData.totalMoney;
+  }
 };
 const payConfirm = async () => {
   PayFormRef.value?.validate(async (valid: boolean) => {

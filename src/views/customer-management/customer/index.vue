@@ -34,16 +34,16 @@
           <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableAttr.multiple" @click="handleDelete()">
               删除
             </el-button>
-          </el-col>
+          </el-col> -->
           <right-toolbar v-model:showSearch="showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="客户标签" align="left" prop="tagIdLabel" />
         <el-table-column label="客户昵称" align="left" prop="nickname" />
         <el-table-column label="手机号码" align="left" prop="telephone" />
@@ -323,7 +323,7 @@ const handleInfo = async (row?: TableVO) => {
 /** 删除按钮操作 */
 const handleDelete = async (row?: TableVO) => {
   const ids = row?.id || tableAttr.ids;
-  await proxy?.$modal.confirm('是否删除选中项？');
+  await proxy?.$modal.confirm(row.totalMoney > 0 ? `账户余额为${row.totalMoney}，强制删除后将无法恢复！是否确认删除？` : '是否删除选中项目');
   await customDel(ids);
   await getTableData();
   proxy?.$modal.msgSuccess('删除成功');

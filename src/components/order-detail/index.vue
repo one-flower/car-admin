@@ -4,7 +4,7 @@
     <el-descriptions-item label="订单类型"> {{ orderData.typeLabel }}</el-descriptions-item>
     <el-descriptions-item label="项目类型"> {{ orderData.projectTypeLabel }} </el-descriptions-item>
     <el-descriptions-item label="品牌名称"> {{ orderData.productBrandIdLabel }} </el-descriptions-item>
-    <el-descriptions-item label="订单价格"> {{ orderData.orderPrice }} 元</el-descriptions-item>
+    <el-descriptions-item label="订单价格"> {{ towPriLabel(orderData.orderPrice) }}</el-descriptions-item>
     <el-descriptions-item label="订单车辆" :span="2"> {{ orderData.carBrandLabel }} </el-descriptions-item>
     <el-descriptions-item label="客户昵称"> {{ orderData.nickname }} </el-descriptions-item>
     <el-descriptions-item label="预留电话"> {{ orderData.telephone }} </el-descriptions-item>
@@ -22,22 +22,22 @@
       <el-descriptions-item label="订单提成"> {{ configPyaData.isCommissionLabel }} </el-descriptions-item>
       <el-descriptions-item label="订单施工"> {{ configPyaData.isFlowLabel }} </el-descriptions-item>
       <template v-if="configPyaData.isCommission === '1'">
-        <el-descriptions-item label="提成金额"> {{ configPyaData.commPrice }} 元 </el-descriptions-item>
+        <el-descriptions-item label="提成金额"> {{ towPriLabel(configPyaData.commPrice) }}</el-descriptions-item>
         <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
       </template>
       <el-descriptions-item label="订单支付" :span="configPyaData.orderPayType === 'PROMPTLY_PAY' ? 1 : 2">
         {{ configPyaData.orderPayTypeLabel }}
       </el-descriptions-item>
       <template v-if="configPyaData.orderPayType === 'PROMPTLY_PAY'">
-        <el-descriptions-item label="订单金额"> {{ configPyaData.realityPrice }} 元 </el-descriptions-item>
-        <el-descriptions-item label="账户支付"> {{ `${configPyaData.accountPrice}` }} 元 </el-descriptions-item>
-        <el-descriptions-item label="现金支付"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item>
-        <!-- <el-descriptions-item label="现金支付"> {{ configPyaData.cashPrice }} 元 </el-descriptions-item> -->
+        <el-descriptions-item label="订单金额"> {{ towPriLabel(configPyaData.realityPrice) }} </el-descriptions-item>
+        <el-descriptions-item label="账户支付"> {{ towPriLabel(configPyaData.accountPrice) }}</el-descriptions-item>
+        <el-descriptions-item label="现金支付"> {{ towPriLabel(configPyaData.cashPrice) }}</el-descriptions-item>
+        <!-- <el-descriptions-item label="现金支付"> {{ towPriLabel(configPyaData.cashPrice) }} 元 </el-descriptions-item> -->
       </template>
 
       <el-descriptions-item label="备注" :span="2"> {{ configPyaData.remarks }} </el-descriptions-item>
     </el-descriptions>
-    <el-descriptions :title="`实际支付${configPyaData.realityPrice}元`" border class="mb10" />
+    <el-descriptions :title="`实际支付${towPriLabel(configPyaData.realityPrice)}`" border class="mb10" />
   </template>
   <!-- 日志 -->
   <el-steps :active="orderLogList.length" direction="vertical" process-status="success" finish-status="success">
@@ -114,6 +114,16 @@ const props = defineProps({
     }
   }
 });
+
+const towPriLabel = (val: string | number) => {
+  const num = Number(val);
+  console.log(num, 'num');
+  if (num !== 0) {
+    return `${num.toFixed(2)} 元`;
+  } else {
+    return '0.00 元';
+  }
+};
 
 const rechargeInfo = reactive({
   visible: false,

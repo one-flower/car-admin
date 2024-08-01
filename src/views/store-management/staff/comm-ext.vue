@@ -74,7 +74,7 @@
         </el-row>
       </template> -->
         <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips">
-          <el-table-column label="订单类型" align="center" prop="projectType" show-overflow-tooltip />
+          <el-table-column label="订单类型" align="center" prop="projectTypeLabel" show-overflow-tooltip />
           <el-table-column label="订单编号" align="center" prop="orderNo" show-overflow-tooltip />
           <el-table-column label="项目类型" align="center" prop="projectTypeLabel" show-overflow-tooltip />
           <el-table-column label="产品品牌" align="center" prop="productBrandLabel" show-overflow-tooltip />

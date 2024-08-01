@@ -68,9 +68,9 @@
           </el-table-column>
           <el-table-column label="计划日期" align="center" prop="planDate" show-overflow-tooltip />
           <el-table-column label="实际日期" align="center" prop="realityDate" show-overflow-tooltip />
-          <el-table-column label="保养方式" align="center" prop="projectType" />
-          <el-table-column label="订单编号" align="center" prop="orderNo" />
-          <el-table-column label="保养状态" align="center" prop="state" />
+          <el-table-column label="保养方式" align="center" prop="projectType" show-overflow-tooltip />
+          <el-table-column label="订单编号" align="center" prop="orderNo" show-overflow-tooltip />
+          <el-table-column label="保养状态" align="center" prop="stateLabel" />
           <!-- <el-table-column label="操作" align="center" prop="">
             <template #default="{ row }">
               <el-tooltip content="详情" placement="top">

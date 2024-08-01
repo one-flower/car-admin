@@ -1,15 +1,6 @@
 <template>
   <div class="p-2">
-    <el-dialog
-      :model-value="visible"
-      title="会员充值"
-      width="600px"
-      append-to-body
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="!saveLoading"
-      :before-close="handleCancel"
-    >
+    <el-dialog :model-value="visible" title="会员充值" width="600px" append-to-body :show-close="!saveLoading" :before-close="handleCancel">
       <el-form ref="FormDataRef" :model="formData" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="选择客户" prop="customId">
           <el-select v-model="formData.customId" filterable placeholder="请选择" @change="change">

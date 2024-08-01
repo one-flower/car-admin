@@ -26,16 +26,16 @@
           <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
-          <!-- <el-col :span="1.5">
+          <el-col :span="1.5">
             <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableAttr.multiple" @click="handleDelete()">
               删除
             </el-button>
-          </el-col> -->
+          </el-col>
           <right-toolbar v-model:showSearch="showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
-        <!-- <el-table-column type="selection" width="55" align="center" /> -->
+        <el-table-column type="selection" width="55" align="center" :selectable="selectable" />
         <el-table-column label="套餐名称" align="center" prop="name" />
         <el-table-column label="充值金额" align="center" prop="realityMoney" />
         <el-table-column label="赠送金额" align="center" prop="giveMoney" />
@@ -56,13 +56,13 @@
             <!-- <el-tooltip v-if="row.state === '1'" content="编辑" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
             </el-tooltip> -->
-            <el-tooltip v-if="row.state === '0'" content="删除" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
-            </el-tooltip>
             <el-tooltip :content="row.state === '0' ? '启用' : '禁用'" placement="top">
               <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
                 <svg-icon class-name="search-icon" :icon-class="row.state === '0' ? 'open' : 'close'" />
               </el-button>
+            </el-tooltip>
+            <el-tooltip v-if="row.state === '0'" content="删除" placement="top">
+              <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -204,6 +204,13 @@ const handleSelectionChange = (selection: TableVO[]) => {
   tableAttr.multiple = !selection.length;
 };
 
+const selectable = (row: any, index: number) => {
+  if (row.state === '1') {
+    return false;
+  } else {
+    return true;
+  }
+};
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
@@ -218,6 +225,7 @@ const handleState = async (row?: TableVO) => {
   await proxy?.$modal.confirm(`是否${title}？`);
   await rechargeUp({ ...row, state: state });
   row.state = state;
+  row.stateLabel = title;
 };
 /** 修改按钮操作 */
 const handleUpdate = async (row?: TableVO) => {

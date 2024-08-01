@@ -123,11 +123,6 @@
     <!-- 添加或修改品牌对话框 -->
     <el-dialog v-model="formInfo.visible" :title="formInfo.title" width="700px" append-to-body>
       <el-form ref="FormDataRef" :model="formInfo.data" :rules="rules" label-width="80px" :disabled="formInfo.disabled" @submit.prevent> </el-form>
-      <template v-if="!formInfo.disabled" #footer>
-        <div class="dialog-footer">
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
     </el-dialog>
 
     <FrequencyLogItem v-model:visible="frequencyInfo.visible" :basic-data="frequencyInfo.data"></FrequencyLogItem>

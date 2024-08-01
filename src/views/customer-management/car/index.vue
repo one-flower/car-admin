@@ -63,18 +63,18 @@
         <el-table-column label="电话号码" align="left" prop="telephone" show-overflow-tooltip>
           <template #default="{ row }">{{ row.customIdObj?.telephone }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="220" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="180" header-align="center" align="left" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="车辆装配" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleFabricate(row)">
                 <svg-icon class-name="search-icon" icon-class="car-change" />
               </el-button>
             </el-tooltip>
-            <el-tooltip content="车辆订单" placement="top">
+            <!-- <el-tooltip content="车辆订单" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleOrderLog(row)">
                 <svg-icon class-name="search-icon" icon-class="order-log"
               /></el-button>
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip content="车主变更" placement="top">
               <el-button v-hasPermi="['system:post:edit']" link @click="handleUser(row)">
                 <svg-icon class-name="search-icon" icon-class="car-user-change"
@@ -88,7 +88,7 @@
                 <svg-icon class-name="search-icon" :icon-class="row.carState === '0' ? 'open' : 'close'" />
               </el-button>
             </el-tooltip>
-            <el-tooltip v-if="row.carState === '1'" content="删除" placement="top">
+            <el-tooltip v-if="row.carState === '0'" content="删除" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
           </template>
@@ -133,7 +133,7 @@
             <el-radio v-for="item in oldDictObj.clyh_license_plate_state" :key="item.key" :label="item.label" :value="item.value" />
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="车辆号牌" prop="licensePlateState">
+        <el-form-item v-if="data.form.licensePlateState === '0'" label="车辆号牌" prop="licensePlateState">
           <div class="cardNo">
             <el-form-item prop="licenseProvince">
               <el-select v-model="data.form.licenseProvince" placeholder="京" clearable filterable class="cardNo--province">
@@ -230,8 +230,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="userSubmit">确 定</el-button>
           <el-button @click="userCanecl">取 消</el-button>
+          <el-button type="primary" @click="userSubmit">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -373,7 +373,7 @@ const handleSelectionChange = (selection: TableVO[]) => {
 };
 //
 const selectable = (row: any, index: number) => {
-  if (row.carState === '0') {
+  if (row.carState === '1') {
     return false;
   } else {
     return true;
