@@ -23,9 +23,9 @@
                   end-placeholder="结束日期"
                 />
               </el-form-item>
-              <el-form-item label="套餐名称" prop="rechargeId">
-                <!-- <el-input v-model="tableInfo.queryParams.rechargeId" placeholder="请输入套餐名称" /> -->
-              </el-form-item>
+              <!--<el-form-item label="充值套餐" prop="rechargeId">
+                 <el-input v-model="tableInfo.queryParams.rechargeId" placeholder="请输入套餐名称" />
+              </el-form-item>-->
               <el-form-item>
                 <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
                 <el-button icon="Refresh" @click="resetQuery">重置</el-button>

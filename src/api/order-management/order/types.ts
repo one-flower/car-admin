@@ -185,7 +185,6 @@ export interface commExtTableQuery extends PageQuery {
   id: string;
   type?: string; //订单类型
   projectType?: string; //项目类型
-  createTime?: string; //订单时间
   commDistri?: string; //提成方式
   commState?: string; //分配状态
 }

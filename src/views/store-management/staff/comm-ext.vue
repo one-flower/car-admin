@@ -10,43 +10,59 @@
     <div class="p-2">
       <div class="mb-[10px]">
         <el-descriptions title="员工信息" :column="3" border>
-          <el-descriptions-item label="员工编号" :min-width="100"> {{ pesronInfo.staffCode }} </el-descriptions-item>
-          <el-descriptions-item label="员工姓名" :min-width="100"> {{ pesronInfo.name }} </el-descriptions-item>
-          <el-descriptions-item label="员工岗位" :min-width="100"> {{ pesronInfo.configPostIdLabel }} </el-descriptions-item>
-          <el-descriptions-item label="员工性别" :min-width="100"> {{ pesronInfo.genderLabel }} </el-descriptions-item>
-          <el-descriptions-item label="联系电话" :min-width="100"> {{ pesronInfo.telephone }} </el-descriptions-item>
-          <el-descriptions-item label="在职状态" :min-width="100"> {{ pesronInfo.stateLabel }} </el-descriptions-item>
+          <el-descriptions-item label="员工编号" :min-width="100"> {{ pesronInfo.staffCode }}</el-descriptions-item>
+          <el-descriptions-item label="员工姓名" :min-width="100"> {{ pesronInfo.name }}</el-descriptions-item>
+          <el-descriptions-item label="员工岗位" :min-width="100"> {{ pesronInfo.configPostIdLabel }}
+          </el-descriptions-item>
+          <el-descriptions-item label="员工性别" :min-width="100"> {{ pesronInfo.genderLabel }}</el-descriptions-item>
+          <el-descriptions-item label="联系电话" :min-width="100"> {{ pesronInfo.telephone }}</el-descriptions-item>
+          <el-descriptions-item label="在职状态" :min-width="100"> {{ pesronInfo.stateLabel }}</el-descriptions-item>
         </el-descriptions>
       </div>
 
-      <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+                  :leave-active-class="proxy?.animate.searchAnimate.leave">
         <div v-show="showSearch" class="mb-[10px]">
           <el-card shadow="hover">
             <el-form ref="queryFormRef" :model="data.queryParams" :inline="true" @submit.prevent>
               <el-form-item label="订单类型" prop="type">
-                <el-select v-model="data.queryParams.type" value-key="post" placeholder="请选择订单类型" clearable filterable>
-                  <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-select v-model="data.queryParams.type" value-key="post" placeholder="请选择订单类型" clearable
+                           filterable>
+                  <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" :label="item.label"
+                             :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="项目类型" prop="projectType">
-                <el-select v-model="data.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
-                  <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                <el-select v-model="data.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable
+                           filterable>
+                  <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label"
+                             :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="订单时间" prop="createTime">
-                <el-date-picker v-model="data.queryParams.createTime" type="daterange" value-format="YYYY-MM-DD" placeholder="选择入职日期">
-                </el-date-picker>
+                <el-date-picker
+                  v-model="dateRange"
+                  value-format="YYYY-MM-DD"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
               </el-form-item>
               <el-form-item label="提成方式" prop="commDistri">
-                <el-select v-model="data.queryParams.commDistri" value-key="" placeholder="请选择提成方式" clearable filterable>
-                  <el-option v-for="item in dictObj.dictEnum__orderIsCommission" :key="item.value" :label="item.label" :value="item.value">
+                <el-select v-model="data.queryParams.commDistri" value-key="" placeholder="请选择提成方式" clearable
+                           filterable>
+                  <el-option v-for="item in dictObj.dictEnum__commDistri" :key="item.value" :label="item.label"
+                             :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="分配状态" prop="commState">
-                <el-select v-model="data.queryParams.commState" value-key="" placeholder="请选择分配状态" clearable filterable>
-                  <el-option v-for="item in dictObj.dictEnum__commDistri" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-select v-model="data.queryParams.commState" value-key="" placeholder="请选择分配状态" clearable
+                           filterable>
+                  <el-option v-for="item in commStateDict" :key="item.value" :label="item.label"
+                             :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item>
@@ -58,7 +74,8 @@
         </div>
       </transition>
 
-      <el-alert :title="`个人提成累计：${tableInfo?.totalMoney ?? 0} 元`" :show-icon="true" type="info" effect="dark" :closable="false"> </el-alert>
+      <el-alert :title="`个人提成累计：${tableInfo?.totalMoney ?? 0} 元`" :show-icon="true" type="info" effect="dark"
+                :closable="false"></el-alert>
       <el-card shadow="hover">
         <!-- <template #header>
         <el-row :gutter="10" class="mb8">
@@ -74,7 +91,7 @@
         </el-row>
       </template> -->
         <el-table v-loading="loading" :data="tableData" tooltip-effect="dark myTooltips">
-          <el-table-column label="订单类型" align="center" prop="projectTypeLabel" show-overflow-tooltip />
+          <el-table-column label="订单类型" align="center" prop="orderTypeLabel" show-overflow-tooltip />
           <el-table-column label="订单编号" align="center" prop="orderNo" show-overflow-tooltip />
           <el-table-column label="项目类型" align="center" prop="projectTypeLabel" show-overflow-tooltip />
           <el-table-column label="产品品牌" align="center" prop="productBrandLabel" show-overflow-tooltip />
@@ -109,7 +126,19 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(
   proxy?.useNewDict('dictEnum__orderType', 'configProject__configProject', 'dictEnum__orderIsCommission', 'dictEnum__commDistri')
 );
-
+// 提成分配状态字典
+const commStateDict = [
+  {
+    value: 'Y',
+    label: '已分配'
+  },
+  {
+    value: 'N',
+    label: '未分配'
+  }
+];
+// 订单时间查询对象
+const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const emit = defineEmits(['update:visible']);
 const props = defineProps({
   visible: propTypes.bool.def(false).isRequired,
@@ -176,7 +205,7 @@ const data = reactive<PageData<commExtFormData, commExtTableQuery>>({
 const getTableData = async () => {
   loading.value = true;
   const res = await orderCommExtlist({
-    ...data.queryParams,
+    ...proxy?.addDateRange(data.queryParams, dateRange.value),
     staffId: props.pesronInfo.id
   });
   tableData.value = res.rows;
@@ -210,7 +239,7 @@ const handleQuery = () => {
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
   data.queryParams.pageNum = 1;
-
+  dateRange.value = ['', ''];
   handleQuery();
 };
 

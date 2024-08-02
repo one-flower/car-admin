@@ -65,11 +65,11 @@
           <el-table-column label="产品品牌" align="center" prop="productBrandIdLabel" />
           <el-table-column label="产品名称" align="center" prop="productIdLabel" />
           <el-table-column label="装配时间" align="center" prop="createTime" />
-          <el-table-column label="订单编号" align="center" prop="orderNum" width="210">
+<!--          <el-table-column label="订单编号" align="center" prop="orderNum" width="210">
             <template #default="{ row }">
               <el-button text type="primary" @click="handleDetail(row)"> {{ row.id }}</el-button>
             </template>
-          </el-table-column>
+          </el-table-column>-->
         </el-table>
 
         <pagination
