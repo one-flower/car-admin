@@ -52,7 +52,7 @@
                 end-placeholder="结束日期"
               />
             </el-form-item>
-            <el-form-item label="订单状态" prop="commState">
+            <el-form-item label="订单状态" prop="orderState">
               <el-select v-model="tableInfo.queryParams.commState" value-key="" placeholder="请选择订单状态" clearable filterable>
                 <el-option v-for="item in dictObj.dictEnum__orderState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
@@ -67,9 +67,9 @@
                 <el-option v-for="item in dictObj.dictEnum__warrantyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item> -->
-            <el-form-item label="支付状态" prop="state">
+            <el-form-item label="支付状态" prop="payState">
               <el-select v-model="tableInfo.queryParams.payState" value-key="" placeholder="请选择支付状态" clearable filterable>
-                <el-option v-for="item in dictObj.dictEnum__orderPayType" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in dictObj.dictEnum__payState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -286,6 +286,7 @@ const dictObj = toReactive<any>(
     'dictEnum__orderIsCommission', //订单提成
     'dictEnum__commDistri', //提成分配
     'dictEnum__orderPayType', // 支付类型
+    'dictEnum__payState', // 支付状态
     'dictEnum__payChannel', // 支付渠道
     'dictEnum__warrantyState'
   )

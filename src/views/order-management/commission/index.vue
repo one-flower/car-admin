@@ -45,7 +45,7 @@
             </el-form-item>
             <el-form-item label="负责人" prop="directorId">
               <el-select v-model="tableInfo.queryParams.directorId" value-key="" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in dictObj.configPost__configPost" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in dictObj.cunstomList" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="分配状态" prop="commState">
@@ -76,9 +76,9 @@
         <el-table-column label="产品品牌" align="left" prop="productBrandLabel" />
         <el-table-column label="订单产品" align="left" prop="productIdLabel" />
         <el-table-column label="订单价格(/元)" align="left" prop="orderPrice" />
-        <el-table-column label="实际支付(/元)" align="left" prop="realityPrice" />
         <el-table-column label="订单提成(/元)" align="left" prop="commPrice" />
         <el-table-column label="负责人" align="center" prop="directorLabel" />
+        <el-table-column label="订单支付状态" align="center" prop="payStateLabel" />
         <el-table-column label="分配状态" align="center" prop="commStateLabel" />
         <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -145,6 +145,7 @@ import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import { TableQuery, TableVO } from '@/api/order-management/order/types';
 import { productDropdown } from '@/api/product-management/product';
 import OrderDetail from '@/components/order-detail/index.vue';
+import { staffDropdown } from '@/api/store-management/staff';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(
@@ -152,7 +153,6 @@ const dictObj = toReactive<any>(
     'dictEnum__orderType', // 订单类型
     'configProject__configProject', // 项目类型
     'configProductBrand__configProductBrand', // 产品品牌
-    'configPost__configPost' // 负责人 作业团队
   )
 );
 
@@ -178,6 +178,7 @@ const getTableData = async () => {
 const productLoading = ref(false);
 const changeBrand = async (val: string) => {
   productLoading.value = true;
+  tableInfo.queryParams.productId = null;
   dictObj.productList = await productDropdown({
     productBrandId: val
   });
@@ -292,6 +293,13 @@ const cancel = () => {
 };
 
 const init = async () => {
+  const cunstomList = await staffDropdown();
+  dictObj.cunstomList = cunstomList.map((item) => {
+    return {
+      value: item.id,
+      label: `${item.name}(${item.configPostIdLabel})`
+    };
+  });
   getTableData();
 };
 
