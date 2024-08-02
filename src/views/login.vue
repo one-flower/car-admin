@@ -2,12 +2,12 @@
   <div class="login">
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">{{ title }}</h3>
-      <!-- <el-form-item v-if="tenantEnabled" prop="tenantId">
+      <el-form-item v-if="tenantEnabled" prop="tenantId">
         <el-select v-model="loginForm.tenantId" filterable placeholder="请选择/输入公司名称" style="width: 100%">
           <el-option v-for="item in tenantList" :key="item.tenantId" :label="item.companyName" :value="item.tenantId"></el-option>
           <template #prefix><svg-icon icon-class="company" class="el-input__icon input-icon" /></template>
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
           <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
@@ -56,7 +56,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <!-- <span>Copyright © 2018-2024 疯狂的狮子Li All Rights Reserved.</span> -->
+      <span>辽ICP备2023012415号-1</span>
     </div>
   </div>
 </template>
@@ -75,9 +75,9 @@ const router = useRouter();
 const title = import.meta.env.VITE_APP_TITLE;
 
 const loginForm = ref<LoginData>({
-  tenantId: '000000',
-  username: 'admin',
-  password: 'admin123',
+  tenantId: '',
+  username: '',
+  password: '',
   rememberMe: false,
   code: '',
   uuid: ''
@@ -213,25 +213,31 @@ onMounted(() => {
 <style lang="scss" scoped>
 .login {
   display: flex;
-  justify-content: center;
+  //justify-content: center;
   align-items: center;
   height: 100%;
   background-image: url('../assets/images/login-background.jpg');
   background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .title {
   margin: 0px auto 30px auto;
   text-align: center;
-  color: #707070;
+  color: #1d2635;
+  font-size: 32px;
+  font-weight: bold;
 }
+
 
 .login-form {
   border-radius: 6px;
   background: #ffffff;
   width: 400px;
-  padding: 25px 25px 5px 25px;
-
+  padding: 45px 35px 45px 35px;
+  position: fixed;
+  left: 176px;
+  box-shadow: 0px 2px 9px 0px rgba(212,212,212,0.5);
   .el-input {
     height: 40px;
 
