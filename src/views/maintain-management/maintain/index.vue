@@ -1,29 +1,23 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
-                :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
             <el-form-item label="车辆品牌" prop="brandName">
-              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择车辆品牌" clearable
-                         filterable>
-                <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label"
-                           :value="item.value"></el-option>
+              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择车辆品牌" clearable filterable>
+                <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <!-- <el-form-item label="车架号码" prop="vin">
               <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="车牌号码" prop="brandId">
-              <el-input v-model="tableInfo.queryParams.brandId" placeholder="请输入车牌号码" clearable
-                        @keyup.enter="handleQuery" />
+              <el-input v-model="tableInfo.queryParams.brandId" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
-              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable
-                         filterable>
-                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label"
-                           :value="item.value">
+              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable filterable>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -48,8 +42,7 @@
               />
             </el-form-item>
             <el-form-item label="保养状态" prop="state">
-              <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable
-                         filterable>
+              <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
                 <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -67,8 +60,7 @@
           <right-toolbar v-model:showSearch="tableInfo.showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
-      <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips"
-                @selection-change="handleSelectionChange">
+      <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="项目类型" align="center" prop="projectTypeName" />
         <el-table-column label="车辆品牌" align="center" prop="brandName" />
@@ -84,7 +76,7 @@
         <el-table-column label="计划保养日期" align="center" prop="planDate" show-overflow-tooltip />
         <el-table-column label="实际保养日期" align="center" prop="realityDate" show-overflow-tooltip />
         <el-table-column label="保养状态" align="center" prop="stateLabel" />
-        <el-table-column label="操作" width="120" align="center" class-name="small-padding fixed-width" fixed="right">
+        <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width" fixed="right">
           <template #default="{ row }">
             <el-tooltip v-if="row.isExpire === 'N'" content="进店保养" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'MAINTAIN')">
@@ -110,19 +102,12 @@
     </el-card>
 
     <!-- 添加 -->
-    <order-add v-model:visible="formInfo.visible" :title="formInfo.title" :basic-data="formInfo.data"
-               @confirm="getTableData"></order-add>
+    <order-add v-model:visible="formInfo.visible" :title="formInfo.title" :basic-data="formInfo.data" @confirm="getTableData"></order-add>
   </div>
 </template>
 
 <script setup name="maintain" lang="ts">
-import {
-  frequencyAdd,
-  frequencyDel,
-  frequencyUp,
-  frequencyInfo,
-  frequencyList
-} from '@/api/maintain-management/maintain';
+import { frequencyAdd, frequencyDel, frequencyUp, frequencyInfo, frequencyList } from '@/api/maintain-management/maintain';
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/maintain/types';
 import OrderAdd from '@/components/order-add/index.vue';
 
@@ -172,9 +157,10 @@ const rules = {
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
+
   let queryParams = proxy?.addDateRange(tableInfo.queryParams, realityDateDateRange.value, 'realityDate');
   queryParams = proxy?.addDateRange(queryParams, planDateDateRange.value, 'planDate');
-  const res = await frequencyList(queryParams);
+  const res = await frequencyList({ ...queryParams, isExpire: 'N' });
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;

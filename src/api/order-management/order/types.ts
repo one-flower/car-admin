@@ -45,13 +45,7 @@ export interface TableVO extends BaseEntity {
   commExtObj: any; // 员工详情
 }
 
-export type OrderState =
-  'WAIT_CONSTRUCTED'
-  | 'DURING_CONSTRUCTION'
-  | 'CONSTRUCTED_COMPLETE'
-  | 'WAIT_DELIVERED'
-  | 'ORDER_COMPLETED'
-  | 'CANCEL_ORDER';
+export type OrderState = 'WAIT_CONSTRUCTED' | 'DURING_CONSTRUCTION' | 'CONSTRUCTED_COMPLETE' | 'WAIT_DELIVERED' | 'ORDER_COMPLETED' | 'CANCEL_ORDER';
 
 export interface FormData {
   id: string | undefined;
@@ -137,7 +131,7 @@ export interface ConfigPayDesc {
   isCommissionLabel: string; //
   commDistriLabel: string; // 提成分配
   commPrice: number; // 提成价格
-  orderPayType: 'PROMPTLY_PAY' | 'LATER_ON_PAY'; // 订单出伏
+  orderPayType: 'PROMPTLY_PAY' | 'LATER_ON_PAY' | 'PAID'; // 订单出伏
   orderPayTypeLabel: string; //
   accountPrice: number | string; // 账户余额
   cashPrice: number | string; // 现金支付

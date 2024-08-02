@@ -50,8 +50,9 @@ import { customDropdown, customList } from '@/api/customer-management/customer';
 import { FormData as customerFormData } from '@/api/customer-management/customer/types';
 import useUserStore from '@/store/modules/user';
 import { countList } from '@/utils/index';
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const emit = defineEmits(['update:visible', 'confirmCallBack']);
+const emit = defineEmits(['update:visible', 'confirm']);
 const props = defineProps({
   // 显示隐藏
   visible: propTypes.bool.def(false).isRequired,
@@ -78,8 +79,14 @@ const formData = reactive<FormData>({ ...initFormData });
 
 watch(
   () => props.visible,
-  (val) => {
+  async (val) => {
     if (!val) return;
+    Object.assign(formData, initFormData);
+    FormDataRef.value?.resetFields();
+    Object.assign(selectOption.form, initSelectOptionForm);
+
+    dictObj.customList = await customDropdown();
+
     formData.id = props.targetInfo.id;
     formData.realityMoney = props.targetInfo.realityMoney ?? '0.00';
     formData.giveMoney = props.targetInfo.giveMoney ?? '0.00';
@@ -94,17 +101,15 @@ const handleNext = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       saveLoading.value = true;
-      await userRecharge(formData);
-      handleCancel();
+      const res = await userRecharge(formData);
       saveLoading.value = false;
+      proxy?.$modal.msgSuccess(res.msg);
+      emit('confirm', false);
+      emit('update:visible', false);
     }
   });
 };
 const handleCancel = () => {
-  Object.assign(formData, initFormData);
-  FormDataRef.value?.resetFields();
-  Object.assign(selectOption.form, initSelectOptionForm);
-
   emit('update:visible', false);
 };
 
@@ -135,8 +140,4 @@ const change = (val) => {
 const dictObj = reactive({
   customList: <any>[]
 });
-const init = async () => {
-  dictObj.customList = await customDropdown();
-};
-init();
 </script>

@@ -42,20 +42,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="质保开始日期" prop="startDate">
-              <el-date-picker
-                v-model="tableInfo.queryParams.startDate"
-                value-format="YYYY-MM-DD"
-                type="date"
-                placeholder="开始日期"
-              />
+              <el-date-picker v-model="tableInfo.queryParams.startDate" value-format="YYYY-MM-DD" type="date" placeholder="开始日期" />
             </el-form-item>
             <el-form-item label="质保结束日期" prop="endDate">
-              <el-date-picker
-                v-model="tableInfo.queryParams.endDate"
-                value-format="YYYY-MM-DD"
-                type="date"
-                placeholder="结束日期"
-              />
+              <el-date-picker v-model="tableInfo.queryParams.endDate" value-format="YYYY-MM-DD" type="date" placeholder="结束日期" />
             </el-form-item>
             <el-form-item label="质保状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>

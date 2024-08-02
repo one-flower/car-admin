@@ -28,19 +28,19 @@
         <div v-show="tableInfo.showSearch" class="mb-[10px]">
           <el-card shadow="hover">
             <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
-              <el-form-item label="项目类型" prop="type">
+              <el-form-item label="项目类型" prop="projectType">
                 <el-select v-model="tableInfo.queryParams.projectType" placeholder="请选择项目类型" clearable filterable>
                   <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="产品品牌" prop="rechargeId">
+              <el-form-item label="产品品牌" prop="productBrandId">
                 <el-select v-model="tableInfo.queryParams.productBrandId" placeholder="请选择产品品牌" clearable filterable @change="changeBrand">
                   <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="产品名称" prop="rechargeId">
+              <el-form-item label="产品名称" prop="productId">
                 <el-select v-model="tableInfo.queryParams.productId" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
                   <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
                 </el-select>
@@ -65,7 +65,7 @@
           <el-table-column label="产品品牌" align="center" prop="productBrandIdLabel" />
           <el-table-column label="产品名称" align="center" prop="productIdLabel" />
           <el-table-column label="装配时间" align="center" prop="createTime" />
-<!--          <el-table-column label="订单编号" align="center" prop="orderNum" width="210">
+          <!--          <el-table-column label="订单编号" align="center" prop="orderNum" width="210">
             <template #default="{ row }">
               <el-button text type="primary" @click="handleDetail(row)"> {{ row.id }}</el-button>
             </template>

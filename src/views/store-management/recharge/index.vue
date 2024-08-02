@@ -102,7 +102,7 @@
     </el-dialog>
 
     <!-- 充值  -->
-    <UserRecharge v-model:visible="userDialog.visible" :target-info="userDialog.form"></UserRecharge>
+    <UserRecharge v-model:visible="userDialog.visible" :target-info="userDialog.form" @confirm="getTableData"></UserRecharge>
     <!-- 充值记录 -->
     <rechargeLog v-model:visible="logDialog.visible" :target-info="logDialog.form"></rechargeLog>
   </div>
@@ -224,6 +224,7 @@ const handleState = async (row?: TableVO) => {
   const state = row.state === '0' ? '1' : '0';
   await proxy?.$modal.confirm(`是否${title}？`);
   await rechargeUp({ ...row, state: state });
+  proxy?.$modal.msgSuccess(`${title}成功`);
   row.state = state;
   row.stateLabel = title;
 };
