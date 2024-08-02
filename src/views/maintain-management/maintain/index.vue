@@ -1,29 +1,45 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+                :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
             <el-form-item label="车辆品牌" prop="brandName">
-              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择车辆品牌" clearable filterable>
-                <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择车辆品牌" clearable
+                         filterable>
+                <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label"
+                           :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <!-- <el-form-item label="车架号码" prop="vin">
               <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="车牌号码" prop="brandId">
-              <el-input v-model="tableInfo.queryParams.brandId" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="tableInfo.queryParams.brandId" placeholder="请输入车牌号码" clearable
+                        @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
-              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable
+                         filterable>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label"
+                           :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="计划日期" prop="planDate">
+            <el-form-item label="计划保养日期" prop="planDateDateRange">
               <el-date-picker
-                v-model="dateRange"
+                v-model="planDateDateRange"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
+            </el-form-item>
+            <el-form-item label="实际保养日期" prop="realityDateDateRange">
+              <el-date-picker
+                v-model="realityDateDateRange"
                 value-format="YYYY-MM-DD"
                 type="daterange"
                 range-separator="至"
@@ -32,8 +48,9 @@
               />
             </el-form-item>
             <el-form-item label="保养状态" prop="state">
-              <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable
+                         filterable>
+                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -50,7 +67,8 @@
           <right-toolbar v-model:showSearch="tableInfo.showSearch" @query-table="getTableData"></right-toolbar>
         </el-row>
       </template>
-      <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips" @selection-change="handleSelectionChange">
+      <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips"
+                @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="车辆品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
@@ -91,18 +109,27 @@
     </el-card>
 
     <!-- 添加 -->
-    <order-add v-model:visible="formInfo.visible" :title="formInfo.title" :basic-data="formInfo.data" @confirm="getTableData"></order-add>
+    <order-add v-model:visible="formInfo.visible" :title="formInfo.title" :basic-data="formInfo.data"
+               @confirm="getTableData"></order-add>
   </div>
 </template>
 
 <script setup name="maintain" lang="ts">
-import { frequencyAdd, frequencyDel, frequencyUp, frequencyInfo, frequencyList } from '@/api/maintain-management/maintain';
+import {
+  frequencyAdd,
+  frequencyDel,
+  frequencyUp,
+  frequencyInfo,
+  frequencyList
+} from '@/api/maintain-management/maintain';
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/maintain/types';
 import OrderAdd from '@/components/order-add/index.vue';
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const dictObj = toReactive<any>(proxy?.useDict('clyhBrand__clyhBrand', 'configProject__configProject'));
-const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
+const realityDateDateRange = ref<[DateModelType, DateModelType]>(['', '']);
+const planDateDateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   ids: [],
@@ -144,8 +171,9 @@ const rules = {
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-
-  const res = await frequencyList(proxy?.addDateRange(tableInfo.queryParams, dateRange.value, 'planDate'));
+  let queryParams = proxy?.addDateRange(tableInfo.queryParams, realityDateDateRange.value, 'realityDate');
+  queryParams = proxy?.addDateRange(queryParams, planDateDateRange.value, 'planDate');
+  const res = await frequencyList(queryParams);
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -160,6 +188,8 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
+  realityDateDateRange.value = ['', ''];
+  planDateDateRange.value = ['', ''];
   tableInfo.queryParams.pageNum = 1;
   handleQuery();
 };
