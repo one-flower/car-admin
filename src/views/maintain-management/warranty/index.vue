@@ -41,17 +41,17 @@
                 <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="质保开始日期" prop="dateRangeStar">
+            <el-form-item label="质保开始日期" prop="startDate">
               <el-date-picker
-                v-model="dateRangeStar"
+                v-model="tableInfo.queryParams.startDate"
                 value-format="YYYY-MM-DD"
                 type="date"
                 placeholder="开始日期"
               />
             </el-form-item>
-            <el-form-item label="质保结束日期" prop="dateRangeEnd">
+            <el-form-item label="质保结束日期" prop="endDate">
               <el-date-picker
-                v-model="dateRangeEnd"
+                v-model="tableInfo.queryParams.endDate"
                 value-format="YYYY-MM-DD"
                 type="date"
                 placeholder="结束日期"
@@ -133,8 +133,6 @@ import { productDropdown } from '@/api/product-management/product';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
-const dateRangeStar = ref<[DateModelType, DateModelType]>(['', '']);
-const dateRangeEnd = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   ids: [],
@@ -166,9 +164,7 @@ const rules = {
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const params1 = proxy?.addDateRange(tableInfo.queryParams, dateRangeStar.value, 'startDate');
-  const params2 = proxy?.addDateRange(params1, dateRangeStar.value, 'endDate');
-  const res = await warrantyList(params2);
+  const res = await warrantyList(tableInfo.queryParams);
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
