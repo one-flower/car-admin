@@ -42,20 +42,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="质保开始日期" prop="startDate">
-              <el-date-picker
-                v-model="tableInfo.queryParams.startDate"
-                value-format="YYYY-MM-DD"
-                type="date"
-                placeholder="开始日期"
-              />
+              <el-date-picker v-model="tableInfo.queryParams.startDate" value-format="YYYY-MM-DD" type="date" placeholder="开始日期" />
             </el-form-item>
             <el-form-item label="质保结束日期" prop="endDate">
-              <el-date-picker
-                v-model="tableInfo.queryParams.endDate"
-                value-format="YYYY-MM-DD"
-                type="date"
-                placeholder="结束日期"
-              />
+              <el-date-picker v-model="tableInfo.queryParams.endDate" value-format="YYYY-MM-DD" type="date" placeholder="结束日期" />
             </el-form-item>
             <el-form-item label="质保状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
@@ -97,7 +87,7 @@
         <el-table-column label="质保状态" align="center" prop="stateLabel" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="保养记录" placement="top">
+            <el-tooltip v-if="row.maxNum > 0" content="保养记录" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleLog(row)">
                 <svg-icon class-name="search-icon" icon-class="order-log"></svg-icon>
               </el-button>
