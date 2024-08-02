@@ -140,10 +140,23 @@ const getSmsCodeLocal = () => {
 };
 
 const getSms = async () => {
+  if (!changeForm.imgCode) {
+    proxy?.$modal.msgWarning('请填写图形验证码!');
+    return;
+  }
+
+  if (!changeForm.newTelephone) {
+    proxy?.$modal.msgWarning('请填写新手机号码!');
+    return;
+  }
+
   smsInfo.count = getSmsCodeLocal();
   // 后期做到session中
   if (smsInfo.count === 0) {
-    const res = await smsCode({ phonenumber: changeForm.newTelephone });
+    const res = await smsCode({
+      imgCode: changeForm.imgCode,
+      phonenumber: changeForm.newTelephone
+    });
     localStorage.setItem('smscode', new Date().getTime().toString());
     proxy?.$modal.msgSuccess('发送成功');
 

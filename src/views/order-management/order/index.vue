@@ -244,13 +244,11 @@
 
     <!-- 下一步 -->
     <el-dialog v-model="orderStateInfo.visiable" :title="orderStateInfo.title" :before-close="stateCancel" width="500px">
-      <el-form ref="formRef" :model="orderStateInfo.data" label-width="80">
-        <el-form-item label="变更状态">
-          <el-select v-model="orderStateInfo.data.state" clearable filterable :disabled="true">
-            <el-option v-for="item in dictObj.dictEnum__orderState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-          </el-select>
+      <el-form ref="OrderStateRef" :model="orderStateInfo.data" label-width="80" :rules="orderStateRules">
+        <el-form-item label="订单状态">
+          <span>{{ orderStateInfo.data.stateLabel }}</span>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item label="备注" :prop="orderStateInfo.data.state === 'CANCEL_ORDER' ? 'remarks' : ''">
           <el-input v-model="orderStateInfo.data.remarks" rows="auto" show-word-limit maxlength="255" type="textarea" placeholder="请输入" />
         </el-form-item>
       </el-form>
@@ -385,21 +383,30 @@ const initOrderStateForm = {
 };
 const orderStateInfo = reactive({
   visiable: false,
-  title: '变更状态',
+  title: '订单流转',
   data: {
     ...initOrderStateForm
   }
 });
+const OrderStateRef = ref();
+const orderStateRules = {
+  remarks: [{ required: true, message: '请输入备注', trigger: 'blur' }]
+};
 const handleUpState = (id: string, state: OrderState) => {
   orderStateInfo.visiable = true;
   orderStateInfo.data.id = id;
   orderStateInfo.data.state = state;
+  orderStateInfo.data.stateLabel = dictObj.dictEnum__orderState.find((x: any) => x.value === state)?.label ?? '';
 };
 const stateSubmit = async () => {
-  await orderUpState(orderStateInfo.data);
-  await getTableData();
-  stateCancel();
-  proxy?.$modal.msgSuccess('更改成功');
+  OrderStateRef.value?.validate(async (valid: boolean) => {
+    if (valid) {
+      await orderUpState(orderStateInfo.data);
+      await getTableData();
+      stateCancel();
+      proxy?.$modal.msgSuccess('更改成功');
+    }
+  });
 };
 const stateCancel = () => {
   orderStateInfo.visiable = false;
@@ -418,7 +425,7 @@ const handleDelete = async (row?: TableVO) => {
 // 详情
 const detailInfo = reactive({
   visible: false,
-  title: '详情',
+  title: '订单详情',
   orderData: <OrderDesc>{},
   configPayData: <ConfigPayDesc>{},
   orderLogObj: []
@@ -464,7 +471,7 @@ const detailCancel = () => {
 // 支付
 const payInfo = reactive({
   visible: false,
-  title: '支付',
+  title: '订单支付',
   orderData: <OrderDesc>{},
   data: {
     orderId: undefined,

@@ -25,16 +25,14 @@
         <el-descriptions-item label="提成金额"> {{ towPriLabel(configPyaData.commPrice) }}</el-descriptions-item>
         <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
       </template>
-      <el-descriptions-item label="订单支付" :span="configPyaData.orderPayType === 'PROMPTLY_PAY' ? 1 : 2">
+      <el-descriptions-item label="订单支付" :span="['PROMPTLY_PAY', 'PAID'].includes(configPyaData.orderPayType) ? 1 : 2">
         {{ configPyaData.orderPayTypeLabel }}
       </el-descriptions-item>
-      <template v-if="configPyaData.orderPayType === 'PROMPTLY_PAY'">
-        <el-descriptions-item label="订单金额"> {{ towPriLabel(configPyaData.realityPrice) }} </el-descriptions-item>
+      <template v-if="['PROMPTLY_PAY', 'PAID'].includes(configPyaData.orderPayType)">
+        <el-descriptions-item label="支付金额"> {{ towPriLabel(configPyaData.realityPrice) }}</el-descriptions-item>
         <el-descriptions-item label="账户支付"> {{ towPriLabel(configPyaData.accountPrice) }}</el-descriptions-item>
         <el-descriptions-item label="现金支付"> {{ towPriLabel(configPyaData.cashPrice) }}</el-descriptions-item>
-        <!-- <el-descriptions-item label="现金支付"> {{ towPriLabel(configPyaData.cashPrice) }} 元 </el-descriptions-item> -->
       </template>
-
       <el-descriptions-item label="备注" :span="2"> {{ configPyaData.remarks }} </el-descriptions-item>
     </el-descriptions>
     <el-descriptions :title="`实际支付${towPriLabel(configPyaData.realityPrice)}`" border class="mb10" />

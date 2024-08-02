@@ -85,7 +85,7 @@
             <el-descriptions-item label="订单类型"> {{ formInfo.data.typeLabel }} </el-descriptions-item>
             <el-descriptions-item label="项目类型"> {{ formInfo.data.projectTypeLabel }} </el-descriptions-item>
             <el-descriptions-item label="品牌名称"> {{ formInfo.data.productLabel }} </el-descriptions-item>
-            <el-descriptions-item label="订单价格"> {{ formInfo.data.orderPrice }} </el-descriptions-item>
+            <el-descriptions-item label="订单价格"> {{ formInfo.data.orderPrice?.toFixed(2) }} </el-descriptions-item>
           </el-descriptions>
           <el-form-item label="负责人" prop="directorId">
             <el-select v-model="formInfo.data.directorId" placeholder="负责人" clearable filterable>
@@ -150,9 +150,7 @@
                 </div>
               </el-form-item>
               <el-form-item label="支付合计" prop="customId">
-                <div :class="{ 'warn': countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice }">
-                  {{ countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) }} 元
-                </div>
+                <div :class="{ 'warn': !isEqual }">{{ countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) }} 元</div>
               </el-form-item>
             </template>
           </template>
@@ -385,6 +383,9 @@ const setPay = () => {
     formInfo.data.cashPrice = Number(formInfo.data.orderPrice) - orderDetail.value.totalMoney;
   }
 };
+const isEqual = computed(() => {
+  return Number(countList([formInfo.data.accountPrice, formInfo.data.cashPrice])) === formInfo.data.orderPrice;
+});
 const handleNext = (step: number) => {
   if (step === -1) {
     active.value += step;
@@ -392,17 +393,14 @@ const handleNext = (step: number) => {
   }
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      if (
-        active.value === 2 &&
-        formInfo.data.orderPayType === 'PROMPTLY_PAY' &&
-        countList([formInfo.data.accountPrice, formInfo.data.cashPrice]) !== formInfo.data.orderPrice
-      ) {
+      if (active.value === 2 && formInfo.data.orderPayType === 'PROMPTLY_PAY' && !isEqual.value) {
         await proxy?.$modal.confirm('订单价格与支付金额不一致，是否继续下一步?');
       }
       active.value += step;
     }
   });
 };
+
 const handleSubmit = () => {
   FormDataRef.value?.validate(async (valid: boolean) => {
     if (valid) {

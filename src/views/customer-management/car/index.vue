@@ -124,9 +124,10 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="data.form.infoCompletion === '0'" label="车辆品牌" prop="brandId">
-          <el-select v-model="data.form.brandId" placeholder="请选择车辆品牌" clearable filterable>
+          <el-select v-if="data.form.id === undefined" v-model="data.form.brandId" placeholder="请选择车辆品牌" clearable filterable>
             <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
+          <span v-else>{{ data.form.brandIdLabel }}</span>
         </el-form-item>
         <el-form-item label="车牌情况" prop="licensePlateState">
           <el-radio-group v-model="data.form.licensePlateState">
@@ -212,7 +213,7 @@
           <el-descriptions-item label="车辆品牌"> {{ userInfo.data.brandIdLabel }} </el-descriptions-item>
           <el-descriptions-item label="车牌号码"> {{ userInfo.data.licensePlate }} </el-descriptions-item>
           <!-- <el-descriptions-item label="车架号码"> {{ userInfo.data.vin }} </el-descriptions-item> -->
-          <el-descriptions-item label="车辆归属"> {{ userInfo.data.toTypeLabel }} </el-descriptions-item>
+          <!-- <el-descriptions-item label="车辆归属"> {{ userInfo.data.toTypeLabel }} </el-descriptions-item> -->
           <el-descriptions-item label="车主昵称"> {{ userInfo.data.customIdObj?.nickname }} </el-descriptions-item>
           <el-descriptions-item label="预留电话"> {{ userInfo.data.customIdObj?.telephone }} </el-descriptions-item>
         </el-descriptions>
@@ -392,6 +393,7 @@ const handleState = async (row?: TableVO) => {
   const state = row.carState === '0' ? '1' : '0';
   await proxy?.$modal.confirm(`是否${label}？`);
   await carManageUp({ ...row, carState: state });
+  proxy?.$modal.msgSuccess(`${label}成功`);
   row.carState = state;
   row.carStateLabel = label;
 };
@@ -482,7 +484,7 @@ type UserInfo = {
 };
 const userInfo = reactive<UserInfo>({
   visible: false,
-  title: '变更车主',
+  title: '车主变更',
   data: {},
   customList: []
 });
@@ -497,12 +499,7 @@ const UserReset = () => {
 const handleUser = async (row: any) => {
   UserReset();
   const res = await carManageInfo(row?.id);
-  try {
-    delete res.data.customIdObj.id;
-    delete res.data.customId;
-  } catch (error) {
-    console.log('handeleUsr error:' + error);
-  }
+
   userInfo.data = res.data;
 
   userInfo.customList = dictObj.customList.filter((item: any) => {
@@ -516,13 +513,8 @@ const userSubmit = () => {
     if (valid) {
       await carManageEditCusetom({
         id: userInfo.data.id,
-        brandId: userInfo.data.brandId,
-        licensePlateState: userInfo.data.licensePlateState,
-        toType: userInfo.data.toType,
-        imgUrls: userInfo.data.imgUrls,
-        vin: userInfo.data.vin,
-        infoCompletion: userInfo.data.infoCompletion,
-        customId: userInfo.data.customId
+        newCustomId: userInfo.data.newCustomId,
+        reason: userInfo.data.newCustomId
       });
       proxy?.$modal.msgSuccess('操作成功');
       userInfo.visible = false;

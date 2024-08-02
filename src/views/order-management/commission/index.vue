@@ -152,7 +152,7 @@ const dictObj = toReactive<any>(
   proxy?.useNewDict(
     'dictEnum__orderType', // 订单类型
     'configProject__configProject', // 项目类型
-    'configProductBrand__configProductBrand', // 产品品牌
+    'configProductBrand__configProductBrand' // 产品品牌
   )
 );
 
@@ -199,7 +199,7 @@ const resetQuery = () => {
 
 const payInfo = reactive({
   visible: false,
-  title: '订单提成分配',
+  title: '提成分配',
   loading: false,
   orderData: <OrderDesc>{},
   configPayData: <ConfigPayDesc>{},
@@ -274,8 +274,8 @@ const submit = async () => {
   payInfo.tableData.forEach((item) => {
     ratioSum += item.ratio;
   });
-  if (ratioSum > 100) {
-    proxy?.$modal.msgWarning('提成比例总和不能大于100');
+  if (ratioSum !== 100) {
+    proxy?.$modal.msgWarning('提成比例总和必须为100%');
     return;
   }
 

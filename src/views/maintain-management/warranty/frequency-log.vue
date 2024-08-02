@@ -1,14 +1,15 @@
 <template>
-  <el-drawer :model-value="visible" title="车辆装配" direction="rtl" size="800px" close-on-click-modal :before-close="closeDom">
+  <el-drawer :model-value="visible" title="保养记录" direction="rtl" size="800px" close-on-click-modal :before-close="closeDom">
     <div class="p-2">
       <div class="mb10">
         <el-descriptions title="产品质保" :column="3" border>
           <!-- <el-descriptions-item label="车架号码"> {{ basicData.vin }} </el-descriptions-item> -->
+          <el-descriptions-item label="项目类型"> {{ basicData.productName }} </el-descriptions-item>
           <el-descriptions-item label="车辆品牌"> {{ basicData.brandName }} </el-descriptions-item>
           <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
-          <el-descriptions-item label="项目类型"> {{ basicData.productName }} </el-descriptions-item>
-          <el-descriptions-item label="产品名称" :span="2"> {{ basicData.productBrandName }} </el-descriptions-item>
-          <el-descriptions-item label="保养频率"> {{ basicData.currentNum }} </el-descriptions-item>
+          <el-descriptions-item label="产品品牌"> {{ basicData.productBrandName }} </el-descriptions-item>
+          <el-descriptions-item label="产品名称"> {{ basicData.productName }} </el-descriptions-item>
+          <el-descriptions-item label="质保周期"> {{ basicData.maxNum }} 个月 </el-descriptions-item>
         </el-descriptions>
       </div>
 
@@ -17,12 +18,14 @@
           <el-card shadow="hover">
             <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
               <el-form-item label="订单编号" prop="orderNo">
-                <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入套餐名称" />
+                <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入订单编号" />
               </el-form-item>
-              <el-form-item label="保养方式" prop="rechargeId">
-                <el-input v-model="tableInfo.queryParams.rechargeId" placeholder="请输入套餐名称" />
+              <el-form-item label="保养状态" prop="state">
+                <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请输入保养状态" clearable filterable>
+                  <el-option v-for="item in dictObj.dictEnum__frequencyState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                </el-select>
               </el-form-item>
-              <el-form-item label="计划日期" prop="type">
+              <el-form-item label="计划保养日期" prop="type">
                 <el-date-picker
                   v-model="dateRangePlan"
                   value-format="YYYY-MM-DD"
@@ -32,7 +35,7 @@
                   end-placeholder="结束日期"
                 />
               </el-form-item>
-              <el-form-item label="实际日期" prop="type">
+              <el-form-item label="实际保养日期" prop="type">
                 <el-date-picker
                   v-model="dateRange"
                   value-format="YYYY-MM-DD"
@@ -41,9 +44,6 @@
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                 />
-              </el-form-item>
-              <el-form-item label="保养状态" prop="state">
-                <el-input v-model="tableInfo.queryParams.state" placeholder="请输入套餐名称" />
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -66,11 +66,11 @@
               {{ `第${row.currentNum}次` }}
             </template>
           </el-table-column>
-          <el-table-column label="计划日期" align="center" prop="planDate" show-overflow-tooltip />
-          <el-table-column label="实际日期" align="center" prop="realityDate" show-overflow-tooltip />
-          <el-table-column label="保养方式" align="center" prop="projectType" show-overflow-tooltip />
-          <el-table-column label="订单编号" align="center" prop="orderNo" show-overflow-tooltip />
+          <el-table-column label="计划保养日期" align="center" prop="planDate" show-overflow-tooltip />
           <el-table-column label="保养状态" align="center" prop="stateLabel" />
+          <el-table-column label="实际保养日期" align="center" prop="realityDate" show-overflow-tooltip />
+          <el-table-column label="订单类型" align="center" prop="orderTypeLabel" show-overflow-tooltip />
+          <el-table-column label="订单编号" align="center" prop="orderNo" show-overflow-tooltip />
           <!-- <el-table-column label="操作" align="center" prop="">
             <template #default="{ row }">
               <el-tooltip content="详情" placement="top">
@@ -98,6 +98,7 @@ import { frequencyList } from '@/api/maintain-management/maintain';
 import {} from '@/api/maintain-management/maintain/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const dictObj = toReactive<any>(proxy?.useNewDict('dictEnum__frequencyState'));
 
 const emit = defineEmits(['update:visible', 'cancel']);
 const props = defineProps({
