@@ -41,24 +41,20 @@
                 <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="质保开始" prop="dateRangeStar">
+            <el-form-item label="质保开始日期" prop="dateRangeStar">
               <el-date-picker
                 v-model="dateRangeStar"
                 value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                type="date"
+                placeholder="开始日期"
               />
             </el-form-item>
-            <el-form-item label="质保结束" prop="dateRangeEnd">
+            <el-form-item label="质保结束日期" prop="dateRangeEnd">
               <el-date-picker
                 v-model="dateRangeEnd"
                 value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                type="date"
+                placeholder="结束日期"
               />
             </el-form-item>
             <el-form-item label="质保状态" prop="state">
@@ -90,7 +86,7 @@
       </template>
       <el-table v-loading="tableInfo.loading" :data="tableInfo.data" tooltip-effect="dark myTooltips">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column label="品牌名称" align="center" prop="brandName" />
+        <el-table-column label="车辆品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
         <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
@@ -99,7 +95,6 @@
         <el-table-column label="质保开始" align="center" prop="startDate" show-overflow-tooltip />
         <el-table-column label="质保结束" align="center" prop="endDate" show-overflow-tooltip />
         <el-table-column label="质保状态" align="center" prop="stateLabel" />
-        <el-table-column label="更新时间" align="center" prop="realityDate" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="保养记录" placement="top">
