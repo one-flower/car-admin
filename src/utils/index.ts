@@ -324,6 +324,15 @@ export const isExternal = (path: string) => {
  * @returns
  */
 export const countList = (arr: (number | string)[], fixed?: number) => {
-  const sum: number = arr.reduce((a, b) => Number(a ?? 0) + Number(b ?? 0), 0);
+  const sum: number = arr.reduce((a, b) => Number(a ?? 0) + Number(b ?? 0), 0) as number;
   return sum.toFixed(fixed ?? 2);
+};
+
+export const towPriLabel = (val: string | number) => {
+  const num = Number(val);
+  if (num !== 0) {
+    return `${num.toFixed(2)} 元`;
+  } else {
+    return '0.00 元';
+  }
 };

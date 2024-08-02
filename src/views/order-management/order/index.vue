@@ -42,7 +42,7 @@
                 <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="订单时间" prop="createTime">
+            <el-form-item label="更新时间" prop="createTime">
               <el-date-picker
                 v-model="dateRange"
                 value-format="YYYY-MM-DD"
@@ -53,7 +53,7 @@
               />
             </el-form-item>
             <el-form-item label="订单状态" prop="orderState">
-              <el-select v-model="tableInfo.queryParams.commState" value-key="" placeholder="请选择订单状态" clearable filterable>
+              <el-select v-model="tableInfo.queryParams.orderState" value-key="" placeholder="请选择订单状态" clearable filterable>
                 <el-option v-for="item in dictObj.dictEnum__orderState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
@@ -215,17 +215,6 @@
             </el-form-item>
           </div>
         </el-form-item>
-        <el-form-item label="备注" prop="remarks">
-          <el-input
-            v-model="payInfo.data.remarks"
-            placeholder="请输入"
-            type="textarea"
-            row="auto"
-            maxlength="255"
-            show-word-limit
-            clearable
-          ></el-input>
-        </el-form-item>
         <el-form-item label="支付合计" prop="customId">
           <div
             :class="{ 'warn': countList([payInfo.data.accMoney, payInfo.data.cashMoney]) !== (payInfo.orderData?.orderPrice as unknown as string) }"
@@ -332,7 +321,7 @@ const changeBrand = async (val: string) => {
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const res = await orderList(proxy?.addDateRange(tableInfo.queryParams, dateRange.value, 'startDate'));
+  const res = await orderList(proxy?.addDateRange(tableInfo.queryParams, dateRange.value, 'updateTime'));
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -394,6 +383,8 @@ const orderStateRules = {
 };
 const handleUpState = (id: string, state: OrderState) => {
   orderStateInfo.visiable = true;
+  OrderStateRef.value?.resetFields();
+  OrderStateRef.value?.clearValidate();
   orderStateInfo.data.id = id;
   orderStateInfo.data.state = state;
   orderStateInfo.data.stateLabel = dictObj.dictEnum__orderState.find((x: any) => x.value === state)?.label ?? '';
