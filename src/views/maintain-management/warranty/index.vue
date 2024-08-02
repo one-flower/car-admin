@@ -97,7 +97,7 @@
         <el-table-column label="质保状态" align="center" prop="stateLabel" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
-            <el-tooltip content="保养记录" placement="top">
+            <el-tooltip v-if="row.maxNum > 0" content="保养记录" placement="top">
               <el-button v-hasPermi="['system:post:remove']" link @click="handleLog(row)">
                 <svg-icon class-name="search-icon" icon-class="order-log"></svg-icon>
               </el-button>
