@@ -85,7 +85,7 @@
             <el-descriptions-item label="订单类型"> {{ formInfo.data.typeLabel }} </el-descriptions-item>
             <el-descriptions-item label="项目类型"> {{ formInfo.data.projectTypeLabel }} </el-descriptions-item>
             <el-descriptions-item label="品牌名称"> {{ formInfo.data.productLabel }} </el-descriptions-item>
-            <el-descriptions-item label="订单价格"> {{ formInfo.data.orderPrice?.toFixed(2) }} </el-descriptions-item>
+            <el-descriptions-item label="订单价格"> {{ towPriLabel(formInfo.data.orderPrice) }} </el-descriptions-item>
           </el-descriptions>
           <el-form-item label="负责人" prop="directorId">
             <el-select v-model="formInfo.data.directorId" placeholder="负责人" clearable filterable>
@@ -179,7 +179,7 @@ import { orderAdd } from '@/api/order-management/order';
 import { OrderForm, OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import OrderDetail from '@/components/order-detail/index.vue';
 import propTypes from '@/utils/propTypes';
-import { countList } from '@/utils/index';
+import { countList, towPriLabel } from '@/utils/index';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(
@@ -262,7 +262,7 @@ const changeBrand = async (val: string) => {
   formInfo.data.projectType = undefined;
   formInfo.data.projectTypeLabel = '';
   formInfo.data.productId = undefined;
-  formInfo.data.orderPrice = 0;
+  formInfo.data.orderPrice = '0.00';
   productLoading.value = true;
   dictObj.productList = await productDropdown({
     productBrandId: val
@@ -387,6 +387,7 @@ const isEqual = computed(() => {
   return Number(countList([formInfo.data.accountPrice, formInfo.data.cashPrice])) === formInfo.data.orderPrice;
 });
 const handleNext = (step: number) => {
+  formInfo.data.orderPrice = Number(formInfo.data.orderPrice).toFixed(2);
   if (step === -1) {
     active.value += step;
     return;
@@ -422,7 +423,7 @@ const init = async () => {
   dictObj.cunstomList = cunstomList.map((item) => {
     return {
       value: item.id,
-      label: `${item.name}(${item.configPostIdLabel})`
+      label: item.name
     };
   });
   getCarDict();

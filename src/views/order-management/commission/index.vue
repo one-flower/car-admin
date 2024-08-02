@@ -55,6 +55,11 @@
                 <!-- <el-option v-for="item in dictObj.dictEnum__commDistri" :key="item.value" :label="item.label" :value="item.value"> </el-option> -->
               </el-select>
             </el-form-item>
+            <el-form-item label="支付状态" prop="payState">
+              <el-select v-model="tableInfo.queryParams.payState" value-key="" placeholder="请选择支付状态" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__payState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -78,7 +83,7 @@
         <el-table-column label="订单价格(/元)" align="left" prop="orderPrice" />
         <el-table-column label="订单提成(/元)" align="left" prop="commPrice" />
         <el-table-column label="负责人" align="center" prop="directorLabel" />
-        <el-table-column label="订单支付状态" align="center" prop="payStateLabel" />
+        <el-table-column label="支付状态" align="center" prop="payStateLabel" />
         <el-table-column label="分配状态" align="center" prop="commStateLabel" />
         <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -152,7 +157,8 @@ const dictObj = toReactive<any>(
   proxy?.useNewDict(
     'dictEnum__orderType', // 订单类型
     'configProject__configProject', // 项目类型
-    'configProductBrand__configProductBrand' // 产品品牌
+    'configProductBrand__configProductBrand', // 产品品牌
+    'dictEnum__payState'
   )
 );
 
@@ -297,7 +303,7 @@ const init = async () => {
   dictObj.cunstomList = cunstomList.map((item) => {
     return {
       value: item.id,
-      label: `${item.name}(${item.configPostIdLabel})`
+      label: item.name
     };
   });
   getTableData();

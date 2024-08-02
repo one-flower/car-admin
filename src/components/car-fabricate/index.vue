@@ -212,6 +212,7 @@ const cancel = () => {
 };
 
 const handleCancel = () => {
+  resetQuery();
   emit('update:visible', false);
 };
 

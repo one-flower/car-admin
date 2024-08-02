@@ -25,11 +25,10 @@
         <el-descriptions-item label="提成金额"> {{ towPriLabel(configPyaData.commPrice) }}</el-descriptions-item>
         <el-descriptions-item label="提成分配"> {{ configPyaData.commDistriLabel }} </el-descriptions-item>
       </template>
-      <el-descriptions-item label="订单支付" :span="['PROMPTLY_PAY', 'PAID'].includes(configPyaData.orderPayType) ? 1 : 2">
+      <el-descriptions-item label="订单支付" :span="2">
         {{ configPyaData.orderPayTypeLabel }}
       </el-descriptions-item>
       <template v-if="['PROMPTLY_PAY', 'PAID'].includes(configPyaData.orderPayType)">
-        <el-descriptions-item label="支付金额"> {{ towPriLabel(configPyaData.realityPrice) }}</el-descriptions-item>
         <el-descriptions-item label="账户支付"> {{ towPriLabel(configPyaData.accountPrice) }}</el-descriptions-item>
         <el-descriptions-item label="现金支付"> {{ towPriLabel(configPyaData.cashPrice) }}</el-descriptions-item>
       </template>
@@ -56,6 +55,7 @@
 import { PropType } from 'vue';
 import { OrderDesc, ConfigPayDesc } from '@/api/order-management/order/types';
 import UserRecharge from '@/views/customer-management/customer/user-recharge.vue';
+import { towPriLabel } from '@/utils/index';
 
 const emit = defineEmits(['changeMoney']);
 const props = defineProps({
@@ -112,16 +112,6 @@ const props = defineProps({
     }
   }
 });
-
-const towPriLabel = (val: string | number) => {
-  const num = Number(val);
-  console.log(num, 'num');
-  if (num !== 0) {
-    return `${num.toFixed(2)} 元`;
-  } else {
-    return '0.00 元';
-  }
-};
 
 const rechargeInfo = reactive({
   visible: false,
