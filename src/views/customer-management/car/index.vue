@@ -38,10 +38,17 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+            <el-button v-hasPermi="['clyh:carManage:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableAttr.multiple" @click="handleDelete()">
+            <el-button
+              v-hasPermi="['clyh:carManage:remove']"
+              type="danger"
+              plain
+              icon="Delete"
+              :disabled="tableAttr.multiple"
+              @click="handleDelete()"
+            >
               删除
             </el-button>
           </el-col>
@@ -66,30 +73,30 @@
         <el-table-column label="操作" width="180" header-align="center" align="left" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="车辆装配" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link @click="handleFabricate(row)">
+              <el-button v-hasPermi="['clyh:carManage:fabricate']" link @click="handleFabricate(row)">
                 <svg-icon class-name="search-icon" icon-class="car-change" />
               </el-button>
             </el-tooltip>
             <!-- <el-tooltip content="车辆订单" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link @click="handleOrderLog(row)">
+              <el-button v-hasPermi="['clyh:carManage:edit']" link @click="handleOrderLog(row)">
                 <svg-icon class-name="search-icon" icon-class="order-log"
               /></el-button>
             </el-tooltip> -->
             <el-tooltip content="车主变更" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link @click="handleUser(row)">
+              <el-button v-hasPermi="['clyh:carManage:belong']" link @click="handleUser(row)">
                 <svg-icon class-name="search-icon" icon-class="car-user-change"
               /></el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
+              <el-button v-hasPermi="['clyh:carManage:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
             </el-tooltip>
             <el-tooltip :content="row.carState === '0' ? '车辆启用' : '车辆禁用'" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link type="info" @click="handleState(row)">
+              <el-button v-hasPermi="['clyh:carManage:state']" link type="info" @click="handleState(row)">
                 <svg-icon class-name="search-icon" :icon-class="row.carState === '0' ? 'open' : 'close'" />
               </el-button>
             </el-tooltip>
             <el-tooltip v-if="row.carState === '0'" content="删除" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
+              <el-button v-hasPermi="['clyh:carManage:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>

@@ -164,7 +164,6 @@ const handleQuery = () => {
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
   tableInfo.queryParams.pageNum = 1;
-  handleQuery();
 };
 
 // 详情
@@ -212,11 +211,11 @@ const cancel = () => {
 };
 
 const handleCancel = () => {
-  resetQuery();
   emit('update:visible', false);
 };
 
 const init = async () => {
+  resetQuery();
   getTableData();
 };
 

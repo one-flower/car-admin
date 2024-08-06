@@ -64,10 +64,10 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <!-- <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+            <el-button v-hasPermi="['clyh:warranty:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableInfo.multiple" @click="handleDelete()">
+            <el-button v-hasPermi="['clyh:warranty:remove']" type="danger" plain icon="Delete" :disabled="tableInfo.multiple" @click="handleDelete()">
               删除
             </el-button>
           </el-col> -->
@@ -88,7 +88,7 @@
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip v-if="row.maxNum > 0" content="保养记录" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link @click="handleLog(row)">
+              <el-button v-hasPermi="['clyh:warranty:log']" link @click="handleLog(row)">
                 <svg-icon class-name="search-icon" icon-class="order-log"></svg-icon>
               </el-button>
             </el-tooltip>

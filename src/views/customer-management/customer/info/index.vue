@@ -35,7 +35,7 @@
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="装配情况" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link @click="handleFabricate(row)">
+              <el-button v-hasPermi="['clyh:custom:archivesInfo']" link @click="handleFabricate(row)">
                 <svg-icon class-name="search-icon" icon-class="car-change" />
               </el-button>
             </el-tooltip>

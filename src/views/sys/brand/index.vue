@@ -24,10 +24,17 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+            <el-button v-hasPermi="['clyh:configPost:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableAttr.multiple" @click="handleDelete()">
+            <el-button
+              v-hasPermi="['clyh:configPost:remove']"
+              type="danger"
+              plain
+              icon="Delete"
+              :disabled="tableAttr.multiple"
+              @click="handleDelete()"
+            >
               删除
             </el-button>
           </el-col>
@@ -47,13 +54,13 @@
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="修改" placement="top">
-              <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
+              <el-button v-hasPermi="['clyh:configPost:edit']" link type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
+              <el-button v-hasPermi="['clyh:configPost:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
             </el-tooltip>
             <!-- <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link @click="handleDetail(row)">
+              <el-button v-hasPermi="['clyh:configPost:detail']" link @click="handleDetail(row)">
                 <svg-icon icon-class="detail"></svg-icon>
               </el-button>
             </el-tooltip> -->

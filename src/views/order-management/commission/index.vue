@@ -88,12 +88,12 @@
         <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link @click="handlePay(row, false)">
+              <el-button v-hasPermi="['clyh:comm:detail']" link @click="handlePay(row, false)">
                 <svg-icon class-name="search-icon" icon-class="detail"></svg-icon>
               </el-button>
             </el-tooltip>
             <el-tooltip v-if="row.commState !== 'Y'" content="立即分配" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link @click="handlePay(row, true)">
+              <el-button v-hasPermi="['clyh:comm:pay']" link @click="handlePay(row, true)">
                 <svg-icon icon-class="commission"></svg-icon>
               </el-button>
             </el-tooltip>

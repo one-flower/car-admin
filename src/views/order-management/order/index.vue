@@ -84,10 +84,10 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+            <el-button v-hasPermi="['clyh:order:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <!-- <el-col :span="1.5">
-            <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="tableInfo.multiple" @click="handleDelete()">
+            <el-button v-hasPermi="['clyh:order:remove']" type="danger" plain icon="Delete" :disabled="tableInfo.multiple" @click="handleDelete()">
               删除
             </el-button>
           </el-col> -->
@@ -114,53 +114,53 @@
         <el-table-column label="操作" width="120" align="left" header-align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="{ row }">
             <el-tooltip content="详情" placement="top">
-              <el-button v-hasPermi="['system:post:detail']" link @click="handleDetail(row)">
+              <el-button v-hasPermi="['clyh:order:detail']" link @click="handleDetail(row)">
                 <svg-icon class-name="search-icon" icon-class="detail"></svg-icon>
               </el-button>
             </el-tooltip>
             <template v-if="row.state !== 'CANCEL_ORDER'">
               <el-tooltip v-if="row.payState !== 'PAID'" content="支付" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link @click="handlePay(row)">
+                <el-button v-hasPermi="['clyh:order:pay']" link @click="handlePay(row)">
                   <svg-icon icon-class="pay-now"></svg-icon>
                 </el-button>
               </el-tooltip>
             </template>
             <template v-if="row.state === 'WAIT_CONSTRUCTED'">
               <el-tooltip content="开始施工" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link @click="handleUpState(row.id, 'DURING_CONSTRUCTION')">
+                <el-button v-hasPermi="['clyh:order:state']" link @click="handleUpState(row.id, 'DURING_CONSTRUCTION')">
                   <svg-icon icon-class="during-construction"></svg-icon>
                 </el-button>
               </el-tooltip>
             </template>
             <template v-else-if="row.state === 'DURING_CONSTRUCTION'">
               <el-tooltip content="完成施工" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link @click="handleUpState(row.id, 'CONSTRUCTED_COMPLETE')">
+                <el-button v-hasPermi="['clyh:order:state']" link @click="handleUpState(row.id, 'CONSTRUCTED_COMPLETE')">
                   <svg-icon icon-class="constructed-complete"></svg-icon>
                 </el-button>
               </el-tooltip>
             </template>
             <template v-else-if="row.state === 'CONSTRUCTED_COMPLETE'">
               <el-tooltip content="订单交付" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link @click="handleUpState(row.id, 'WAIT_DELIVERED')">
+                <el-button v-hasPermi="['clyh:order:state']" link @click="handleUpState(row.id, 'WAIT_DELIVERED')">
                   <svg-icon icon-class="wait-delivered"></svg-icon>
                 </el-button>
               </el-tooltip>
             </template>
             <template v-else-if="row.state === 'WAIT_DELIVERED'">
               <el-tooltip content="订单完成" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link @click="handleUpState(row.id, 'ORDER_COMPLETED')">
+                <el-button v-hasPermi="['clyh:order:state']" link @click="handleUpState(row.id, 'ORDER_COMPLETED')">
                   <svg-icon icon-class="order-completed"></svg-icon>
                 </el-button>
               </el-tooltip>
             </template>
             <template v-else-if="row.state === 'CANCEL_ORDER'">
               <el-tooltip content="删除订单" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
+                <el-button v-hasPermi="['clyh:order:remove']" link type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
               </el-tooltip>
             </template>
             <template v-if="['WAIT_CONSTRUCTED', 'DURING_CONSTRUCTION'].includes(row.state) || (row.state === 'WAIT_DELIVERED' && row.isFlow === 0)">
               <el-tooltip content="取消订单" placement="top">
-                <el-button v-hasPermi="['system:post:remove']" link @click="handleUpState(row.id, 'CANCEL_ORDER')">
+                <el-button v-hasPermi="['clyh:order:cancel']" link @click="handleUpState(row.id, 'CANCEL_ORDER')">
                   <svg-icon icon-class="cancel-order"></svg-icon>
                 </el-button>
               </el-tooltip>
@@ -215,12 +215,8 @@
             </el-form-item>
           </div>
         </el-form-item>
-        <el-form-item label="支付合计" prop="customId">
-          <div
-            :class="{ 'warn': countList([payInfo.data.accMoney, payInfo.data.cashMoney]) !== (payInfo.orderData?.orderPrice as unknown as string) }"
-          >
-            {{ countList([payInfo.data.accMoney, payInfo.data.cashMoney]) }} 元
-          </div>
+        <el-form-item label="支付合计 " prop="customId">
+          <div :class="{ 'warn': !isEqual }">{{ countList([payInfo.data.accMoney, payInfo.data.cashMoney]) }} 元</div>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -478,6 +474,9 @@ const payRules = {
   cashMoney: [{ required: true, message: '现金支付不能为空', trigger: ['change', 'blur'] }],
   payChannel: [{ required: true, message: '支付方式不能为空', trigger: 'change' }]
 };
+const isEqual = computed(() => {
+  return !(Number(payInfo.data.accMoney) + Number(payInfo.data.cashMoney) - Number(payInfo.orderData.orderPrice));
+});
 const handlePay = async (row: TableVO) => {
   PayFormRef.value?.resetFields();
   const res = await orderInfo(row?.id);
