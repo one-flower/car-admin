@@ -79,7 +79,7 @@
         <el-table-column label="车辆品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
-        <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
+        <el-table-column label="项目类型" align="center" prop="projectTypeName" />
         <el-table-column label="产品品牌" align="center" prop="productBrandName" />
         <el-table-column label="产品名称" align="center" prop="productName" />
         <el-table-column label="质保开始" align="center" prop="startDate" show-overflow-tooltip />
