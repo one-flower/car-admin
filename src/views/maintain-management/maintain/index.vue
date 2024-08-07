@@ -79,12 +79,12 @@
         <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width" fixed="right">
           <template #default="{ row }">
             <el-tooltip v-if="row.isExpire === 'N'" content="进店保养" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'MAINTAIN')">
+              <el-button v-hasPermi="['clyh:frequency:inStore']" link @click="handleAdd(row, 'MAINTAIN')">
                 <svg-icon icon-class="in-store"></svg-icon>
               </el-button>
             </el-tooltip>
             <el-tooltip v-if="row.isCrossStore === 'Y' && row.isExpire === 'N'" content="跨店保养" placement="top">
-              <el-button v-hasPermi="['system:post:remove']" link @click="handleAdd(row, 'CROSS_STORE')">
+              <el-button v-hasPermi="['clyh:frequency:unionStore']" link @click="handleAdd(row, 'CROSS_STORE')">
                 <svg-icon icon-class="union-store"></svg-icon>
               </el-button>
             </el-tooltip>

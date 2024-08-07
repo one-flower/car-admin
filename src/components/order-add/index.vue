@@ -384,7 +384,7 @@ const setPay = () => {
   }
 };
 const isEqual = computed(() => {
-  return Number(countList([formInfo.data.accountPrice, formInfo.data.cashPrice])) === formInfo.data.orderPrice;
+  return !(Number(formInfo.data.accountPrice) + Number(formInfo.data.cashPrice) - Number(formInfo.data.orderPrice));
 });
 const handleNext = (step: number) => {
   formInfo.data.orderPrice = Number(formInfo.data.orderPrice).toFixed(2);
