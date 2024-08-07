@@ -38,7 +38,7 @@
   </template>
   <!-- 日志 -->
   <el-steps :active="orderLogList.length" direction="vertical" process-status="success" finish-status="success">
-    <el-step v-for="item in orderLogList" :key="item.key" :title="item.orderState">
+    <el-step v-for="item in orderLogList" :key="item.key" :title="item.orderStateLabel">
       <template #description>
         <el-descriptions title="" :column="1" border class="mb10">
           <el-descriptions-item label="处理人员"> {{ item.createByLabel }} </el-descriptions-item>

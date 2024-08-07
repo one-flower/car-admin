@@ -9,7 +9,7 @@
           <el-descriptions-item label="车牌号码"> {{ basicData.licensePlate }} </el-descriptions-item>
           <el-descriptions-item label="产品品牌"> {{ basicData.productBrandName }} </el-descriptions-item>
           <el-descriptions-item label="产品名称"> {{ basicData.productName }} </el-descriptions-item>
-          <el-descriptions-item label="质保周期"> {{ basicData.maxNum }} 个月 </el-descriptions-item>
+          <!-- <el-descriptions-item label="质保周期"> {{ basicData.maxNum }} 个月 </el-descriptions-item> -->
         </el-descriptions>
       </div>
 

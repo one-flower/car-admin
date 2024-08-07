@@ -42,10 +42,24 @@
               </el-select>
             </el-form-item>
             <el-form-item label="质保开始日期" prop="startDate">
-              <el-date-picker v-model="tableInfo.queryParams.startDate" value-format="YYYY-MM-DD" type="date" placeholder="开始日期" />
+              <el-date-picker
+                v-model="startDateRange"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
             </el-form-item>
             <el-form-item label="质保结束日期" prop="endDate">
-              <el-date-picker v-model="tableInfo.queryParams.endDate" value-format="YYYY-MM-DD" type="date" placeholder="结束日期" />
+              <el-date-picker
+                v-model="endDateRange"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
             </el-form-item>
             <el-form-item label="质保状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
@@ -79,11 +93,11 @@
         <el-table-column label="车辆品牌" align="center" prop="brandName" />
         <!-- <el-table-column label="车架号码" align="center" prop="vin" /> -->
         <el-table-column label="车牌号码" align="center" prop="licensePlate" />
-        <el-table-column label="项目类型" align="center" prop="projectTypeLabel" />
+        <el-table-column label="项目类型" align="center" prop="projectTypeName" />
         <el-table-column label="产品品牌" align="center" prop="productBrandName" />
         <el-table-column label="产品名称" align="center" prop="productName" />
-        <el-table-column label="质保开始" align="center" prop="startDate" show-overflow-tooltip />
-        <el-table-column label="质保结束" align="center" prop="endDate" show-overflow-tooltip />
+        <el-table-column label="质保开始日期" align="center" prop="startDate" show-overflow-tooltip />
+        <el-table-column label="质保结束日期" align="center" prop="endDate" show-overflow-tooltip />
         <el-table-column label="质保状态" align="center" prop="stateLabel" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
@@ -123,6 +137,9 @@ import { productDropdown } from '@/api/product-management/product';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(proxy?.useDict('configProject__configProject', 'configProductBrand__configProductBrand', 'dictEnum__warrantyState'));
+const startDateRange = ref<[DateModelType, DateModelType]>(['', '']);
+const endDateRange = ref<[DateModelType, DateModelType]>(['', '']);
+
 const queryFormRef = ref<ElFormInstance>();
 const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
   ids: [],
@@ -154,7 +171,9 @@ const rules = {
 /** 查询品牌列表 */
 const getTableData = async () => {
   tableInfo.loading = true;
-  const res = await warrantyList(tableInfo.queryParams);
+  let queryParams = proxy?.addDateRange(tableInfo.queryParams, startDateRange.value, 'startDate');
+  queryParams = proxy?.addDateRange(queryParams, endDateRange.value, 'endDate');
+  const res = await warrantyList(queryParams);
   tableInfo.data = res.rows;
   tableInfo.total = res.total;
   tableInfo.loading = false;
@@ -177,6 +196,8 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
+  startDateRange.value = ['', ''];
+  endDateRange.value = ['', ''];
   formInfo.data = { ...initFormData };
   formRef.value?.resetFields();
 };

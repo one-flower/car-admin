@@ -43,7 +43,7 @@
             </el-form-item>
             <el-form-item label="保养状态" prop="state">
               <el-select v-model="tableInfo.queryParams.state" value-key="" placeholder="请选择质保状态" clearable filterable>
-                <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in dictObj.dictEnum__frequencyState" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -78,16 +78,18 @@
         <el-table-column label="保养状态" align="center" prop="stateLabel" />
         <el-table-column label="操作" width="100" header-align="center" align="left" class-name="small-padding fixed-width" fixed="right">
           <template #default="{ row }">
-            <el-tooltip v-if="row.isExpire === 'N'" content="进店保养" placement="top">
-              <el-button v-hasPermi="['clyh:frequency:inStore']" link @click="handleAdd(row, 'MAINTAIN')">
-                <svg-icon icon-class="in-store"></svg-icon>
-              </el-button>
-            </el-tooltip>
-            <el-tooltip v-if="row.isCrossStore === 'Y' && row.isExpire === 'N'" content="跨店保养" placement="top">
-              <el-button v-hasPermi="['clyh:frequency:unionStore']" link @click="handleAdd(row, 'CROSS_STORE')">
-                <svg-icon icon-class="union-store"></svg-icon>
-              </el-button>
-            </el-tooltip>
+            <template v-if="!['IN_MAINTAIN', 'ALREADY_MAINTAIN'].includes(row.state)">
+              <el-tooltip v-if="row.isExpire === 'N'" content="进店保养" placement="top">
+                <el-button v-hasPermi="['clyh:frequency:inStore']" link @click="handleAdd(row, 'MAINTAIN')">
+                  <svg-icon icon-class="in-store"></svg-icon>
+                </el-button>
+              </el-tooltip>
+              <el-tooltip v-if="row.isCrossStore === 'Y' && row.isExpire === 'N'" content="跨店保养" placement="top">
+                <el-button v-hasPermi="['clyh:frequency:unionStore']" link @click="handleAdd(row, 'CROSS_STORE')">
+                  <svg-icon icon-class="union-store"></svg-icon>
+                </el-button>
+              </el-tooltip>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -113,7 +115,7 @@ import OrderAdd from '@/components/order-add/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const dictObj = toReactive<any>(proxy?.useDict('clyhBrand__clyhBrand', 'configProject__configProject'));
+const dictObj = toReactive<any>(proxy?.useNewDict('clyhBrand__clyhBrand', 'configProject__configProject', 'dictEnum__frequencyState'));
 const realityDateDateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const planDateDateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
