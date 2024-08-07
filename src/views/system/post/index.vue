@@ -74,7 +74,9 @@
                 >
               </el-col>
               <el-col :span="1.5">
-                <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"> 删除 </el-button>
+                <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()">
+                  删除
+                </el-button>
               </el-col>
               <el-col :span="1.5">
                 <el-button v-hasPermi="['system:post:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
@@ -106,7 +108,7 @@
                   <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)"></el-button>
                 </el-tooltip>
                 <el-tooltip content="删除" placement="top">
-                  <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
+                  <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -122,7 +124,7 @@
         </el-card>
 
         <!-- 添加或修改岗位对话框 -->
-        <el-dialog v-model="dialog.visible" :title="dialog.title" width="600px" append-to-body>
+        <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
           <el-form ref="postFormRef" :model="form" :rules="rules" label-width="80px">
             <el-form-item label="岗位名称" prop="postName">
               <el-input v-model="form.postName" placeholder="请输入岗位名称" />
@@ -314,7 +316,7 @@ const handleUpdate = async (row?: PostVO) => {
   reset();
   const postId = row?.postId || ids.value[0];
   const res = await getPost(postId);
-  form.value = res.data;
+  Object.assign(form.value, res.data);
   dialog.visible = true;
   dialog.title = '修改岗位';
 };

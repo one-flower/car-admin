@@ -1,18 +1,31 @@
 export interface PostVO extends BaseEntity {
-  id: number | string;
+  postId: number | string;
+  deptId: number | string;
   postCode: string;
-  name: string;
-  remarks: string;
+  postName: string;
+  postCategory: string;
+  deptName: string;
+  postSort: number;
+  status: string;
+  remark: string;
 }
 
 export interface PostForm {
-  id: number | string | undefined;
+  postId: number | string | undefined;
+  deptId: number | string | undefined;
   postCode: string;
-  name: string;
-  remarks: string;
+  postName: string;
+  postCategory: string;
+  postSort: number;
+  status: string;
+  remark: string;
 }
 
 export interface PostQuery extends PageQuery {
+  deptId: number | string;
+  belongDeptId: number | string;
   postCode: string;
-  name: string;
+  postName: string;
+  postCategory: string;
+  status: string;
 }
