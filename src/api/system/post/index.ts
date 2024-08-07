@@ -5,7 +5,7 @@ import { AxiosPromise } from 'axios';
 // 查询岗位列表
 export function listPost(query: PostQuery): AxiosPromise<PostVO[]> {
   return request({
-    url: '/clyh/configPost/list',
+    url: '/system/post/list',
     method: 'get',
     params: query
   });
@@ -14,7 +14,7 @@ export function listPost(query: PostQuery): AxiosPromise<PostVO[]> {
 // 查询岗位详细
 export function getPost(postId: string | number): AxiosPromise<PostVO> {
   return request({
-    url: '/clyh/configPost/' + postId,
+    url: '/system/post/' + postId,
     method: 'get'
   });
 }
@@ -34,7 +34,7 @@ export function optionselect(deptId?: number | string, postIds?: (number | strin
 // 新增岗位
 export function addPost(data: PostForm) {
   return request({
-    url: '/clyh/configPost',
+    url: '/system/post',
     method: 'post',
     data: data
   });
@@ -43,7 +43,7 @@ export function addPost(data: PostForm) {
 // 修改岗位
 export function updatePost(data: PostForm) {
   return request({
-    url: '/clyh/configPost',
+    url: '/system/post',
     method: 'put',
     data: data
   });
@@ -52,7 +52,7 @@ export function updatePost(data: PostForm) {
 // 删除岗位
 export function delPost(postId: string | number | (string | number)[]) {
   return request({
-    url: '/clyh/configPost/' + postId,
+    url: '/system/post/' + postId,
     method: 'delete'
   });
 }
