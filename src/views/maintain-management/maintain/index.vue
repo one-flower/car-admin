@@ -4,21 +4,32 @@
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="车辆品牌" prop="brandName">
+            <el-form-item label="项目类型" prop="projectType">
+              <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
+                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <!-- <el-form-item label="车辆品牌" prop="brandName">
               <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择车辆品牌" clearable filterable>
                 <el-option v-for="item in dictObj.clyhBrand__clyhBrand" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <!-- <el-form-item label="车架号码" prop="vin">
               <el-input v-model="tableInfo.queryParams.vin" placeholder="请输入车架号码" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
-            <el-form-item label="车牌号码" prop="brandId">
-              <el-input v-model="tableInfo.queryParams.brandId" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="车牌号码" prop="licensePlate">
+              <el-input v-model="tableInfo.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="产品品牌" prop="productBrandId">
+              <el-select v-model="tableInfo.queryParams.productBrandId" placeholder="请选择产品品牌" clearable filterable @change="changeBrand">
+                <el-option v-for="item in dictObj.configProductBrand__configProductBrand" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="产品名称" prop="productId">
-              <el-select v-model="tableInfo.queryParams.productId" value-key="" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in dictObj.configProject__configProject" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
+              <el-select v-model="tableInfo.queryParams.productId" :disabled="productLoading" placeholder="请选择产品名称" clearable filterable>
+                <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="计划保养日期" prop="planDateDateRange">
@@ -111,11 +122,14 @@
 <script setup name="maintain" lang="ts">
 import { frequencyAdd, frequencyDel, frequencyUp, frequencyInfo, frequencyList } from '@/api/maintain-management/maintain';
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/maintain/types';
+import { productDropdown } from '@/api/product-management/product';
 import OrderAdd from '@/components/order-add/index.vue';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const dictObj = toReactive<any>(proxy?.useNewDict('clyhBrand__clyhBrand', 'configProject__configProject', 'dictEnum__frequencyState'));
+const dictObj = toReactive<any>(
+  proxy?.useNewDict('clyhBrand__clyhBrand', 'configProject__configProject', 'dictEnum__frequencyState', 'configProductBrand__configProductBrand')
+);
 const realityDateDateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const planDateDateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const queryFormRef = ref<ElFormInstance>();
@@ -154,6 +168,16 @@ const rules = {
   name: [{ required: true, message: '品牌名称不能为空', trigger: 'blur' }],
   isOrg: [{ required: true, message: '上游机构不能为空', trigger: 'change' }],
   upOrg: [{ required: true, message: '上游机构不能为空', trigger: ['blur', 'change'] }]
+};
+
+const productLoading = ref(false);
+const changeBrand = async (val: string) => {
+  tableInfo.queryParams.productId = undefined;
+  productLoading.value = true;
+  dictObj.productList = await productDropdown({
+    productBrandId: val
+  });
+  productLoading.value = false;
 };
 
 /** 查询品牌列表 */

@@ -83,7 +83,7 @@
         <el-table-column label="项目类型" align="center" prop="projectTypeLabel" show-overflow-tooltip />
         <el-table-column label="产品品牌" align="center" prop="productBrandLabel" show-overflow-tooltip />
         <el-table-column label="订单产品" align="center" prop="productIdLabel" show-overflow-tooltip />
-        <el-table-column label="订单时间" align="center" prop="createTime" show-overflow-tooltip />
+        <!-- <el-table-column label="订单时间" align="center" prop="createTime" show-overflow-tooltip /> -->
         <el-table-column label="提成总额" align="center" prop="commPrice" show-overflow-tooltip />
         <el-table-column label="个人提成" align="center" prop="personalCommPrice" show-overflow-tooltip />
         <el-table-column label="提成方式" align="center" prop="commDistriLabel" show-overflow-tooltip />

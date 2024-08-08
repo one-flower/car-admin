@@ -4,10 +4,11 @@
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="tableInfo.queryParams" :inline="true" @submit.prevent>
-            <el-form-item label="订单类型" prop="type">
-              <el-select v-model="tableInfo.queryParams.type" value-key="" placeholder="请选择项目类型" clearable filterable>
-                <el-option v-for="item in dictObj.dictEnum__orderType" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+            <el-form-item label="订单编号" prop="orderNo">
+              <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入项目编号" clearable @keyup.enter="handleQuery"></el-input>
+            </el-form-item>
+            <el-form-item label="车牌号码" prop="licensePlate">
+              <el-input v-model="tableInfo.queryParams.licensePlate" placeholder="请输入车牌号码" clearable @keyup.enter="handleQuery"></el-input>
             </el-form-item>
             <el-form-item label="项目类型" prop="projectType">
               <el-select v-model="tableInfo.queryParams.projectType" value-key="" placeholder="请选择项目类型" clearable filterable>
@@ -15,8 +16,10 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="订单编号" prop="orderNo">
-              <el-input v-model="tableInfo.queryParams.orderNo" placeholder="请输入项目编号" clearable @keyup.enter="handleQuery"></el-input>
+            <el-form-item label="负责人" prop="directorId">
+              <el-select v-model="tableInfo.queryParams.directorId" value-key="" placeholder="请选择产品名称" clearable filterable>
+                <el-option v-for="item in dictObj.cunstomList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="产品品牌" prop="productBrandId">
               <el-select
@@ -43,9 +46,9 @@
                 <el-option v-for="item in dictObj.productList" :key="item.value" :label="item.productName" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="负责人" prop="directorId">
-              <el-select v-model="tableInfo.queryParams.directorId" value-key="" placeholder="请选择产品名称" clearable filterable>
-                <el-option v-for="item in dictObj.cunstomList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-form-item label="支付状态" prop="payState">
+              <el-select v-model="tableInfo.queryParams.payState" value-key="" placeholder="请选择支付状态" clearable filterable>
+                <el-option v-for="item in dictObj.dictEnum__payState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="分配状态" prop="commState">
@@ -53,11 +56,6 @@
                 <el-option label="已分配" value="Y" />
                 <el-option label="未分配" value="N" />
                 <!-- <el-option v-for="item in dictObj.dictEnum__commDistri" :key="item.value" :label="item.label" :value="item.value"> </el-option> -->
-              </el-select>
-            </el-form-item>
-            <el-form-item label="支付状态" prop="payState">
-              <el-select v-model="tableInfo.queryParams.payState" value-key="" placeholder="请选择支付状态" clearable filterable>
-                <el-option v-for="item in dictObj.dictEnum__payState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -78,6 +76,7 @@
         <el-table-column label="订单类型" align="left" prop="typeLabel" />
         <el-table-column label="订单编号" align="left" prop="orderNo" show-overflow-tooltip />
         <el-table-column label="项目类型" align="left" prop="projectTypeLabel" />
+        <el-table-column label="车牌号码" align="left" prop="licensePlate" />
         <el-table-column label="产品品牌" align="left" prop="productBrandLabel" />
         <el-table-column label="订单产品" align="left" prop="productIdLabel" />
         <el-table-column label="订单价格(/元)" align="left" prop="orderPrice" />
@@ -155,7 +154,6 @@ import { staffDropdown } from '@/api/store-management/staff';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const dictObj = toReactive<any>(
   proxy?.useNewDict(
-    'dictEnum__orderType', // 订单类型
     'configProject__configProject', // 项目类型
     'configProductBrand__configProductBrand', // 产品品牌
     'dictEnum__payState'

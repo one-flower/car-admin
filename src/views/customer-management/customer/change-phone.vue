@@ -9,7 +9,7 @@
       <el-form-item label="新手机号码" prop="newTelephone">
         <el-input v-model="changeForm.newTelephone" placeholder="请输入新手机号码" clearable />
       </el-form-item>
-      <el-form-item label="图形验证码" prop="imgCode">
+      <!-- <el-form-item label="图形验证码" prop="imgCode">
         <el-input v-model="changeForm.imgCode" auto-complete="off" placeholder="图形验证码" style="width: 63%"> </el-input>
         <div class="login-code">
           <img :src="codeUrl" class="login-code-img" @click="getCode" />
@@ -22,7 +22,7 @@
             {{ smsInfo.showSend ? '获取验证码' : `${smsInfo.count}秒后重试` }}
           </el-button>
         </div>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
     <template #footer>

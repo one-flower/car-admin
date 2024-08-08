@@ -9,7 +9,10 @@
       </div>
     </div>
     <div class="login__bottom">
-      <span class="login__bottom--title">CarCare车辆养护系统</span>
+      <div class="login__bottom__title">
+        CarCare车辆养护系统
+        <span class="login__bottom__title--span">Version 1.0.0</span>
+      </div>
       <span class="login__bottom--subTtile">CARCARE VEHICE MAINTENANCE SYSTEM</span>
       <div class="login__bottom--type">
         <div class="login__bottom--li">
@@ -255,22 +258,11 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-// .login {
-//   display: flex;
-//   //justify-content: center;
-//   align-items: center;
-//   height: 100%;
-//   background-image: url('../assets/images/login-background.jpg');
-//   background-size: cover;
-//   background-repeat: no-repeat;
-// }
 .login {
   width: 100vw;
   height: 100vh;
   min-width: 1400px;
   min-height: 700px;
-  // min-width: 1000px;
-  // min-height: 500px;
   position: relative;
   &--logo {
     position: absolute;
@@ -308,7 +300,7 @@ onMounted(() => {
     width: 100%;
     height: 40%;
     position: relative;
-    &--title {
+    &__title {
       position: absolute;
       left: 40%;
       padding: 10px 0;
@@ -317,6 +309,10 @@ onMounted(() => {
       border-bottom: 1px solid rgb(255, 255, 255, 0.5);
       overflow: hidden;
       white-space: nowrap;
+      &--span {
+        margin-left: 60px;
+        font-size: 16px;
+      }
     }
     &--subTtile {
       position: absolute;
@@ -358,17 +354,12 @@ onMounted(() => {
   font-size: 32px;
   font-weight: bold;
 }
-:deep(.is-focus) {
-  border: 0px;
-  box-shadow: none;
-}
+
 .login-form {
   border-radius: 8px;
   background: #ffffff;
   width: 370px;
   padding: 50px 30px;
-  // position: fixed;
-  // left: 176px;
   box-shadow: 0px 0px 2px 2px rgba(212, 212, 212, 0.5);
   .el-input {
     border: 0px;
@@ -440,12 +431,13 @@ onMounted(() => {
     vertical-align: middle;
   }
 }
+
 .login-code-img {
   position: relative;
   width: 100%;
   height: 40px;
-  // padding-left: 12px;
 }
+
 .el-login-footer {
   height: 40px;
   line-height: 40px;
@@ -454,8 +446,6 @@ onMounted(() => {
   width: 100%;
   text-align: center;
   color: #fff;
-  // font-family: Arial, serif;
   font-size: 12px;
-  // letter-spacing: 1px;
 }
 </style>
