@@ -44,3 +44,13 @@ export function warrantyDel(id: string | number | (string | number)[]) {
     method: 'delete'
   });
 }
+
+// 切换状态
+export function warrantyUpdatePending(data: any) {
+  // id、pendingState、remarks
+  return request({
+    url: '/clyh/warranty/updatePending',
+    method: 'put',
+    data: data
+  });
+}

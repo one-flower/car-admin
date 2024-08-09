@@ -84,8 +84,8 @@
           <el-table-column label="订单产品" align="center" prop="productIdLabel" />
           <el-table-column label="订单状态" align="center" prop="stateLabel" />
           <el-table-column label="订单更新时间" align="center" prop="updateTime" show-overflow-tooltip width="120" />
-          <el-table-column label="订单价格(/元)" align="center" prop="orderPrice" />
-          <el-table-column label="实际支付(/元)" align="center" prop="realityPrice" />
+          <el-table-column label="订单价格" align="center" prop="orderPrice" />
+          <el-table-column label="实际支付" align="center" prop="realityPrice" />
           <el-table-column label="支付状态" align="center" prop="payStateLabel" />
           <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
             <template #default="{ row }">

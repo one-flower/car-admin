@@ -107,8 +107,8 @@
         <!-- <el-table-column label="订单施工" align="left" prop="isFlowLabel" /> -->
         <el-table-column label="订单状态" align="left" prop="stateLabel" />
         <el-table-column label="订单提成" align="left" prop="commPrice" />
-        <el-table-column label="订单价格(/元)" align="left" prop="orderPrice" />
-        <el-table-column label="实际支付(/元)" align="left" prop="realityPrice" />
+        <el-table-column label="订单价格" align="left" prop="orderPrice" />
+        <el-table-column label="实际支付" align="left" prop="realityPrice" />
         <el-table-column label="支付状态" align="left" prop="payStateLabel" />
         <el-table-column label="更新时间" align="left" prop="updateTime" show-overflow-tooltip width="120" />
         <el-table-column label="操作" width="120" align="left" header-align="center" class-name="small-padding fixed-width" fixed="right">

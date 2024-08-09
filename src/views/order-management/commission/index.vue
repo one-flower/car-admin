@@ -79,8 +79,8 @@
         <el-table-column label="车牌号码" align="left" prop="licensePlate" />
         <el-table-column label="产品品牌" align="left" prop="productBrandLabel" />
         <el-table-column label="订单产品" align="left" prop="productIdLabel" />
-        <el-table-column label="订单价格(/元)" align="left" prop="orderPrice" />
-        <el-table-column label="订单提成(/元)" align="left" prop="commPrice" />
+        <el-table-column label="订单价格" align="left" prop="orderPrice" />
+        <el-table-column label="订单提成" align="left" prop="commPrice" />
         <el-table-column label="负责人" align="center" prop="directorLabel" />
         <el-table-column label="支付状态" align="center" prop="payStateLabel" />
         <el-table-column label="分配状态" align="center" prop="commStateLabel" />

@@ -55,3 +55,8 @@ app.use(plugins);
 directive(app);
 
 app.mount('#app');
+
+// 自定义组件
+import WmDialog from '@/components/WmDialog/index.vue';
+// 挂载
+app.component('WmDialog', WmDialog);

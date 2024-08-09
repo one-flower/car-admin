@@ -10,6 +10,15 @@ export interface TableVO extends BaseEntity {
   endDate: string; // 质保结束
   state: string; // 质保状态
   updateTime: string; // 更新时间
+  pendingState: 'PENDING' | 'RESTORE';
+
+  customId?: string;
+  customNo: string;
+  tagIdLabel: string;
+  nickname: string;
+  telephone: string;
+  channel: string;
+  totalMoney: string;
 }
 
 export interface FormData {

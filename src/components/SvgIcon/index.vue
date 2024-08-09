@@ -37,4 +37,21 @@ const svgClass = computed(() => {
   fill: currentColor;
   vertical-align: -2px;
 }
+
+.primary {
+  color: #337ab7;
+}
+.success {
+  color: #67c23a;
+}
+.warning {
+  color: #e6a23c;
+}
+.danger {
+  color: #f56c6c;
+}
+
+.info {
+  color: #909399;
+}
 </style>

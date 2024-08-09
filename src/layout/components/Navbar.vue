@@ -23,11 +23,11 @@
 
         <!-- <header-search id="header-search" class="right-menu-item" /> -->
         <search-menu ref="searchMenuRef" />
-        <el-tooltip content="搜索" effect="dark" placement="bottom">
+        <!-- <el-tooltip content="搜索" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect" @click="openSearchMenu">
             <svg-icon class-name="search-icon" icon-class="search" />
           </div>
-        </el-tooltip>
+        </el-tooltip> -->
         <!-- 消息 -->
         <!-- <el-tooltip :content="$t('navbar.message')" effect="dark" placement="bottom">
           <div>

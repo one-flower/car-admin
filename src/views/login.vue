@@ -10,7 +10,7 @@
     </div>
     <div class="login__bottom">
       <div class="login__bottom__title">
-        CarCare车辆养护系统
+        CarCare车辆养护管理系统
         <span class="login__bottom__title--span">Version 1.0.0</span>
       </div>
       <span class="login__bottom--subTtile">CARCARE VEHICE MAINTENANCE SYSTEM</span>
@@ -27,6 +27,9 @@
           <svg-icon icon-class="mendian" class-name="login__bottom--icon" />
           <span>智能数据助力终端门店</span>
         </div>
+      </div>
+      <div class="login__bottom--footer">
+        <span>辽ICP备2023012415号-1</span>
       </div>
     </div>
     <div></div>
@@ -72,8 +75,8 @@
           </div>
         </el-form-item>
       </div>
+      <el-checkbox v-model="loginForm.rememberMe" style="margin: 0 0 25px 0">记住密码</el-checkbox>
 
-      <!-- <el-checkbox v-model="loginForm.rememberMe" style="margin: 0 0 25px 0">记住密码</el-checkbox> -->
       <!-- <el-form-item style="float: right">
         <el-button circle title="微信登录" @click="doSocialLogin('wechat')">
           <svg-icon icon-class="wechat" />
@@ -101,10 +104,6 @@
       </div>
       <!-- </el-form-item> -->
     </el-form>
-    <!--  底部  -->
-    <div class="el-login-footer">
-      <span>辽ICP备2023012415号-1</span>
-    </div>
   </div>
 </template>
 
@@ -287,7 +286,7 @@ onMounted(() => {
   }
   &__top {
     width: 100%;
-    height: 60%;
+    height: 70%;
     position: relative;
     &__form {
       position: absolute;
@@ -298,7 +297,7 @@ onMounted(() => {
   &__bottom {
     background: #1d2635;
     width: 100%;
-    height: 40%;
+    height: 30%;
     position: relative;
     &__title {
       position: absolute;
@@ -343,6 +342,14 @@ onMounted(() => {
     &--icon {
       width: 30px;
       height: 30px;
+    }
+    &--footer {
+      position: absolute;
+      top: 14rem;
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      font-size: 12px;
     }
   }
 }
@@ -436,16 +443,5 @@ onMounted(() => {
   position: relative;
   width: 100%;
   height: 40px;
-}
-
-.el-login-footer {
-  height: 40px;
-  line-height: 40px;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  color: #fff;
-  font-size: 12px;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div class="p-2">
+    {{ stateForm.visiable }}
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="tableInfo.showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -99,11 +100,20 @@
         <el-table-column label="质保开始日期" align="center" prop="startDate" show-overflow-tooltip />
         <el-table-column label="质保结束日期" align="center" prop="endDate" show-overflow-tooltip />
         <el-table-column label="质保状态" align="center" prop="stateLabel" />
+        <el-table-column label="挂起状态" align="center" prop="pendingStateLabel" />
         <el-table-column label="操作" width="100" align="center" class-name="small-padding fixed-width">
           <template #default="{ row }">
             <el-tooltip v-if="row.maxNum > 0" content="保养记录" placement="top">
               <el-button v-hasPermi="['clyh:warranty:log']" link @click="handleLog(row)">
-                <svg-icon class-name="search-icon" icon-class="order-log"></svg-icon>
+                <svg-icon icon-class="order-log"></svg-icon>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip :content="row.pendingState === 'PENDING' ? '启动状态' : '挂起状态'" placement="top">
+              <el-button v-hasPermi="['clyh:warranty:pending']" link @click="handlePending(row)">
+                <svg-icon
+                  :icon-class="row.pendingState === 'PENDING' ? 'restore' : 'pending'"
+                  :class-name="row.pendingState === 'PENDING' ? 'success' : 'danger'"
+                ></svg-icon>
               </el-button>
             </el-tooltip>
           </template>
@@ -120,16 +130,34 @@
     </el-card>
 
     <!-- 添加或修改品牌对话框 -->
-    <el-dialog v-model="formInfo.visible" :title="formInfo.title" width="700px" append-to-body>
+    <el-dialog v-model="formInfo.visible" :title="formInfo.title" width="700px" v-bind="$attrs" append-to-body>
       <el-form ref="FormDataRef" :model="formInfo.data" :rules="rules" label-width="80px" :disabled="formInfo.disabled" @submit.prevent> </el-form>
     </el-dialog>
 
     <FrequencyLogItem v-model:visible="frequencyInfo.visible" :basic-data="frequencyInfo.data"></FrequencyLogItem>
+
+    <!--  -->
+    <wm-dialog v-model="stateForm.visiable" title="变更状态" :width="'400px'" @cancel="stateCancel" @submit="stateSubmit">
+      <
+      <el-form ref="stateRef" :model="stateForm.data" :rules="stateRules">
+        <el-form-item label="备注">
+          <el-input
+            v-model="stateForm.data.remarks"
+            placeholder="请输入备注"
+            maxlength="255"
+            show-word-limit
+            :rows="4"
+            type="textarea"
+            clearable
+          ></el-input>
+        </el-form-item>
+      </el-form>
+    </wm-dialog>
   </div>
 </template>
 
 <script setup name="Brand" lang="ts">
-import { warrantyInfo, warrantyList } from '@/api/maintain-management/warranty';
+import { warrantyInfo, warrantyList, warrantyUpdatePending } from '@/api/maintain-management/warranty';
 
 import { FormData, TableQuery, TableVO } from '@/api/maintain-management/warranty/types';
 import FrequencyLogItem from './frequency-log.vue';
@@ -152,7 +180,13 @@ const tableInfo = reactive<TableInfo<TableQuery, TableVO[]>>({
 });
 
 const initFormData: FormData = {
-  id: undefined
+  id: undefined,
+  customNo: '',
+  tagIdLabel: '',
+  nickname: '',
+  telephone: '',
+  channel: '',
+  totalMoney: ''
 };
 const formRef = ref<ElFormInstance>();
 const formInfo = reactive<FormInfo<FormData>>({
@@ -218,7 +252,7 @@ const resetQuery = () => {
 const handleDetail = async (row?: TableVO) => {
   const postId = row?.id || tableInfo.ids[0];
   const res = await warrantyInfo(postId);
-  formInfo.data = res.data;
+  formInfo.data = { ...res.data };
   formInfo.visible = true;
   formInfo.title = '品牌详情';
 };
@@ -233,6 +267,52 @@ const handleLog = async (row?: TableVO) => {
   frequencyInfo.visible = true;
 };
 
+// 切换状态
+type StateData = {
+  id: string;
+  pendingState: 'PENDING' | 'RESTORE';
+  remarks: string;
+};
+const stateRef = ref();
+const stateRules = {};
+const initStateForm = <StateData>{
+  id: undefined,
+  remarks: ''
+};
+const stateForm = reactive({
+  title: '切换状态',
+  visiable: false,
+  data: <StateData>{
+    ...initStateForm
+  }
+});
+const handlePending = (row?: TableVO) => {
+  stateForm.data = {
+    id: row.id,
+    pendingState: row.pendingState,
+    remarks: ''
+  };
+
+  stateForm.title = row.pendingState === 'PENDING' ? '确认将当前挂起车辆进行恢复？' : '确认将当前质保车辆挂起，挂起后将暂停质保和保养服务';
+  stateForm.visiable = true;
+};
+const stateCancel = () => {
+  stateForm.data = {
+    ...initStateForm
+  };
+  stateForm.visiable = false;
+};
+const stateSubmit = async () => {
+  const state = stateForm.data.pendingState === 'PENDING' ? 'RESTORE' : 'PENDING';
+  const res = await warrantyUpdatePending({
+    id: stateForm.data.id,
+    pendingState: state,
+    remarks: stateForm.data.remarks
+  });
+  proxy?.$modal.msgSuccess(res.msg);
+  stateCancel();
+  getTableData();
+};
 const init = async () => {
   getTableData();
 };

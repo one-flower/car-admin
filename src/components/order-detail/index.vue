@@ -28,7 +28,7 @@
       <el-descriptions-item label="订单支付" :span="2">
         {{ configPyaData.orderPayTypeLabel }}
       </el-descriptions-item>
-      <template v-if="['PROMPTLY_PAY', 'PAID'].includes(configPyaData.orderPayType)">
+      <template v-if="!['LATER_ON_PAY', 'UNPAID'].includes(configPyaData.orderPayType)">
         <el-descriptions-item label="账户支付"> {{ towPriLabel(configPyaData.accountPrice) }}</el-descriptions-item>
         <el-descriptions-item label="现金支付"> {{ towPriLabel(configPyaData.cashPrice) }}</el-descriptions-item>
       </template>
@@ -37,6 +37,17 @@
     <el-descriptions :title="`实际支付${towPriLabel(configPyaData.realityPrice)}`" border class="mb10" />
   </template>
   <!-- 日志 -->
+  <!-- <el-timeline>
+    <el-timeline-item v-for="item in orderLogList" :key="item.key" :timestamp="item.orderStateLabel" placement="top">
+      <template #default>
+        <el-descriptions title="" :column="1" border class="mb10">
+          <el-descriptions-item label="处理人员"> {{ item.createByLabel }} </el-descriptions-item>
+          <el-descriptions-item label="操作时间"> {{ item.createTime }} </el-descriptions-item>
+          <el-descriptions-item label="备注说明"> {{ item.remarks }} </el-descriptions-item>
+        </el-descriptions>
+      </template>
+    </el-timeline-item>
+  </el-timeline> -->
   <el-steps :active="orderLogList.length" direction="vertical" process-status="success" finish-status="success">
     <el-step v-for="item in orderLogList" :key="item.key" :title="item.orderStateLabel">
       <template #description>
